@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api'
+    'api',
+    'books'
 ]
 
 MIDDLEWARE = [
@@ -74,10 +75,15 @@ WSGI_APPLICATION = 'storefront.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
+DATABASES = {  # remember to change these using envs for security
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'goodreads_clone_dev_db',          # Your database name
+        'USER': 'goodreads_clone_dev',             # Your database user
+        'PASSWORD': 'Goodreads_clone_dev_pwd123',  # Your user password
+        # Hostname (localhost for local development)
+        'HOST': 'localhost',
+        'PORT': '5432',                            # Default PostgreSQL port
     }
 }
 
