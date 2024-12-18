@@ -11,18 +11,10 @@ class users(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
-    posts = models.ManyToManyField('posts', related_name='user_posts')
-    files = models.ManyToManyField('files', related_name='user_files')
-    events = models.ManyToManyField('events', related_name='user_events')
-    notifications = models.ManyToManyField('notifications', related_name='user_notifications')
-    messages = models.ManyToManyField('messages', related_name='user_messages')
-    comments = models.ManyToManyField('comments', related_name='user_comments')
-    likes = models.ManyToManyField('likes', related_name='user_likes')
-    shares = models.ManyToManyField('shares', related_name='user_shares')    
 
     class Meta:
         indexes = [
-            models.Index(fields=['name']),
+            models.Index(fields=['name'])
         ]
         verbose_name = "user"
         verbose_name_plural = "users"
@@ -191,6 +183,7 @@ class notifications(models.Model):
         unique_together = (('user', 'post'), ('user', 'comment'), ('user', 'file'), ('user', 'event'))
         verbose_name = "notification"
         verbose_name_plural = "notifications"
+
     def __str__(self):
         return f"Notification #{self.pk}"
 
