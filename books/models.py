@@ -10,7 +10,7 @@ class Author(models.Model):
     birth_date = models.DateField()
     death_date = models.DateField(null=True)  # maybe still alive
     bio = models.TextField(blank=True)
-    photo = models.ImageField(upload_to='authors/',
+    photo = models.ImageField(upload_to='authors_pics/',
                               default='default_author.png')
     added_date = models.DateTimeField(auto_now_add=True)
 
@@ -32,20 +32,18 @@ class Book(models.Model):
     """Book model."""
 
     title = models.CharField(max_length=255)
-    authors = models.ManyToManyField(Author, related_name='books')
+    author = models.ForeignKey(Author, on_delete=models.PROTECT, null=True)
     publication_date = models.DateField()
     pages = models.IntegerField()  # for limiting the current_page feature
     cover = models.ImageField(upload_to='covers/', default='default_book.png')
     buy_link = models.CharField(max_length=255, null=True)
-    # avg_rating
     description = models.TextField(blank=True)
     added_date = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(default='-')  # for search
+    # avg_rating
 
     # isbn = models.CharField(max_length=13)  # maybe make this a primary key
     class Meta:
-        verbose_name = "book"
-        verbose_name_plural = "books"
         indexes = [
             models.Index(fields=['title']),
         ]
@@ -57,4 +55,4 @@ class Book(models.Model):
         Returns:
             str: string representation of the book
         """
-        return self.title
+        return "{}|{}".format(self.title, self.author)
