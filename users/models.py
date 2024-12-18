@@ -24,6 +24,8 @@ class users(models.Model):
         indexes = [
             models.Index(fields=['name']),
         ]
+        verbose_name = "user"
+        verbose_name_plural = "users"
 
     def __str__(self):
         return self.name
@@ -49,6 +51,8 @@ class groups(models.Model):
         indexes = [
             models.Index(fields=['name']),
         ]
+        verbose_name = "group"
+        verbose_name_plural = "groups"
 
     def __str__(self):
         return self.name
@@ -63,7 +67,7 @@ class posts(models.Model):
     group = models.ForeignKey(groups, on_delete=models.CASCADE)
     comments = models.ManyToManyField('comments', related_name='post_comments')
     likes = models.ManyToManyField(users, related_name='post_likes')
-    shares = models.ManyToManyField(posts, related_name='post_shares')
+    shares = models.ManyToManyField('posts', related_name='post_shares')
     notifications = models.ManyToManyField('notifications', related_name='post_notifications')
     files = models.ManyToManyField('files', related_name='post_files')
 
@@ -72,6 +76,8 @@ class posts(models.Model):
             models.Index(fields=['content']),
         ]
         ordering = ['-created_at']
+        verbose_name = "post"
+        verbose_name_plural = "posts"
 
     def __str__(self):
         return f"Post #{self.pk}: {self.content[:50]}..."
@@ -94,6 +100,8 @@ class comments(models.Model):
             models.Index(fields=['content']),
         ]
         ordering = ['-created_at']
+        verbose_name = "comment"
+        verbose_name_plural = "comments"
 
     def __str__(self):
         return f"Comment #{self.pk}: {self.content[:50]}..."
@@ -110,7 +118,11 @@ class files(models.Model):
     notifications = models.ManyToManyField('notifications', related_name='file_notifications')
     groups = models.ManyToManyField(groups, related_name='file_groups')
     users = models.ManyToManyField(users, related_name='file_users')
-    messages = models.ManyToManyField(messages, related_name='file_messages')
+    messages = models.ManyToManyField('messages', related_name='file_messages')
+
+    class Meta:
+        verbose_name = "file"
+        verbose_name_plural = "files"
 
     def __str__(self):
         return f"File #{self.pk}: {self.file.name[:50]}..."
@@ -134,11 +146,11 @@ class events(models.Model):
             models.Index(fields=['title']),
         ]
         ordering = ['-start_date']
-        verbose_name_plural = "events"
         verbose_name = "event"
+        verbose_name_plural = "events"
 
-        def __str__(self):
-            return f"Event #{self.pk}: {self.title[:50]}..."
+    def __str__(self):
+        return f"Event #{self.pk}: {self.title[:50]}..."
 
 
 class likes(models.Model):
@@ -147,9 +159,11 @@ class likes(models.Model):
 
     class Meta:
         unique_together = (('user', 'post'), ('user', 'comment'), ('user', 'file'), ('user', 'event'))
+        verbose_name = "like"
+        verbose_name_plural = "likes"
 
-        def __str__(self):
-            return f"Like #{self.pk}"
+    def __str__(self):
+        return f"Like #{self.pk}"
 
 
 class shares(models.Model):
@@ -162,8 +176,8 @@ class shares(models.Model):
 
     class Meta:
         unique_together = (('user', 'post'), ('user', 'comment'), ('user', 'file'), ('user', 'event'))
-        verbose_name_plural = "shares"
         verbose_name = "share"
+        verbose_name_plural = "shares"
 
     def __str__(self):
         return f"Share #{self.pk}"
@@ -175,9 +189,8 @@ class notifications(models.Model):
 
     class Meta:
         unique_together = (('user', 'post'), ('user', 'comment'), ('user', 'file'), ('user', 'event'))
-        verbose_name_plural = "notifications"
         verbose_name = "notification"
-
+        verbose_name_plural = "notifications"
     def __str__(self):
         return f"Notification #{self.pk}"
 
@@ -198,8 +211,8 @@ class messages(models.Model):
             models.Index(fields=['content']),
         ]
         ordering = ['-created_at']
-        verbose_name_plural = "messages"
         verbose_name = "message"
+        verbose_name_plural = "messages"
 
-        def __str__(self):
-            return f"Message #{self.pk}: {self.content[:50]}..."
+    def __str__(self):
+        return f"Message #{self.pk}: {self.content[:50]}..."

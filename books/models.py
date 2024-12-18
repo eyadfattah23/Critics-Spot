@@ -32,7 +32,7 @@ class Book(models.Model):
     """Book model."""
 
     title = models.CharField(max_length=255)
-    author = models.ForeignKey(Author, on_delete=models.PROTECT, null=True)
+    authors = models.ManyToManyField(Author, related_name='books')
     publication_date = models.DateField()
     pages = models.IntegerField()  # for limiting the current_page feature
     cover = models.ImageField(upload_to='covers/', default='default_book.png')
@@ -44,6 +44,8 @@ class Book(models.Model):
 
     # isbn = models.CharField(max_length=13)  # maybe make this a primary key
     class Meta:
+        verbose_name = "book"
+        verbose_name_plural = "books"
         indexes = [
             models.Index(fields=['title']),
         ]
