@@ -62,3 +62,52 @@ myproject/
 │   ├── serializers.py
 │
 ```
+
+
+### Using add() After Creating the Book
+```python
+# Create the genres
+genre1 = Genre.objects.get_or_create(name="Fiction")[0]
+genre2 = Genre.objects.get_or_create(name="Adventure")[0]
+
+# Create the book
+book = Book.objects.create(
+    title="The Adventures of Sherlock Holmes",
+    publication_date="1892-10-14",
+    pages=307,
+    description="A collection of Sherlock Holmes stories.",
+)
+
+# Add the genres to the book
+book.genres.add(genre1, genre2)
+```
+* `get_or_create()` ensures you don't create duplicate genres.
+* The `add()` method associates the `Genre` instances with the `Book`.
+
+
+### 2. Backend Search Logic
+Basic Search Functionality
+
+Start with a simple search by querying the Book table using Django's ORM.
+
+In your `views.py`:
+
+```python
+from django.db.models import Q
+from django.shortcuts import render
+from .models import Book
+
+def book_search(request):
+    query = request.GET.get('q', '')  # Get the search query from URL parameters
+    books = Book.objects.filter(
+        Q(title__icontains=query) |  # Search in the title
+        Q(description__icontains=query) |  # Search in the description
+        Q(author__name__icontains=query)  # Search in the author's name
+    )
+    return render(request, 'book_search.html', {'books': books, 'query': query})
+
+```
+**Explanation of `Q`**:
+
+* `icontains`: Case-insensitive search for matching substrings.
+* `Q`: Allows you to combine multiple conditions (title, description, author) with an OR operator.
