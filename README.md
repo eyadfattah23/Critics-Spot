@@ -37,13 +37,13 @@ myproject/
 │   ├── urls.py
 │   ├── serializers.py
 │
-├── reviews/
+├── reviews/ #done
 │   ├── models.py
 │   ├── views.py
 │   ├── urls.py
 │   ├── serializers.py
 │
-├── groups/ 
+├── groups/ #done
 │   ├── models.py
 │   ├── views.py
 │   ├── urls.py
@@ -55,7 +55,7 @@ myproject/
 │   ├── urls.py
 │   ├── serializers.py
 │
-├── favorites/
+├── favorites/ #done
 │   ├── models.py
 │   ├── views.py
 │   ├── urls.py
