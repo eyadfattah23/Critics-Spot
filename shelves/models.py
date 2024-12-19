@@ -31,7 +31,7 @@ class Shelf(models.Model):
 class ShelfBook(models.Model):
     """Model representing a book in a shelf."""
     shelf = models.ForeignKey(
-        Shelf, on_delete=models.CASCADE0)
+        Shelf, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
 
     class Meta:
