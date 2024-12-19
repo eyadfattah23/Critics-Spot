@@ -25,13 +25,13 @@ myproject/
 │   ├── urls.py
 │   ├── wsgi.py
 │
-├── users/
+├── users/ #done
 │   ├── models.py
 │   ├── views.py
 │   ├── urls.py
 │   ├── serializers.py
 │
-├── books/
+├── books/ # done
 │   ├── models.py
 │   ├── views.py
 │   ├── urls.py
@@ -43,13 +43,13 @@ myproject/
 │   ├── urls.py
 │   ├── serializers.py
 │
-├── groups/
+├── groups/ 
 │   ├── models.py
 │   ├── views.py
 │   ├── urls.py
 │   ├── serializers.py
 │
-├── shelves/
+├── shelves/ # done 
 │   ├── models.py
 │   ├── views.py
 │   ├── urls.py
@@ -111,3 +111,38 @@ def book_search(request):
 
 * `icontains`: Case-insensitive search for matching substrings.
 * `Q`: Allows you to combine multiple conditions (title, description, author) with an OR operator.
+---
+to solve this problem:
+I get the following error:
+
+ERROR:  database "pilot" is being accessed by other users
+DETAIL:  There is 1 other session using the database.
+
+run : `sudo service postgresql restart`
+---
+
+### How to Get All Books in a Specific Genre?
+
+If you're using the BookGenre junction table:
+```python
+# Query for all books in a specific genre
+genre_name = "Fiction"
+books_in_genre = Book.objects.filter(bookgenre__genre__name=genre_name)
+```
+
+If using ManyToManyField:
+```python
+books_in_genre = Book.objects.filter(genres__name="Fiction")
+```
+### How to Get All Genres of a Book?
+
+If using BookGenre:
+
+book_id = 1
+genres_of_book = Genre.objects.filter(bookgenre__book_id=book_id)
+
+If using ManyToManyField:
+```python
+book = Book.objects.get(id=1)
+genres_of_book = book.genres.all()
+```
