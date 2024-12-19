@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 """User related models."""
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 
-class Profile(models.Model):
+class CustomUser(AbstractUser):
     """User profile model"""
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    email = models.EmailField(unique=True)
     bio = models.TextField(max_length=500, blank=True)
     image = models.ImageField(
         upload_to='profile_pictures/', default='default_user_image.png')
