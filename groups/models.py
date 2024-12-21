@@ -50,16 +50,16 @@ class Comment(models.Model):
         return f"{self.user.username} commented on {self.post}: {self.content[:30]}... ({self.created_at})"
 
 
-class Group(models.Model):
-    """Group model."""
+class Community(models.Model):
+    """Community model."""
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(max_length=1000)
-    posts = models.ManyToManyField(Post, related_name='groups')
+    posts = models.ManyToManyField(Post, related_name='communities')
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)  # Creator of the group
+                             on_delete=models.CASCADE)  # Creator of the Community
     date_added = models.DateTimeField(auto_now_add=True)
     users = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name='groups')  # users in each group
+        settings.AUTH_USER_MODEL, related_name='communities')  # users in each Community
 
     def __str__(self):
-        return f"{self.name} group, owned by {self.user.username} created at {self.date_added}"
+        return f"{self.name} Community, owned by {self.user.username} created at {self.date_added}"
