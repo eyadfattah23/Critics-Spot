@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'api',
     'books',
     'users',
@@ -54,6 +55,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware"
+
 ]
 
 ROOT_URLCONF = 'storefront.urls'
@@ -82,7 +85,7 @@ WSGI_APPLICATION = 'storefront.wsgi.application'
 
 DATABASES = {  # remember to change these using envs for security
 
-    'non_default': {
+    'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'goodreads_clone_dev_db',          # Your database name
         'USER': 'goodreads_clone_dev',             # Your database user
@@ -90,15 +93,15 @@ DATABASES = {  # remember to change these using envs for security
         # Hostname (localhost for local development)
         'HOST': 'localhost',
         'PORT': '5432',                            # Default PostgreSQL port
-    },
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'goodreads_clone_test_db',
-        'USER': 'goodreads_clone_test',
-        'PASSWORD': 'Goodreads_clone_test_pwd123',
-        'HOST': 'localhost',
-        'PORT': '5432',
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'goodreads_clone_test_db',
+    #     'USER': 'goodreads_clone_test',
+    #     'PASSWORD': 'Goodreads_clone_test_pwd123',
+    #     'HOST': 'localhost',
+    #     'PORT': '5432',
+    # }
 }
 
 
@@ -145,3 +148,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]

@@ -13,6 +13,7 @@ A back-end clone to goodreads.com platform,which is a huge platform for book rea
 
 5. `python3 -m venv goodreads_clone_venv` to create a virtual environment
 6. `source goodreads_clone_venv/bin/activate` to run this venv
+7. `sudo service postgresql restart`
 
 
 ## architecture:
