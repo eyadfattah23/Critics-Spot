@@ -58,6 +58,8 @@ class Group(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)  # Creator of the group
     date_added = models.DateTimeField(auto_now_add=True)
+    users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name='groups')  # users in each group
 
     def __str__(self):
         return f"{self.name} group, owned by {self.user.username} created at {self.date_added}"
