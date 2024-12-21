@@ -14,14 +14,12 @@ from .models import CustomUser
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
 
-    # Add the 'profile_image' field to the fieldsets (used for editing)
     fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('profile_image',)}),
+        (None, {'fields': ('image',)}),
     )
 
-    # Add the 'profile_image' field to add/edit user form views
     add_fieldsets = UserAdmin.add_fieldsets + (
-        (None, {'fields': ('profile_image',)}),
+        (None, {'fields': ('image',)}),
     )
 
 

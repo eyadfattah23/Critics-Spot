@@ -149,3 +149,9 @@ genres_of_book = book.genres.all()
 ```
 
 **Note**: use this `results?search_query=postgresql+tutorial` url example to implement search functionality
+
+
+## Superuser/Admin:
+Username: admin
+Email: admin@grclone.com
+Password: grclone_admin_pwd
