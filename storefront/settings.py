@@ -81,7 +81,8 @@ WSGI_APPLICATION = 'storefront.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {  # remember to change these using envs for security
-    'default': {
+
+    'non_default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'goodreads_clone_dev_db',          # Your database name
         'USER': 'goodreads_clone_dev',             # Your database user
@@ -89,6 +90,14 @@ DATABASES = {  # remember to change these using envs for security
         # Hostname (localhost for local development)
         'HOST': 'localhost',
         'PORT': '5432',                            # Default PostgreSQL port
+    },
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'goodreads_clone_test_db',
+        'USER': 'goodreads_clone_test',
+        'PASSWORD': 'Goodreads_clone_test_pwd123',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
