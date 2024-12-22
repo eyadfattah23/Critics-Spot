@@ -82,22 +82,14 @@ WSGI_APPLICATION = 'storefront.wsgi.application'
 
 DATABASES = {  # remember to change these using envs for security
 
-    'non_default': {
+    'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'goodreads_clone_dev_db',          # Your database name
-        'USER': 'goodreads_clone_dev',             # Your database user
-        'PASSWORD': 'Goodreads_clone_dev_pwd123',  # Your user password
+        'NAME': 'goodreads_clone_db',          # Your database name
+        'USER': 'goodreads_clone_user',             # Your database user
+        'PASSWORD': 'boss',  # Your user password
         # Hostname (localhost for local development)
         'HOST': 'localhost',
         'PORT': '5432',                            # Default PostgreSQL port
-    },
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'goodreads_clone_test_db',
-        'USER': 'goodreads_clone_test',
-        'PASSWORD': 'Goodreads_clone_test_pwd123',
-        'HOST': 'localhost',
-        'PORT': '5432',
     }
 }
 
