@@ -6,7 +6,7 @@ from django.contrib import admin
 # Register your models here.
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, Favorite, BookReview
 
 # Customizing the UserAdmin to include additional fields
 
@@ -25,3 +25,5 @@ class CustomUserAdmin(UserAdmin):
 
 # Register the CustomUser model with the customized admin
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(Favorite)
+admin.site.register(BookReview)
