@@ -25,7 +25,7 @@ class Shelf(models.Model):
         ]
 
     def __str__(self):
-        return f"shelf: {self.name} owned by ({self.user.username})"
+        return f"shelf \"{self.name}\" owned by (**{self.user.username}**)"
 
 
 class ShelfBook(models.Model):

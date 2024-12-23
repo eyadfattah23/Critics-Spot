@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'books',
     'users',
     'shelves',
-    'groups'
+    'communities'
 ]
 
 MIDDLEWARE = [

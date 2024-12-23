@@ -55,7 +55,7 @@ class Book(models.Model):
     """Book model."""
 
     title = models.CharField(max_length=255, unique=True)
-    buy_link = models.CharField(max_length=255, null=True)
+    buy_link = models.URLField(max_length=255, null=True, blank=True)
     description = models.TextField(blank=True)
     pages = models.PositiveIntegerField()  # for limiting the current_page feature
     publication_date = models.DateField()
@@ -63,7 +63,7 @@ class Book(models.Model):
     cover = models.ImageField(upload_to='covers/', default='default_book.png')
 
     author = models.ForeignKey(Author, on_delete=models.PROTECT, null=True)
-    genres = models.ManyToManyField(Genre)
+    genres = models.ManyToManyField(Genre, related_name='books')
 
     avg_rating = models.DecimalField(
         max_digits=3,
@@ -79,7 +79,7 @@ class Book(models.Model):
             models.Index(fields=['title']),
             models.Index(fields=['author'])
         ]
-        ordering = ["-added_date"]
+        ordering = ["-added_date", 'title']
 
     def __str__(self):
         """Return the title of the book.
@@ -87,4 +87,4 @@ class Book(models.Model):
         Returns:
             str: string representation of the book
         """
-        return "{}|{}".format(self.title, self.author)
+        return "{} | by: {}".format(self.title, self.author)

@@ -3,7 +3,14 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from books.models import Book
+import os
 # Create your models here.
+
+
+def user_image_upload_to(instance, filename):
+    """Generate file path for user profile pictures."""
+    ext = filename.split('.')[-1]  # Get the file extension
+    return os.path.join(f"profile_pictures/{instance.username}/profile.{ext}")
 
 
 class CustomUserManager(BaseUserManager):
@@ -63,10 +70,20 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     bio = models.TextField(max_length=500, blank=True)
     image = models.ImageField(
-        upload_to='profile_pictures/', default='default_user_image.png')
+        upload_to=user_image_upload_to, default='default_user_image.png')
 
     def __str__(self):
-        return "{} Profile".format(self.username)
+        return "{} | id:{}".format(self.username, self.id)
+
+    def save(self, *args, **kwargs):
+        # Save once to generate an ID for the instance
+        if not self.id:
+            super().save(*args, **kwargs)
+
+        # Update the file path using the ID and save again if the file path needs an ID
+        if self.image and f'profile_pictures/{self.username}' not in self.image.name:
+            self.image.name = user_image_upload_to(self, self.image.name)
+            super().save(*args, **kwargs)
 
 
 class Favorite(models.Model):
