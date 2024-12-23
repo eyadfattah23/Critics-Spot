@@ -7,7 +7,7 @@ from .models import *
 
 @admin.register(Community)
 class CommunityAdmin(admin.ModelAdmin):
-    list_display = ['name', 'date_added']
+    list_display = ['name', 'date_added', 'owner']
 
 
 admin.site.register(Post)

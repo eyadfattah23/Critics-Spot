@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """Groups related models."""
+import os
 from django.db import models
 from django.conf import settings
 from django.db.models import UniqueConstraint
@@ -53,6 +54,12 @@ class Comment(models.Model):
         return f"{self.user.username} commented on {self.post}: {self.content[:30]}... ({self.created_at})"
 
 
+def community_image_upload_to(instance, filename):
+    """Generate file path for community images."""
+    ext = filename.split('.')[-1]  # Get the file extension
+    return os.path.join(f"community_images/{instance.name}/cover.{ext}")
+
+
 class Community(models.Model):
     """Community model."""
     name = models.CharField(max_length=255, unique=True)
@@ -63,7 +70,17 @@ class Community(models.Model):
     members = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name='member_of_communities')  # users in each Community
     image = models.ImageField(
-        upload_to='communities_images/', default='default_community_image.jpeg')
+        upload_to=community_image_upload_to, default='default_community_image.jpeg')
 
     def __str__(self):
-        return f"{self.name} Community, owned by {self.user.username} created at {self.date_added}"
+        return f"{self.name} Community, owned by {self.owner.username} created at {self.date_added}"
+
+    def save(self, *args, **kwargs):
+        # Save once to generate an ID for the instance
+        if not self.id:
+            super().save(*args, **kwargs)
+
+        # Update the file path using the ID and save again if the file path needs an ID
+        if self.image and f'communities_images/{self.name}' not in self.image.name:
+            self.image.name = community_image_upload_to(self, self.image.name)
+            super().save(*args, **kwargs)
