@@ -14,6 +14,9 @@ class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE, related_name='posts')
 
+    community = models.ForeignKey(
+        'Community', on_delete=models.CASCADE, related_name='+')
+
     def __str__(self):
         return f"Post by {self.user.username} at {self.created_at}"
 
@@ -54,12 +57,13 @@ class Community(models.Model):
     """Community model."""
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(max_length=1000)
-    posts = models.ManyToManyField(Post, related_name='communities')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)  # Creator of the Community
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              on_delete=models.CASCADE)  # Creator of the Community
     date_added = models.DateTimeField(auto_now_add=True)
-    users = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name='communities')  # users in each Community
+    members = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name='member_of_communities')  # users in each Community
+    image = models.ImageField(
+        upload_to='communities_images/', default='default_community_image.jpeg')
 
     def __str__(self):
         return f"{self.name} Community, owned by {self.user.username} created at {self.date_added}"
