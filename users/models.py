@@ -73,7 +73,7 @@ class CustomUser(AbstractUser):
         upload_to=user_image_upload_to, default='default_user_image.png')
 
     def __str__(self):
-        return "{}|{}".format(self.username, self.id)
+        return "{} | id:{}".format(self.username, self.id)
 
     def save(self, *args, **kwargs):
         # Save once to generate an ID for the instance

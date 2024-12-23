@@ -16,7 +16,7 @@ class Post(models.Model):
                              on_delete=models.CASCADE, related_name='posts')
 
     community = models.ForeignKey(
-        'Community', on_delete=models.CASCADE, related_name='+')
+        'Community', on_delete=models.CASCADE, related_name='posts')
 
     def __str__(self):
         return f"Post by {self.user.username} at {self.created_at}"
@@ -73,7 +73,7 @@ class Community(models.Model):
         upload_to=community_image_upload_to, default='default_community_image.jpeg')
 
     def __str__(self):
-        return f"{self.name} Community, owned by {self.owner.username} created at {self.date_added}"
+        return f"{self.name}"
 
     def save(self, *args, **kwargs):
         # Save once to generate an ID for the instance

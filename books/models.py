@@ -63,7 +63,7 @@ class Book(models.Model):
     cover = models.ImageField(upload_to='covers/', default='default_book.png')
 
     author = models.ForeignKey(Author, on_delete=models.PROTECT, null=True)
-    genres = models.ManyToManyField(Genre)
+    genres = models.ManyToManyField(Genre, related_name='books')
 
     avg_rating = models.DecimalField(
         max_digits=3,
