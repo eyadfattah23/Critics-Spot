@@ -55,7 +55,7 @@ class Book(models.Model):
     """Book model."""
 
     title = models.CharField(max_length=255, unique=True)
-    buy_link = models.CharField(max_length=255, null=True)
+    buy_link = models.URLField(max_length=255, null=True, blank=True)
     description = models.TextField(blank=True)
     pages = models.PositiveIntegerField()  # for limiting the current_page feature
     publication_date = models.DateField()
@@ -87,4 +87,4 @@ class Book(models.Model):
         Returns:
             str: string representation of the book
         """
-        return "{}|{}".format(self.title, self.author)
+        return "{} | by: {}".format(self.title, self.author)

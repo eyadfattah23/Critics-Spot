@@ -6,10 +6,16 @@ from .models import *
 # Register your models here.
 
 
+class CommunityPostInline(admin.TabularInline):
+    model = Post
+
+
 @admin.register(Community)
 class CommunityAdmin(admin.ModelAdmin):
     list_display = ['name', 'date_added', 'owner',
                     'number_of_members', 'number_of_posts', 'community_image']
+
+    inlines = [CommunityPostInline]
 
     def number_of_members(self, obj):
         """Count the number of members in a community."""
@@ -29,10 +35,20 @@ class CommunityAdmin(admin.ModelAdmin):
     community_image.short_description = 'Image'
 
 
+class PostLikeInline(admin.TabularInline):
+    model = Like
+
+
+class PostCommentInline(admin.TabularInline):
+    model = Comment
+
+
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     list_display = ['user', 'created_at',
                     'content_beginning', 'community', 'number_of_likes', 'number_of_comments']
+    list_select_related = ['user', 'community']
+    inlines = [PostLikeInline, PostCommentInline]
 
     def content_beginning(self, post):
         """get the content beginning of the post."""
@@ -48,5 +64,13 @@ class PostAdmin(admin.ModelAdmin):
     number_of_comments.short_description = 'Number of Comments'
 
 
-admin.site.register(Like)
-admin.site.register(Comment)
+@admin.register(Like)
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ['user', 'post', 'created_at']
+    list_select_related = ['user', 'post']
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['user', 'post', 'created_at']
+    list_select_related = ['user', 'post']

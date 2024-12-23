@@ -7,9 +7,17 @@ from .models import Shelf, ShelfBook
 # Register your models here.
 
 
+class ShelfBookInline(admin.TabularInline):
+    autocomplete_fields = ['book', 'shelf']
+    model = ShelfBook
+
+
 @admin.register(Shelf)
 class ShelfAdmin(admin.ModelAdmin):
     list_display = ['name', 'user', 'number_of_books']
+    list_select_related = ['user']
+    search_fields = ['name', 'user__username']
+    inlines = [ShelfBookInline]
 
     def number_of_books(self, shelf):
         """Count the number of books in a shelf."""
@@ -21,4 +29,7 @@ class ShelfAdmin(admin.ModelAdmin):
     number_of_books.short_description = 'Number of Books'
 
 
-admin.site.register(ShelfBook)
+@admin.register(ShelfBook)
+class ShelfBookAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['shelf', 'book']
+    list_select_related = ['shelf', 'book']
