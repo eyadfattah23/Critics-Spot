@@ -79,7 +79,7 @@ class Book(models.Model):
             models.Index(fields=['title']),
             models.Index(fields=['author'])
         ]
-        ordering = ["-added_date"]
+        ordering = ["-added_date", 'title']
 
     def __str__(self):
         """Return the title of the book.

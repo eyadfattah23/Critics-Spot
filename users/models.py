@@ -66,7 +66,7 @@ class CustomUser(AbstractUser):
         upload_to='profile_pictures/', default='default_user_image.png')
 
     def __str__(self):
-        return "{} Profile".format(self.username)
+        return "{}|{}".format(self.username, self.id)
 
 
 class Favorite(models.Model):
