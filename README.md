@@ -156,3 +156,15 @@ genres_of_book = book.genres.all()
 Username: admin
 Email: admin@grclone.com
 Password: grclone_admin_pwd
+
+
+{
+        "title": "Tom and Jerry",
+        "description": "test post request novel",
+        "author": "http://127.0.0.1:8000/api/authors/1",
+        "genres": [
+            "http://127.0.0.1:8000/api/genres/3",
+            "http://127.0.0.1:8000/api/genres/2",
+            "http://127.0.0.1:8000/api/genres/1"
+        ]
+    }

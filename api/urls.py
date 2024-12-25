@@ -5,6 +5,5 @@ from . import views
 
 urlpatterns = [
     path('hello/', views.say_hello),  # always end routes with /
-    path('hellot/', views.say_hello_template),  # always end routes with /
-    path('__debug__/', include(debug_toolbar.urls))
+    path('hellot/', views.say_hello_template)
 ]

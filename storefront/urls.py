@@ -17,13 +17,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
+import debug_toolbar
 from . import settings
 
 admin.site.site_header = 'Goodreads-clone Admin'
 admin.site.index_title = 'Admin'
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('api.urls')),
+    path('api/', include('users.urls')),
+    path('api/', include('books.urls')),
+    path('__debug__/', include(debug_toolbar.urls))
+
 ]
 if settings.DEBUG:  # Serve media files in development
     urlpatterns += static(settings.MEDIA_URL,
