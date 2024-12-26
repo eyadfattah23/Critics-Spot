@@ -12,7 +12,7 @@ from rest_framework import status
 def users_list(request):
     if request.method == 'GET':
         users = CustomUser.objects.all()
-        serializer = CustomUserSerializer(users, many=True)
+        serializer = CustomUserSerializer(users, many=True, context={'request': request})
         return Response(serializer.data)
     elif request.method == 'POST':
         serializer = UserCreateSerializer(data=request.data)
@@ -23,7 +23,10 @@ def users_list(request):
 
 
 @api_view()
-def user_details(request, id):
-    user = get_object_or_404(CustomUser, pk=id)
-    serializer = CustomUserSerializer(user)
+def user_details(request, pk):
+    user = get_object_or_404(
+        CustomUser,
+        pk=pk
+    )
+    serializer = CustomUserSerializer(user, context={'request': request})
     return Response(serializer.data)
