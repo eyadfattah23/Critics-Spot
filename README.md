@@ -168,3 +168,17 @@ Password: grclone_admin_pwd
             "http://127.0.0.1:8000/api/genres/1"
         ]
     }
+
+## steps for changing the auth method for you psql user
+first step 
+you look up the file on your local machine
+using this command
+    psql -u postgres -c "SHOW hba_file.conf"
+
+reload postgres server using
+
+sudo service postgresql reload 
+
+then you look up your user and change its auth method from peer (the default) to md5
+
+but if it's not there at all you can add the user along with the auth method md5 in our case
