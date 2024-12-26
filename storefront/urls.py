@@ -27,7 +27,8 @@ urlpatterns = [
     path('api/', include('users.urls')),
     path('api/', include('books.urls')),
     path('api/', include('shelves.urls')),
-    path('api/shelves/', include('shelves.urls')),
+    path('api/', include('shelves.urls')),
+    path('api/', include('communities.urls')),
     path('__debug__/', include(debug_toolbar.urls))
 
 ]
