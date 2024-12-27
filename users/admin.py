@@ -15,11 +15,11 @@ class CustomUserAdmin(UserAdmin):
     model = CustomUser
 
     fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('image',)}),
+        (None, {'fields': ('image', )}),
     )
 
     add_fieldsets = UserAdmin.add_fieldsets + (
-        (None, {'fields': ('image',)}),
+        (None, {'fields': ('image', 'email', 'first_name', 'last_name')}),
     )
     search_fields = ['username__startswith',
                      'first_name__startswith', 'last_name__startswith']
