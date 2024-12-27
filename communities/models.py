@@ -65,10 +65,10 @@ class Community(models.Model):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(max_length=1000)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
-                              on_delete=models.CASCADE)  # Creator of the Community
+                              on_delete=models.CASCADE, related_name='owner')  # Creator of the Community
     date_added = models.DateTimeField(auto_now_add=True)
     members = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name='member_of_communities')  # users in each Community
+        settings.AUTH_USER_MODEL, related_name='members')  # users in each Community
     image = models.ImageField(
         upload_to=community_image_upload_to, default='default_community_image.jpeg')
 
