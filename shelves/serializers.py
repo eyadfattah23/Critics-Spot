@@ -27,3 +27,11 @@ class ShelfSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shelf
         fields = ['id', 'name', 'user', 'is_default', 'books']
+
+
+class ShelfCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Shelf
+        user = serializers.PrimaryKeyRelatedField(read_only=True)
+        fields = ['name', 'user']
+        extra_kwargs = {'user': {'read_only': True}}
