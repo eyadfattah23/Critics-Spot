@@ -4,12 +4,6 @@ from .models import Shelf, ShelfBook
 from books.serializers import BookLightSerializer
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ['id', 'username', 'email']
-
-
 class ShelfBookSerializer(serializers.ModelSerializer):
     book = BookLightSerializer()
 
@@ -24,7 +18,11 @@ class ShelfSerializer(serializers.ModelSerializer):
         view_name='user-details',
         lookup_field='pk'
     )
-    books = ShelfBookSerializer(source='shelfbook_set', many=True, read_only=True)
+    books = ShelfBookSerializer(
+        source='shelfbook_set',
+        many=True,
+        read_only=True
+    )
 
     class Meta:
         model = Shelf
