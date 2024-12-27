@@ -12,7 +12,7 @@ class CustomCommunitySerializer(serializers.ModelSerializer):
     )
     owner = serializers.HyperlinkedRelatedField(
         queryset=CustomUser.objects.all(),
-        view_name='owner-details'
+        view_name='user-details'
     )
 
     class Meta:
