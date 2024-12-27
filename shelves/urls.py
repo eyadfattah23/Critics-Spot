@@ -1,6 +1,5 @@
 from django.urls import path
 from .views import shelves_list, shelf_details, create_shelf
-import users.views
 
 urlpatterns = [
     path('shelves/', shelves_list, name='shelves-list'),
