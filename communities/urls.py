@@ -18,24 +18,26 @@ urlpatterns = [
         name='community-post-comments'
     ),
     path(
-        'posts/<int:pk>/likes',
+        'posts/<int:pk>/likes/',
         views.community_post_likes,
         name='community-post-likes'
     ),
     path(
-        'communities/<community_id>/posts/<post_id>',
+        'posts/<int:pk>/',
         views.community_post_details,
         name='community-post-details'
     ),
     path(
-        'posts/<int:pk>/comments/<int:comment_id>',
+        'comments/<int:pk>/',
         views.community_post_comment_details,
         name='community-post-comment-details'
     ),
 
     path(
-        'posts/<int:pk>/likes/<int:like_id>',
+        'likes/<int:pk>/',
         views.community_post_like_details,
         name='community-post-like-details'
-    )
+    ),
+    path('communities/<int:pk>/members/add/', views.add_member, name='add-member'),
+    path('communities/<int:pk>/members/leave/', views.remove_member, name='remove-member')
 ]
