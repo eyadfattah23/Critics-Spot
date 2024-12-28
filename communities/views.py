@@ -5,9 +5,16 @@ from .models import Community, Post, Comment, Like
 from .serializers import *
 
 
-@api_view()
+@api_view(['GET', 'POST'])
 def communities_list(request):
     """ Return all the communities. """
+    if request.method == 'POST':
+        serializer = CustomCommunitySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(owner=request.user)
+        return Response(serializer.data, status=201)
+
+
     communities = Community.objects.prefetch_related('members', 'owner', 'posts').all()
     serializer = CustomCommunitySerializer(
         communities,
