@@ -9,7 +9,7 @@ from books.models import Book
 
 class Shelf(models.Model):
     """Model to represent a user's book shelf."""
-    DEFAULT_SHELVES = ['Read', 'Reading', 'Want To Read']
+    DEFAULT_SHELVES = ['Read', 'Currently Reading', 'Want To Read']
 
     name = models.CharField(max_length=128)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='shelves',
@@ -33,6 +33,7 @@ class ShelfBook(models.Model):
     shelf = models.ForeignKey(
         Shelf, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    current_page = models.PositiveIntegerField(default=0)  # Add this field
 
     class Meta:
         # Prevent duplicate books in the same shelf
