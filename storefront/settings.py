@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -80,7 +81,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'storefront.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -94,16 +94,20 @@ DATABASES = {  # remember to change these using envs for security
         # Hostname (localhost for local development)
         'HOST': 'localhost',
         'PORT': '5432',                            # Default PostgreSQL port
-    }
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'goodreads_clone_test_db',
-    #     'USER': 'goodreads_clone_test',
-    #     'PASSWORD': 'Goodreads_clone_test_pwd123',
-    #     'HOST': 'localhost',
-    #     'PORT': '5432',
-    # }
+    },
+    'test': {  # Test database configuration
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'goodreads_clone_test_db',
+        'USER': 'goodreads_clone_test',
+        'PASSWORD': 'Goodreads_clone_test_pwd123',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    },
 }
+
+# Use the test database when running tests
+if 'test' in sys.argv:
+    DATABASES['default'] = DATABASES['test']
 
 
 # Password validation
