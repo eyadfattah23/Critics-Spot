@@ -44,3 +44,26 @@ class ShelfBookDeserializer(serializers.ModelSerializer):
         model = ShelfBook
         fields = ['shelf', 'book', 'current_page']  # Include current_page
         extra_kwargs = {'shelf': {'read_only': True}}
+
+
+'''
+
+POST api/communities/<community_id>/join/
+
+{
+    "user": 1
+}
+
+community.members.add(user_id=1)
+
+POST api/communities/<community_id>/leave
+{
+    "user": 1
+}
+community.members.delete(user_id=1)
+
+
+
+
+
+'''
