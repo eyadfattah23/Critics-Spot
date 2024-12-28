@@ -24,10 +24,23 @@ def communities_list(request):
     return Response(serializer.data)
 
 
-@api_view()
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def community_details(request, pk):
     """Return the details of a specific community. """
     community = get_object_or_404(Community, pk=pk)
+    if request.method == 'PUT' or request.method == 'PATCH':
+        serializer = CustomCommunitySerializer(
+            community,
+            data=request.data,
+            context={'request': request},
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=200)
+    elif request.method == 'DELETE':
+        community.delete()
+        return Response(status=204)
     serializer = CustomCommunitySerializer(
         community,
         context={'request': request})
