@@ -34,10 +34,15 @@ def community_details(request, pk):
     return Response(serializer.data)
 
 
-@api_view()
+@api_view(['GET', 'POST'])
 def community_posts(request, pk):
     """Return the posts of a specific community. """
     community = get_object_or_404(Community, pk=pk)
+    if request.method == 'POST':
+        serializer = PostSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=201)
     posts = Post.objects.filter(community=community)
     serializer = PostSerializer(posts, many=True, context={'request': request})
     return Response(serializer.data)
