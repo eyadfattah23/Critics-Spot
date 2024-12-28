@@ -61,10 +61,24 @@ def community_posts(request, pk):
     return Response(serializer.data)
 
 
-@api_view()
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def community_post_details(request, community_id, post_id):
     """Return the details of a specific post in a specific community."""
     community = get_object_or_404(Community, pk=community_id)
+    post = get_object_or_404(Post, pk=post_id, community=community)
+    if request.method == 'PUT' or request.method == 'PATCH':
+        serializer = PostDetailsSerializer(
+            post,
+            data=request.data,
+            context={'request': request},
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=200)
+    elif request.method == 'DELETE':
+        post.delete()
+        return Response(status=204)
     post = get_object_or_404(Post, pk=post_id, community=community)
     serializer = PostDetailsSerializer(post, context={'request': request})
     return Response(serializer.data)
