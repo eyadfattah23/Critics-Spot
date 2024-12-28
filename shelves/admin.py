@@ -18,6 +18,7 @@ class ShelfAdmin(admin.ModelAdmin):
     list_select_related = ['user']
     search_fields = ['name', 'user__username']
     inlines = [ShelfBookInline]
+    autocomplete_fields = ['user']
 
     def number_of_books(self, shelf):
         """Count the number of books in a shelf."""

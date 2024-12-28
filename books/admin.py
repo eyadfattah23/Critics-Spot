@@ -8,16 +8,22 @@ from users.models import BookReview
 # Register your models here.
 
 
-class BookBookReview(admin.TabularInline):
+class BookBookReviewInline(admin.TabularInline):
     model = BookReview
     autocomplete_fields = ['user']
 
 
+class AuthorBookInline(admin.TabularInline):
+    model = Book
+    extra = 1
+
+
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
-    list_display = ['name', 'birth_date', 'death_date',
+    list_display = ['id', 'name', 'birth_date', 'death_date',
                     'number_of_books']
     search_fields = ['name']
+    inlines = [AuthorBookInline]
 
     def number_of_books(self, author):
         """Count the number of books written by an author.
@@ -33,7 +39,7 @@ class AuthorAdmin(admin.ModelAdmin):
 
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
-    list_display = ['name', 'number_of_books']
+    list_display = ['id', 'name', 'number_of_books']
 
     def number_of_books(self, genre):
         """Count the number of books in a genre.
@@ -49,12 +55,12 @@ class GenreAdmin(admin.ModelAdmin):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ['title', 'pages', 'author',
+    list_display = ['id', 'title', 'pages', 'author',
                     'avg_rating', 'number_of_reviews']
-    search_fields = ['title', 'pages', 'author__startswith']
+    search_fields = ['title', 'pages', 'author__name__istartswith']
 
     list_filter = ['genres']
-    inlines = [BookBookReview]
+    inlines = [BookBookReviewInline]
     # autocomplete_fields = ['author', 'title']
     list_select_related = ['author']
 

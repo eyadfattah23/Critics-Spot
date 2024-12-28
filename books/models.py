@@ -48,7 +48,7 @@ class Genre(models.Model):
         Returns:
             str: string representation of the genre
         """
-        return self.name
+        return f"{self.name}"
 
 
 class Book(models.Model):
@@ -88,4 +88,4 @@ class Book(models.Model):
         Returns:
             str: string representation of the book
         """
-        return "{} | by: {}".format(self.title, self.author)
+        return "{}|{}, by: {}|{}".format(self.title, self.pk, self.author, self.author.id)

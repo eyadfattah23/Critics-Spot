@@ -12,7 +12,7 @@ class CommunityPostInline(admin.TabularInline):
 
 @admin.register(Community)
 class CommunityAdmin(admin.ModelAdmin):
-    list_display = ['name', 'date_added', 'owner',
+    list_display = ['id', 'name', 'date_added', 'owner',
                     'number_of_members', 'number_of_posts', 'community_image']
 
     inlines = [CommunityPostInline]
@@ -34,6 +34,11 @@ class CommunityAdmin(admin.ModelAdmin):
         return "No Image"
     community_image.short_description = 'Image'
 
+    search_fields = ['name', 'owner__username']
+    list_select_related = ['owner']
+    list_filter = ['owner', 'date_added']
+    autocomplete_fields = ['owner']
+
 
 class PostLikeInline(admin.TabularInline):
     model = Like
@@ -41,14 +46,18 @@ class PostLikeInline(admin.TabularInline):
 
 class PostCommentInline(admin.TabularInline):
     model = Comment
+    list_display = ['user', 'content', 'created_at', 'post']
+    list_select_related = ['user', 'post']
 
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ['user', 'created_at',
+    list_display = ['id', 'user', 'created_at',
                     'content_beginning', 'community', 'number_of_likes', 'number_of_comments']
     list_select_related = ['user', 'community']
     inlines = [PostLikeInline, PostCommentInline]
+    autocomplete_fields = ['user', 'community']
+    search_fields = ['content', 'user__username']
 
     def content_beginning(self, post):
         """get the content beginning of the post."""
@@ -66,11 +75,13 @@ class PostAdmin(admin.ModelAdmin):
 
 @admin.register(Like)
 class LikeAdmin(admin.ModelAdmin):
-    list_display = ['user', 'post', 'created_at']
+    list_display = ['id', 'user', 'post', 'created_at']
     list_select_related = ['user', 'post']
+    autocomplete_fields = ['user', 'post']
 
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ['user', 'post', 'created_at']
+    list_display = ['id', 'user', 'post', 'created_at']
     list_select_related = ['user', 'post']
+    autocomplete_fields = ['user', 'post']
