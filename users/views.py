@@ -41,3 +41,15 @@ def user_favorites(request, pk):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     serilizer = FavoriteSerializer(favorites, many=True, context={'request': request})
     return Response(serilizer.data)
+
+
+@api_view(['GET', 'DELETE'])
+def favorite_detail(request, pk, favorite_pk):
+    user = get_object_or_404(CustomUser, pk=pk)
+    favorite = get_object_or_404(Favorite, user=user, pk=favorite_pk)
+    if request.method == 'GET':
+        serializer = FavoriteSerializer(favorite, context={'request': request})
+        return Response(serializer.data)
+    elif request.method == 'DELETE':
+        favorite.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
