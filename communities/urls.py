@@ -13,8 +13,18 @@ urlpatterns = [
         name='community-posts'
     ),
     path(
-        'communities/<community_id>/posts/<post_id>/comments',
-        views.community_posts_comments,
-        name='post-comments'
+        'posts/<int:pk>/comments',
+        views.community_post_comments,
+        name='community-post-comments'
+    ),
+    path(
+        'posts/<int:pk>/likes',
+        views.community_post_likes,
+        name='community-post-likes'
+    ),
+    path(
+        'communities/<community_id>/posts/<post_id>',
+        views.community_post_details,
+        name='community-post-details'
     ),
 ]
