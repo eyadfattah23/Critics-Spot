@@ -12,7 +12,7 @@ class Shelf(models.Model):
     DEFAULT_SHELVES = ['Read', 'Reading', 'Want To Read']
 
     name = models.CharField(max_length=128)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='shelves',
                              on_delete=models.CASCADE)
     # Distinguish between default and custom shelves
     is_default = models.BooleanField(default=False)
