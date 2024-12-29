@@ -24,6 +24,7 @@ class AuthorAdmin(admin.ModelAdmin):
                     'number_of_books']
     search_fields = ['name']
     inlines = [AuthorBookInline]
+    prepopulated_fields = {'slug': ('name',)}
 
     def number_of_books(self, author):
         """Count the number of books written by an author.
