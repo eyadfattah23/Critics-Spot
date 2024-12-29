@@ -182,3 +182,15 @@ sudo service postgresql reload
 then you look up your user and change its auth method from peer (the default) to md5
 
 but if it's not there at all you can add the user along with the auth method md5 in our case
+
+
+## in case of getting this error:
+duplicate key value violates unique constraint "users_customuser_pkey" DETAIL: Key (id)=(10) already exists.
+
+1. First, you need to check the max(id) in your table.
+    SELECT MAX(id) FROM users_customuser;
+
+2. Then update the id sequence to start from the 
+max(id) + 1
+    ALTER SEQUENCE users_customuser_id_seq RESTART
+    WITH max(id) + 1;
