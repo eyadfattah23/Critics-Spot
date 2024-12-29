@@ -27,4 +27,15 @@ urlpatterns = [
         views.community_post_details,
         name='community-post-details'
     ),
+    path(
+        'posts/<int:pk>/comments/<int:comment_id>',
+        views.community_post_comment_details,
+        name='community-post-comment-details'
+    ),
+
+    path(
+        'posts/<int:pk>/likes/<int:like_id>',
+        views.community_post_like_details,
+        name='community-post-like-details'
+    )
 ]

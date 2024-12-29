@@ -99,6 +99,27 @@ def community_post_comments(request, pk):
     return Response(serializer.data)
 
 
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+def community_post_comment_details(request, pk, comment_id):
+    """Return the details of a specific comment in a specific post."""
+    post = get_object_or_404(Post, pk=pk)
+    comment = get_object_or_404(Comment, pk=comment_id, post=post)
+    if request.method == 'PUT' or request.method == 'PATCH':
+        serializer = CommunityPostCommentSerializer(
+            comment,
+            data=request.data,
+            context={'request': request},
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=200)
+    elif request.method == 'DELETE':
+        comment.delete()
+        return Response(status=204)
+    serializer = CommunityPostCommentSerializer(comment, context={'request': request})
+    return Response(serializer.data)
+
 @api_view(['GET', 'POST'])
 def community_post_likes(request, pk):
     """Return the likes of a specific post in a specific community."""
@@ -110,4 +131,16 @@ def community_post_likes(request, pk):
         return Response(serializer.data, status=201)
     likes = Like.objects.filter(post=post)
     serializer = LikeSerializer(likes, many=True, context={'request': request})
+    return Response(serializer.data)
+
+
+@api_view(['GET', 'DELETE'])
+def community_post_like_details(request, pk, like_id):
+    """Return the details of a specific like in a specific post."""
+    post = get_object_or_404(Post, pk=pk)
+    like = get_object_or_404(Like, pk=like_id, post=post)
+    if request.method == 'DELETE':
+        like.delete()
+        return Response(status=204)
+    serializer = LikeSerializer(like, context={'request': request})
     return Response(serializer.data)
