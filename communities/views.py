@@ -57,19 +57,30 @@ def community_post_details(request, community_id, post_id):
     return Response(serializer.data)
 
 
-@api_view()
-def community_post_comments(request, post_id):
+@api_view(['GET', 'POST'])
+def community_post_comments(request, pk):
     """Return the comments of a specific post in a specific community."""
-    post = get_object_or_404(Post, pk=post_id)
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        serializer = CommunityPostCommentSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=201)
+
     comments = Comment.objects.filter(post=post)
     serializer = CommunityPostCommentSerializer(comments, many=True, context={'request': request})
     return Response(serializer.data)
 
 
-@api_view()
-def community_post_likes(request, post_id):
+@api_view(['GET', 'POST'])
+def community_post_likes(request, pk):
     """Return the likes of a specific post in a specific community."""
-    post = get_object_or_404(Post, pk=post_id)
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        serializer = LikeSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save(post=post)
+        return Response(serializer.data, status=201)
     likes = Like.objects.filter(post=post)
     serializer = LikeSerializer(likes, many=True, context={'request': request})
     return Response(serializer.data)

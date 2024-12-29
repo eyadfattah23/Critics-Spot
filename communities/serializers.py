@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 from rest_framework import serializers
 from .models import Community, Post, Comment, Like
 from users.models import CustomUser
