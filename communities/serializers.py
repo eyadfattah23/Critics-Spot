@@ -5,6 +5,11 @@ from users.models import CustomUser
 
 
 class CustomCommunitySerializer(serializers.ModelSerializer):
+    posts = serializers.HyperlinkedRelatedField(
+        queryset=Post.objects.all(),
+        many=True,
+        view_name='community-posts'
+    )
     members = serializers.HyperlinkedRelatedField(
         queryset=CustomUser.objects.all(),
         many=True,
@@ -17,7 +22,7 @@ class CustomCommunitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Community
-        fields = ['id', 'name', 'description', 'members', 'image', 'owner']
+        fields = ['id', 'name', 'description', 'members', 'image', 'owner', 'posts']
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -29,13 +34,21 @@ class PostSerializer(serializers.ModelSerializer):
         queryset=Community.objects.all(),
         view_name='community-details'
     )
+    likes = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
         fields = [
             'id', 'content', 'created_at', 'updated_at', 'user',
-            'community'
+            'community', 'likes', 'comments'
         ]
+
+    def get_likes(self, obj):
+        return obj.likes.count()
+
+    def get_comments(self, obj):
+        return obj.comments.count()
 
 
 class CommunityPostCommentSerializer(serializers.ModelSerializer):
