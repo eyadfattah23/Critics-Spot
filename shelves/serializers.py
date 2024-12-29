@@ -19,10 +19,14 @@ class ShelfSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True
     )
+    user = serializers.HyperlinkedRelatedField(
+        queryset=CustomUser.objects.all(),
+        view_name='user-details',
+    )
 
     class Meta:
         model = Shelf
-        fields = ['id', 'name', 'is_default', 'books']
+        fields = ['id', 'name', 'is_default', 'books', 'user']
 
 
 class ShelfCreateSerializer(serializers.ModelSerializer):

@@ -4,40 +4,63 @@ from rest_framework.decorators import api_view
 from .models import Shelf
 from users.models import CustomUser
 from .serializers import *
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 
-@api_view(['GET'])
+class ShelfList(ListCreateAPIView):
+    queryset = Shelf.objects.select_related(
+        'user').prefetch_related('shelfbook_set__book').all()
+    serializer_class = ShelfSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+
+""" @api_view(['GET'])
 def shelves_list(request):
-    """ Return all the shelves. """
     shelves = Shelf.objects.select_related(
         'user').prefetch_related('shelfbook_set__book').all()
     serializer = ShelfSerializer(
         shelves, many=True, context={'request': request})
     return Response(serializer.data)
+ """
 
 
-@api_view(['GET', 'POST'])
-def user_shelves_list(request, user_id):
-    """ Return the users shelves from the id of the user. """
-    user = get_object_or_404(CustomUser, pk=user_id)
-    if request.method == 'GET':
-        shelves = Shelf.objects.select_related(
-            'user').prefetch_related('shelfbook_set__book').filter(user=user)
-        serializer = ShelfSerializer(
-            shelves, many=True, context={'request': request})
-        return Response(serializer.data)
-    elif request.method == 'POST':
-        data = request.data.copy()
-        data['user'] = user.id
-        serializer = ShelfCreateSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
+class UserShelfList(ListCreateAPIView):
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        user = get_object_or_404(CustomUser, pk=user_id)
+        return Shelf.objects.select_related('user').prefetch_related('shelfbook_set__book').filter(user=user)
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return ShelfCreateSerializer
+        return ShelfSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+    def perform_create(self, serializer):
+        user_id = self.kwargs['user_id']
+        user = get_object_or_404(CustomUser, pk=user_id)
         serializer.save(user=user)
-        return Response(serializer.data, status=201)
 
 
-@api_view(['GET', 'PUT', 'PATCH'])
+class ShelfDetails(RetrieveUpdateDestroyAPIView):
+    queryset = Shelf.objects.select_related(
+        'user').prefetch_related('shelfbook_set__book').all()
+
+    def get_serializer_class(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            return ShelfCreateSerializer
+        return ShelfSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+
+""" @api_view(['GET', 'PUT', 'PATCH'])
 def shelf_details(request, pk):
-    """Return or update the details of a shelf."""
     shelf = get_object_or_404(Shelf, pk=pk, user=request.user)
 
     if request.method == 'GET':
@@ -50,7 +73,7 @@ def shelf_details(request, pk):
             shelf, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data)
+        return Response(serializer.data) """
 
 
 @api_view(['POST', 'DELETE', 'PUT', 'PATCH'])
