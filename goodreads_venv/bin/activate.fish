@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV /home/eyad/work/goodreads-clone/goodreads_venv
+set -gx VIRTUAL_ENV /home/eyad/work/Goodreads_clone/goodreads-clone/goodreads_venv
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH
