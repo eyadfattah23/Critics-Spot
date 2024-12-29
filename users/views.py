@@ -11,7 +11,7 @@ from rest_framework import status
 @api_view(['GET', 'POST'])
 def users_list(request):
     if request.method == 'GET':
-        users = CustomUser.objects.all()
+        users = CustomUser.objects.prefetch_related('shelves').all()
         serializer = CustomUserSerializer(users, many=True, context={'request': request})
         return Response(serializer.data)
     elif request.method == 'POST':
@@ -24,9 +24,6 @@ def users_list(request):
 
 @api_view()
 def user_details(request, pk):
-    user = get_object_or_404(
-        CustomUser,
-        pk=pk
-    )
+    user = get_object_or_404(CustomUser, pk=pk)
     serializer = CustomUserSerializer(user, context={'request': request})
     return Response(serializer.data)
