@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, Favorite
 from shelves.models import Shelf
+from books.models import Book
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -35,3 +36,20 @@ class UserCreateSerializer(serializers.ModelSerializer):
             image=validated_data.get('image', 'default_user_image.png')
         )
         return user
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    user = serializers.HyperlinkedRelatedField(
+        queryset=CustomUser.objects.all(),
+        view_name='user-details',
+    )
+
+    book = serializers.HyperlinkedRelatedField(
+        queryset=Book.objects.all(),
+        view_name='book-details',
+    )
+
+    class Meta:
+        model = Favorite
+        fields = ['id', 'user', 'book']
+        read_only_fields = ['user']
