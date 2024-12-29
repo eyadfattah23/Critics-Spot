@@ -1,8 +1,9 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import CustomUser
+from .models import CustomUser, Favorite
 from .serializers import CustomUserSerializer, UserCreateSerializer
+from .serializers import FavoriteSerializer
 from rest_framework import status
 
 # Create your views here.
@@ -27,3 +28,16 @@ def user_details(request, pk):
     user = get_object_or_404(CustomUser, pk=pk)
     serializer = CustomUserSerializer(user, context={'request': request})
     return Response(serializer.data)
+
+
+@api_view(['GET', 'POST'])
+def user_favorites(request, pk):
+    user = get_object_or_404(CustomUser, pk=pk)
+    favorites = Favorite.objects.filter(user=user)
+    if request.method == 'POST':
+        serializer = FavoriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    serilizer = FavoriteSerializer(favorites, many=True, context={'request': request})
+    return Response(serilizer.data)
