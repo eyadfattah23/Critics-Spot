@@ -4,16 +4,16 @@ from . import views
 urlpatterns = [
     path('communities/', views.communities_list, name='communities-list'),
     path(
-        'communities/<int:pk>',
+        'communities/<int:pk>/',
         views.community_details,
         name='community-details'
     ),
     path(
-        'communities/<int:pk>/posts', views.community_posts,
+        'communities/<int:pk>/posts/', views.community_posts,
         name='community-posts'
     ),
     path(
-        'posts/<int:pk>/comments',
+        'posts/<int:pk>/comments/',
         views.community_post_comments,
         name='community-post-comments'
     ),
@@ -38,6 +38,15 @@ urlpatterns = [
         views.community_post_like_details,
         name='community-post-like-details'
     ),
-    path('communities/<int:pk>/members/add/', views.add_member, name='add-member'),
-    path('communities/<int:pk>/members/leave/', views.remove_member, name='remove-member')
+    path(
+        'communities/<int:pk>/members/join/',
+        views.add_member,
+        name='add-member'
+    ),
+
+    path(
+        'communities/<int:pk>/members/leave/',
+        views.remove_member,
+        name='remove-member'
+    )
 ]
