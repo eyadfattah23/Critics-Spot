@@ -8,12 +8,14 @@ from .serializers import CustomCommunitySerializer
 @api_view()
 def communities_list(request):
     """ Return all the communities. """
-    communities = Community.objects.prefetch_related('members').all()
+    communities = Community.objects.prefetch_related('members', 'owner').all()
     serializer = CustomCommunitySerializer(communities, many=True, context={'request': request})
     return Response(serializer.data)
 
 
 @api_view()
-def community_details(request, id):
+def community_details(request, pk):
     """Return the details of a specific community. """
-    return Response(id)
+    community = get_object_or_404(Community, pk=pk)
+    serializer = CustomCommunitySerializer(community, context={'request': request})
+    return Response(serializer.data)
