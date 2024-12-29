@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 from rest_framework import serializers
-from .models import Community
+from .models import Community, Post
 from users.models import CustomUser
 
 
@@ -18,3 +18,20 @@ class CustomCommunitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Community
         fields = ['id', 'name', 'description', 'members', 'image', 'owner']
+
+
+class PostSerializer(serializers.ModelSerializer):
+    user = serializers.HyperlinkedRelatedField(
+        queryset=CustomUser.objects.all(),
+        view_name='user-details'
+    )
+    community = serializers.HyperlinkedRelatedField(
+        queryset=Community.objects.all(),
+        view_name='community-details'
+    )
+
+    class Meta:
+        model = Post
+        fields = [
+            'id', 'content', 'created_at', 'updated_at', 'user',
+            'community']
