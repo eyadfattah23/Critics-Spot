@@ -14,10 +14,11 @@ class ShelfBookInline(admin.TabularInline):
 
 @admin.register(Shelf)
 class ShelfAdmin(admin.ModelAdmin):
-    list_display = ['name', 'user', 'number_of_books']
+    list_display = ['id', 'name', 'user', 'number_of_books']
     list_select_related = ['user']
     search_fields = ['name', 'user__username']
     inlines = [ShelfBookInline]
+    autocomplete_fields = ['user']
 
     def number_of_books(self, shelf):
         """Count the number of books in a shelf."""
@@ -33,3 +34,4 @@ class ShelfAdmin(admin.ModelAdmin):
 class ShelfBookAdmin(admin.ModelAdmin):
     autocomplete_fields = ['shelf', 'book']
     list_select_related = ['shelf', 'book']
+    list_display = ['id', 'book', 'shelf', 'current_page']

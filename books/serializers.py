@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+'''
+Book related serializers.
+'''
 from rest_framework import serializers
 from .models import *
 
@@ -17,7 +20,14 @@ class BookLightSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = ['id', 'title', 'cover', 'description',
-                  'author', 'genres', 'publication_date']
+                  'author', 'genres', 'publication_date', 'slug']
+
+
+class BookDeserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ['title', 'cover', 'description',
+                  'author', 'genres', 'publication_date', 'buy_link', 'pages', 'author']
 
 
 class VeryLightBookSerializer(serializers.ModelSerializer):
@@ -70,11 +80,7 @@ class BookSerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    books = serializers.HyperlinkedRelatedField(
-        many=True,
-        read_only=True,
-        view_name='book-details',
-    )
+    books = VeryLightBookSerializer(many=True, read_only=True)
 
     class Meta:
         model = Genre
@@ -82,9 +88,10 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class AuthorSerializer(serializers.ModelSerializer):
-    books = VeryLightBookSerializer(many=True)
+    books = VeryLightBookSerializer(many=True, read_only=True)
 
     class Meta:
         model = Author
         fields = ['id', 'name', 'birth_date',
                   'bio', 'death_date', 'books', 'photo']
+        # read_only_fields = ['books']

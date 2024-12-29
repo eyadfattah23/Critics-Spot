@@ -9,7 +9,7 @@ from books.models import Book
 
 class Shelf(models.Model):
     """Model to represent a user's book shelf."""
-    DEFAULT_SHELVES = ['Read', 'Reading', 'Want To Read']
+    DEFAULT_SHELVES = ['Read', 'Currently Reading', 'Want To Read']
 
     name = models.CharField(max_length=128)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='shelves',
@@ -25,7 +25,7 @@ class Shelf(models.Model):
         ]
 
     def __str__(self):
-        return f"shelf \"{self.name}\" owned by (**{self.user.username}**)"
+        return f"shelf \"{self.name}\":{self.pk} owned by \"{self.user.username}\":{self.user.pk}"
 
 
 class ShelfBook(models.Model):
@@ -33,6 +33,9 @@ class ShelfBook(models.Model):
     shelf = models.ForeignKey(
         Shelf, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    current_page = models.PositiveIntegerField(default=0)  # Add this field
+    notes = models.TextField(blank=True)
+    date_added = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         # Prevent duplicate books in the same shelf
@@ -42,4 +45,4 @@ class ShelfBook(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.book.title} in {self.shelf.name} owned by user: ({self.shelf.user.username})"
+        return f"{self.book.title}|{self.book.id} in {self.shelf.name}|{self.shelf.id} owned by user: ({self.shelf.user.username})|{self.shelf.user.id}"

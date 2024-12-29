@@ -1,91 +1,132 @@
-from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.exceptions import NotFound
+# from django.shortcuts import get_object_or_404
+# from rest_framework.decorators import api_view
+# from rest_framework.response import Response
+# from rest_framework.views import APIView
+# from rest_framework import status
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from .models import *
 from .serializers import *
-
-
-def get_object_or_404(model, pk):
-    try:
-        return model.objects.get(pk=pk)
-    except model.DoesNotExist:
-        raise NotFound(f"{model.__name__} with ID {pk} not found.")
 
 # Create your views here.
 
 
 # Books
 
-@api_view(['GET', 'POST'])
-def books_list(request):
-    if request.method == 'GET':
-        books = Book.objects.select_related('author').all()
-        serializer = BookLightSerializer(
-            books, many=True, context={'request': request})
-        return Response(serializer.data)
-    elif request.method == 'POST':
-        serializer = BookSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.validated_data
-        return Response('a new book has been created', status=201)
+class BookList(ListCreateAPIView):
+    queryset = Book.objects.select_related(
+        'author').prefetch_related('genres').all()
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return BookDeserializer
+        return BookLightSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+    def get(self, request, *args, **kwargs):
+        self.serializer_class = BookLightSerializer
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.serializer_class = BookDeserializer
+        return self.create(request, *args, **kwargs)
 
 
-@api_view()
-def book_details(request, pk):
-    try:
-        book = Book.objects.select_related(
-            'author').prefetch_related('genres').get(pk=pk)
-        serializer = BookSerializer(book, context={'request': request})
-    except Book.DoesNotExist:
-        return Response({"error": "Book not found"}, status=404)
-    return Response(serializer.data)
+'''
+{
+    "title": "The Lord of the Rings",
+    "description": "A hobbit goes on an adventure",
+    "author": 1,
+    "genres": [1, 2],
+    "publication_date": "1954-07-29",
+    "buy_link": "https://www.google.com",
+    "pages": 100
+}
+
+'''
 
 
-""" @api_view()
-def books_in_genre(request, genre_id):
-    book = get_object_or_404(Book, id)
-    serializer = BookSerializer(book)
-    return Response(serializer.data)
- """
+class BookDetails(RetrieveUpdateDestroyAPIView):
+    queryset = Book.objects.select_related(
+        'author').prefetch_related('genres').all()
+
+    def get_serializer_class(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            return BookDeserializer
+        return BookSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
 
 # Authors
 
 
-@api_view()
-def authors_list(request):
-    authors = Author.objects.all()
-    serializer = AuthorLightSerializer(
-        authors, many=True, context={'request': request})
-    return Response(serializer.data)
+class AuthorList(ListCreateAPIView):
+    queryset = Author.objects.prefetch_related('books').all()
+    serializer_class = AuthorLightSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return AuthorSerializer
+        return AuthorLightSerializer
+
+    def get(self, request, *args, **kwargs):
+        self.serializer_class = AuthorLightSerializer
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.serializer_class = AuthorSerializer
+        return self.create(request, *args, **kwargs)
 
 
-@api_view()
-def author_details(request, pk):
-    try:
-        author = Author.objects.prefetch_related(
-            'books').get(pk=pk)
-        serializer = AuthorSerializer(author, context={'request': request})
-    except Author.DoesNotExist:
-        return Response({"error": "Author not found"}, status=404)
-    return Response(serializer.data)
+class AuthorDetails(RetrieveUpdateDestroyAPIView):
+    queryset = Author.objects.prefetch_related('books').all()
+    serializer_class = AuthorSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 
 # Genres
 
-@api_view()
-def genre_details(request, pk):
-    try:
-        genre = Genre.objects.prefetch_related('books').get(pk=pk)
-        serializer = GenreSerializer(genre, context={'request': request})
-    except Genre.DoesNotExist:
-        return Response({"error": "Genre not found"}, status=404)
-    return Response(serializer.data)
+
+class GenreList(ListCreateAPIView):
+    queryset = Genre.objects.prefetch_related('books').all()
+    serializer_class = GenreLightSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return GenreSerializer
+        return GenreLightSerializer
+
+    def get(self, request, *args, **kwargs):
+        self.serializer_class = GenreLightSerializer
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.serializer_class = GenreSerializer
+        return self.create(request, *args, **kwargs)
 
 
-@ api_view()
-def genres_list(request):
-    genres = Genre.objects.all()
-    serializer = GenreLightSerializer(
-        genres, many=True, context={'request': request})
-    return Response(serializer.data)
+class GenreDetails(RetrieveUpdateDestroyAPIView):
+    queryset = Genre.objects.prefetch_related('books').all()
+    serializer_class = GenreSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+
+'''
+{
+    "name": "Fantasy",
+    "description": "A genre of speculative fiction set in a fictional universe, often inspired by real world myth and folklore."
+}
+'''

@@ -19,7 +19,7 @@ class Post(models.Model):
         'Community', on_delete=models.CASCADE, related_name='posts')
 
     def __str__(self):
-        return f"Post by {self.user.username} at {self.created_at}"
+        return f"Post: {self.id} | Community: {self.community.id} by {self.user.username}: {self.user.id} at {self.created_at.ctime()}"
 
 
 class Like(models.Model):

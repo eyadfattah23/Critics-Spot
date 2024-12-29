@@ -14,12 +14,14 @@ from .models import CustomUser, Favorite, BookReview
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
 
+    list_display = ['id', 'username', 'email',
+                    'first_name', 'last_name', 'is_staff',]
     fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('image',)}),
+        (None, {'fields': ('image', )}),
     )
 
     add_fieldsets = UserAdmin.add_fieldsets + (
-        (None, {'fields': ('image',)}),
+        (None, {'fields': ('image', 'email', 'first_name', 'last_name',)}),
     )
     search_fields = ['username__startswith',
                      'first_name__startswith', 'last_name__startswith']
@@ -27,11 +29,13 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(BookReview)
 class BookReviewAdmin(admin.ModelAdmin):
-    list_display = ['user', 'book', 'rating', 'created_at']
-    list_filter = ['rating', 'created_at']
-    search_fields = ['book__title', 'user__email']
+    list_display = ['id', 'user', 'book', 'rating', 'created_at']
+    list_filter = ['rating', 'created_at', 'book__title']
+    search_fields = ['book__title', 'user__email', 'user__username']
     ordering = ['created_at']
     autocomplete_fields = ['book', 'user']
+
+    list_select_related = ['book', 'user']
 
 
 # Register the CustomUser model with the customized admin
