@@ -8,16 +8,19 @@ class CustomCommunitySerializer(serializers.ModelSerializer):
     posts = serializers.HyperlinkedRelatedField(
         queryset=Post.objects.all(),
         many=True,
-        view_name='community-posts'
+        view_name='community-posts',
+        lookup_field='pk'
     )
     members = serializers.HyperlinkedRelatedField(
         queryset=CustomUser.objects.all(),
         many=True,
-        view_name='user-details'
+        view_name='user-details',
+        lookup_field='pk'
     )
     owner = serializers.HyperlinkedRelatedField(
         queryset=CustomUser.objects.all(),
-        view_name='user-details'
+        view_name='user-details',
+        lookup_field='pk'
     )
 
     class Meta:
