@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Community, Post, Comment, Like
 from .serializers import *
-
+from users.models import CustomUser
 
 @api_view(['GET', 'POST'])
 def communities_list(request):
@@ -62,10 +62,9 @@ def community_posts(request, pk):
 
 
 @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
-def community_post_details(request, community_id, post_id):
+def community_post_details(request, pk):
     """Return the details of a specific post in a specific community."""
-    community = get_object_or_404(Community, pk=community_id)
-    post = get_object_or_404(Post, pk=post_id, community=community)
+    post = get_object_or_404(Post, pk=pk)
     if request.method == 'PUT' or request.method == 'PATCH':
         serializer = PostDetailsSerializer(
             post,
@@ -79,7 +78,7 @@ def community_post_details(request, community_id, post_id):
     elif request.method == 'DELETE':
         post.delete()
         return Response(status=204)
-    post = get_object_or_404(Post, pk=post_id, community=community)
+    post = get_object_or_404(Post, pk=pk)
     serializer = PostDetailsSerializer(post, context={'request': request})
     return Response(serializer.data)
 
@@ -100,10 +99,9 @@ def community_post_comments(request, pk):
 
 
 @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
-def community_post_comment_details(request, pk, comment_id):
+def community_post_comment_details(request, pk):
     """Return the details of a specific comment in a specific post."""
-    post = get_object_or_404(Post, pk=pk)
-    comment = get_object_or_404(Comment, pk=comment_id, post=post)
+    comment = get_object_or_404(Comment, pk=pk)
     if request.method == 'PUT' or request.method == 'PATCH':
         serializer = CommunityPostCommentSerializer(
             comment,
@@ -120,6 +118,7 @@ def community_post_comment_details(request, pk, comment_id):
     serializer = CommunityPostCommentSerializer(comment, context={'request': request})
     return Response(serializer.data)
 
+
 @api_view(['GET', 'POST'])
 def community_post_likes(request, pk):
     """Return the likes of a specific post in a specific community."""
@@ -135,12 +134,33 @@ def community_post_likes(request, pk):
 
 
 @api_view(['GET', 'DELETE'])
-def community_post_like_details(request, pk, like_id):
+def community_post_like_details(request, pk):
     """Return the details of a specific like in a specific post."""
-    post = get_object_or_404(Post, pk=pk)
-    like = get_object_or_404(Like, pk=like_id, post=post)
+    like = get_object_or_404(Like, pk=pk)
     if request.method == 'DELETE':
         like.delete()
         return Response(status=204)
     serializer = LikeSerializer(like, context={'request': request})
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+def add_member(request, pk):
+    """Add a member to a specific community."""
+    community = get_object_or_404(Community, pk=pk)
+    user = get_object_or_404(CustomUser, pk=request.data['user_id'])
+    if user in community.members.all():
+        return Response({'error': 'User is already a member of the community.'}, status=400)
+    community.members.add(user)
+    return Response(status=201)
+
+
+@api_view(['POST'])
+def remove_member(request, pk):
+    """Remove a member from a specific community."""
+    community = get_object_or_404(Community, pk=pk)
+    user = get_object_or_404(CustomUser, pk=request.data['user_id'])
+    if user not in community.members.all():
+        return Response({'error': 'User is not a member of the community.'}, status=400)
+    community.members.remove(user)
+    return Response(status=204)
