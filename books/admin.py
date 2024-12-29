@@ -25,7 +25,7 @@ class AuthorAdmin(admin.ModelAdmin):
         url = (reverse('admin:books_book_changelist')
                + '?'
                + urlencode({'author__id': str(author.id)}))
-        return format_html('<a href="{}">{}</a>', url, author.book_set.count())
+        return format_html('<a href="{}">{}</a>', url, author.books.count())
 
         return author.book_set.count()
     number_of_books.short_description = 'Number of books'
