@@ -63,6 +63,7 @@ class BookAdmin(admin.ModelAdmin):
     inlines = [BookBookReviewInline]
     # autocomplete_fields = ['author', 'title']
     list_select_related = ['author']
+    prepopulated_fields = {'slug': ('title',)}
 
     def number_of_reviews(self, book):
         """Count the number of reviews of a book.

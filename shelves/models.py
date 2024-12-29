@@ -34,6 +34,8 @@ class ShelfBook(models.Model):
         Shelf, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     current_page = models.PositiveIntegerField(default=0)  # Add this field
+    notes = models.TextField(blank=True)
+    date_added = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         # Prevent duplicate books in the same shelf
@@ -43,4 +45,4 @@ class ShelfBook(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.book.title} in {self.shelf.name} owned by user: ({self.shelf.user.username})"
+        return f"{self.book.title}|{self.book.id} in {self.shelf.name}|{self.shelf.id} owned by user: ({self.shelf.user.username})|{self.shelf.user.id}"
