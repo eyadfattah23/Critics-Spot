@@ -16,6 +16,7 @@ class Shelf(models.Model):
                              on_delete=models.CASCADE)
     # Distinguish between default and custom shelves
     is_default = models.BooleanField(default=False)
+    books = models.ManyToManyField(Book, through='ShelfBook', related_name='shelves')
 
     class Meta:
         # User cannot have duplicate shelf names
@@ -30,8 +31,7 @@ class Shelf(models.Model):
 
 class ShelfBook(models.Model):
     """Model representing a book in a shelf."""
-    shelf = models.ForeignKey(
-        Shelf, on_delete=models.CASCADE)
+    shelf = models.ForeignKey(Shelf, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
 
     class Meta:
