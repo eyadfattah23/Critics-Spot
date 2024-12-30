@@ -1,174 +1,82 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import APIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from .models import Community, Post, Comment, Like
 from .serializers import *
 from users.models import CustomUser
 
 
-class CommunityList(APIView):
+class CommunityList(ListCreateAPIView):
     """ Return all the communities. """
-    def get(self, request):
-        communities = Community.objects.prefetch_related('members', 'owner', 'posts').all()
-        serializer = CustomCommunitySerializer(
-            communities,
-            many=True,
-            context={'request': request}
-        )
-        return Response(serializer.data)
+    queryset = Community.objects.all()
+    serializer_class = CustomCommunitySerializer
 
-    def post(self, request):
-        serializer = CustomCommunitySerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(owner=request.user)
-        return Response(serializer.data, status=201)
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 
-class CommunityDetail(APIView):
+class CommunityDetail(RetrieveUpdateDestroyAPIView):
     """ Return the details of a specific community. """
-    def get(self, request, pk):
-        community = get_object_or_404(Community, pk=pk)
-        serializer = CustomCommunitySerializer(community, context={'request': request})
-        return Response(serializer.data)
+    queryset = Community.objects.all()
+    serializer_class = CustomCommunitySerializer
 
-    def put(self, request, pk):
-        community = get_object_or_404(Community, pk=pk)
-        serializer = CustomCommunitySerializer(community, data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=200)
-
-    def patch(self, request, pk):
-        community = get_object_or_404(Community, pk=pk)
-        serializer = CustomCommunitySerializer(community, data=request.data, context={'request': request}, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=200)
-
-    def delete(self, request, pk):
-        community = get_object_or_404(Community, pk=pk)
-        community.delete()
-        return Response(status=204)
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 
-class CommunityPost(APIView):
+class CommunityPost(ListCreateAPIView):
     """ Return the posts of a specific community. """
-    def get(self, request, pk):
-        community = get_object_or_404(Community, pk=pk)
-        posts = Post.objects.filter(community=community)
-        serializer = PostSerializer(posts, many=True, context={'request': request})
-        return Response(serializer.data)
+    queryset = Post.objects.all()
+    serializer_class = PostListSerializer
 
-    def post(self, request, pk):
-        community = get_object_or_404(Community, pk=pk)
-        serializer = PostSerializer(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save(community=community)
-        return Response(serializer.data, status=201)
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 
-class CommunityPostDetail(APIView):
+class CommunityPostDetail(RetrieveUpdateDestroyAPIView):
     """ Return the details of a specific post in a specific community. """
-    def get(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
-        serializer = PostDetailsSerializer(post, context={'request': request})
-        return Response(serializer.data)
+    queryset = Post.objects.all()
+    serializer_class = PostDetailsSerializer
 
-    def put(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
-        serializer = PostDetailsSerializer(post, data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=200)
-
-    def patch(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
-        serializer = PostDetailsSerializer(post, data=request.data, context={'request': request}, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=200)
-
-    def delete(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
-        post.delete()
-        return Response(status=204)
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 
-class CommunityPostComments(APIView):
+class CommunityPostComments(ListCreateAPIView):
     """Return the comments of a specific post in a specific community."""
-    def get(self, request, pk):
-        comments = Comment.objects.filter(post=post)
-        serializer = CommunityPostCommentSerializer(comments, many=True, context={'request': request})
-        return Response(serializer.data)
+    queryset = Comment.objects.all()
+    serializer_class = CommunityPostCommentSerializer
 
-    def post(self, request, pk):
-        serializer = CommunityPostCommentSerializer(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=201)
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 
-class CommunityPostCommentDetails(APIView):
+class CommunityPostCommentDetails(RetrieveUpdateDestroyAPIView):
     """Return the details of a specific comment in a specific post."""
-    def get(self, request, pk):
-        comment = get_object_or_404(Comment, pk=pk)
-        serializer = CommunityPostCommentSerializer(comment, context={'request': request})
-        return Response(serializer.data)
+    queryset = Comment.objects.all()
+    serializer_class = CommunityPostCommentDetailsSerializer
 
-    def put(self, request, pk):
-        comment = get_object_or_404(Comment, pk=pk)
-        serializer = CommunityPostCommentSerializer(
-            comment,
-            data=request.data,
-            context={'request': request}
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=200)
-
-    def patch(self, request, pk):
-        comment = get_object_or_404(Comment, pk=pk)
-        serializer = CommunityPostCommentSerializer(
-            comment,
-            data=request.data,
-            context={'request': request},
-            partial=True
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=200)
-
-    def delete(self, request, pk):
-        comment = get_object_or_404(Comment, pk=pk)
-        comment.delete()
-        return Response(status=204)
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 
-class CommunityPostLikes(APIView):
+class CommunityPostLikes(ListCreateAPIView):
     """Return the likes of a specific post in a specific community."""
-    def get(self, request, pk):
-        likes = Like.objects.filter(post=post)
-        serializer = LikeSerializer(likes, many=True, context={'request': request})
-        return Response(serializer.data)
+    queryset = Like.objects.all()
+    serializer_class = LikeSerializer
 
-    def post(self, request, pk):
-        serializer = LikeSerializer(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=201)
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 
-class CommunityPostLikeDetails(APIView):
+class CommunityPostLikeDetails(RetrieveUpdateDestroyAPIView):
     """Return the details of a specific like in a specific post."""
-    def get(self, request, pk):
-        like = get_object_or_404(Like, pk=pk)
-        serializer = LikeSerializer(like, context={'request': request})
-        return Response(serializer.data)
+    queryset = Like.objects.all()
+    serializer_class = LikeSerializer
 
-    def delete(self, request, pk):
-        like = get_object_or_404(Like, pk=pk)
-        like.delete()
-        return Response(status=204)
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 
 class CommunityMemberList(APIView):
