@@ -1,14 +1,16 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
-from rest_framework.routers import SimpleRouter
 
-router = SimpleRouter()
-router.register('communities', views.CommunityViewSet)
-router.register('posts', views.CommunityPostViewSet)
-router.register('comments', views.CommunityPostCommentsViewSet)
+router = DefaultRouter()
+router.register('communities', views.CommunityViewSet, basename='community')
+router.register('posts', views.CommunityPostViewSet, basename='communitypost')
+router.register('comments', views.CommunityPostCommentsViewSet, basename='communitypostcomment')
+router.register('likes', views.CommunityPostLikesViewSet, basename='communitypostlike')
 
-urlpatterns = [ 
-    router.urls,
+urlpatterns = [
+    path('', include(router.urls)),
     path('communities/<int:pk>/members/', views.CommunityMemberList.as_view(), name='community-members'),
-    path('posts/<int:pk>/likes/', views.CommunityPostLikes.as_view(), name='community-post-likes')
+    path('communities/<int:pk>/members/join', views.CommunityMemberList.as_view(), name='community-members'),
+    path('communities/<int:pk>/members/leave', views.CommunityMemberList.as_view(), name='community-members'),
 ]
