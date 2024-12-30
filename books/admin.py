@@ -47,7 +47,7 @@ class GenreAdmin(admin.ModelAdmin):
             redirect to books only in the genre"""
         url = (reverse('admin:books_book_changelist')
                + '?'
-               + urlencode({'genre__id': str(genre.id)}))
+               + urlencode({'genres__id': str(genre.id)}))
         return format_html('<a href="{}">{}</a>', url, genre.books.count())
 
         return genre.book_set.count()

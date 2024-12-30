@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 """admin Groups handler"""
-from django.utils.html import format_html
+from django.utils.html import format_html, urlencode
 from django.contrib import admin
+from django.urls import reverse
 from .models import *
 # Register your models here.
 
@@ -19,12 +20,26 @@ class CommunityAdmin(admin.ModelAdmin):
 
     def number_of_members(self, obj):
         """Count the number of members in a community."""
-        return obj.members.count()
+        count = obj.members.count()
+        url = (
+            # Adjust to match your app's user model
+            reverse('admin:users_customuser_changelist')
+            + "?"
+            + urlencode({'member_of_communities__id': str(obj.id)})
+        )
+        return format_html('<a href="{}">{}</a>', url, count)
     number_of_members.short_description = 'Number of Members'
 
     def number_of_posts(self, obj):
         """Count the number of posts in a community."""
-        return obj.posts.count()
+        count = obj.posts.count()
+        url = (
+            # Adjust to match your app's post model
+            reverse('admin:communities_post_changelist')
+            + "?"
+            + urlencode({'community__id': str(obj.id)})
+        )
+        return format_html('<a href="{}">{}</a>', url, count)
     number_of_posts.short_description = 'Number of Posts'
 
     def community_image(self, obj):
@@ -65,7 +80,7 @@ class PostAdmin(admin.ModelAdmin):
     content_beginning.short_description = 'Content'
 
     def number_of_likes(self, post):
-        return post.like_set.count()
+        return post.likes.count()
     number_of_likes.short_description = 'Number of Likes'
 
     def number_of_comments(self, post):
