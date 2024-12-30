@@ -9,7 +9,8 @@ class ShelfBookSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ShelfBook
-        fields = ['book', 'current_page', 'notes']
+        fields = ['book', 'current_page', 'notes',
+                  'date_added', 'date_finished']
 
 
 class ShelfSerializer(serializers.ModelSerializer):
@@ -24,9 +25,14 @@ class ShelfSerializer(serializers.ModelSerializer):
         view_name='user-details',
     )
 
+    url = serializers.HyperlinkedIdentityField(
+        view_name='shelf-details',
+        lookup_field='pk'
+    )
+
     class Meta:
         model = Shelf
-        fields = ['id', 'name', 'is_default', 'books', 'user']
+        fields = ['id', 'name', 'is_default', 'books', 'user', 'url']
 
 
 class ShelfCreateSerializer(serializers.ModelSerializer):
@@ -46,7 +52,7 @@ class ShelfDeserializer(serializers.ModelSerializer):
 class ShelfBookDeserializer(serializers.ModelSerializer):
     class Meta:
         model = ShelfBook
-        fields = ['shelf', 'book', 'current_page']
+        fields = ['shelf', 'book', 'current_page', 'date_finished']
         extra_kwargs = {'shelf': {'read_only': True}}
 
 

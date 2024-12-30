@@ -36,6 +36,7 @@ class ShelfBook(models.Model):
     current_page = models.PositiveIntegerField(default=0)  # Add this field
     notes = models.TextField(blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
+    date_finished = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         # Prevent duplicate books in the same shelf
