@@ -69,6 +69,8 @@ class BookDetails(RetrieveUpdateDestroyAPIView):
 class AuthorList(ListCreateAPIView):
     queryset = Author.objects.prefetch_related('books').all()
     serializer_class = AuthorLightSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = AuthorFilter
 
     def get_serializer_context(self):
         return {'request': self.request}
@@ -101,6 +103,8 @@ class AuthorDetails(RetrieveUpdateDestroyAPIView):
 class GenreList(ListCreateAPIView):
     queryset = Genre.objects.prefetch_related('books').all()
     serializer_class = GenreLightSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = GenreFilter
 
     def get_serializer_context(self):
         return {'request': self.request}

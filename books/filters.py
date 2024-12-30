@@ -3,7 +3,7 @@
 
 from django_filters.rest_framework import FilterSet
 from django_filters import filters
-from .models import Book
+from .models import Book, Author, Genre
 
 
 class BookFilter(FilterSet):
@@ -26,3 +26,25 @@ class BookFilter(FilterSet):
         """
         genre_list = value.split(",")  # Split the input into a list
         return queryset.filter(genres__name__in=genre_list).distinct()
+
+
+class AuthorFilter(FilterSet):
+    """Author filter."""
+
+    class Meta:
+        model = Author
+        fields = {
+            'name': ['icontains'],
+            'birth_date': ['year__gt', 'year__lt'],
+            'death_date': ['year__gt', 'year__lt'],
+        }
+
+
+class GenreFilter(FilterSet):
+    """Genre filter."""
+
+    class Meta:
+        model = Genre
+        fields = {
+            'name': ['icontains'],
+        }
