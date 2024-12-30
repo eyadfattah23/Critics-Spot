@@ -1,14 +1,16 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import APIView
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.viewsets import ModelViewSet
 from .models import Community, Post, Comment, Like
 from .serializers import *
 from users.models import CustomUser
 
 
-class CommunityList(ListCreateAPIView):
-    """ Return all the communities. """
+class CommunityViewSet(ModelViewSet):
+    """ Handels all communities' routes. """
     queryset = Community.objects.all()
     serializer_class = CustomCommunitySerializer
 
@@ -16,35 +18,17 @@ class CommunityList(ListCreateAPIView):
         return {'request': self.request}
 
 
-class CommunityDetail(RetrieveUpdateDestroyAPIView):
-    """ Return the details of a specific community. """
-    queryset = Community.objects.all()
-    serializer_class = CustomCommunitySerializer
-
-    def get_serializer_context(self):
-        return {'request': self.request}
-
-
-class CommunityPost(ListCreateAPIView):
-    """ Return the posts of a specific community. """
+class CommunityPostViewSet(ModelViewSet):
+    """ Handels all the routes posts of a specific community. """
     queryset = Post.objects.all()
-    serializer_class = PostListSerializer
+    serializer_class = PostSerializer
 
     def get_serializer_context(self):
         return {'request': self.request}
 
 
-class CommunityPostDetail(RetrieveUpdateDestroyAPIView):
-    """ Return the details of a specific post in a specific community. """
-    queryset = Post.objects.all()
-    serializer_class = PostDetailsSerializer
-
-    def get_serializer_context(self):
-        return {'request': self.request}
-
-
-class CommunityPostComments(ListCreateAPIView):
-    """Return the comments of a specific post in a specific community."""
+class CommunityPostCommentsViewSet(ModelViewSet):
+    """ Handels all the routes comments of a specific post in a specific community. """
     queryset = Comment.objects.all()
     serializer_class = CommunityPostCommentSerializer
 
@@ -52,26 +36,8 @@ class CommunityPostComments(ListCreateAPIView):
         return {'request': self.request}
 
 
-class CommunityPostCommentDetails(RetrieveUpdateDestroyAPIView):
-    """Return the details of a specific comment in a specific post."""
-    queryset = Comment.objects.all()
-    serializer_class = CommunityPostCommentDetailsSerializer
-
-    def get_serializer_context(self):
-        return {'request': self.request}
-
-
-class CommunityPostLikes(ListCreateAPIView):
-    """Return the likes of a specific post in a specific community."""
-    queryset = Like.objects.all()
-    serializer_class = LikeSerializer
-
-    def get_serializer_context(self):
-        return {'request': self.request}
-
-
-class CommunityPostLikeDetails(RetrieveUpdateDestroyAPIView):
-    """Return the details of a specific like in a specific post."""
+class CommunityPostLikesViewSet(ModelViewSet):
+    """ Handels all the routes likes of a specific post in a specific community. """
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
 
