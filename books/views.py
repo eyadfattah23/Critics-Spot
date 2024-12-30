@@ -4,9 +4,10 @@
 # from rest_framework.views import APIView
 # from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import *
 from .serializers import *
-
+from .filters import *
 # Create your views here.
 
 
@@ -15,6 +16,8 @@ from .serializers import *
 class BookList(ListCreateAPIView):
     queryset = Book.objects.select_related(
         'author').prefetch_related('genres').all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = BookFilter
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
