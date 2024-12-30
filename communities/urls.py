@@ -10,7 +10,6 @@ router.register('likes', views.CommunityPostLikesViewSet, basename='communitypos
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('communities/<int:pk>/members/', views.CommunityMemberList.as_view(), name='community-members'),
     path('communities/<int:pk>/members/join', views.CommunityMemberList.as_view(), name='community-members'),
     path('communities/<int:pk>/members/leave', views.CommunityMemberList.as_view(), name='community-members'),
 ]
