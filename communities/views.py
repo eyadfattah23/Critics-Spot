@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Community, Post, Comment, Like
+from .pagination import DefaultPagination
 from .serializers import *
 from users.models import CustomUser
 
@@ -14,6 +15,7 @@ class CommunityViewSet(ModelViewSet):
     queryset = Community.objects.all().select_related('owner').prefetch_related('members', 'posts')
     serializer_class = CustomCommunitySerializer
     filter_backends = [SearchFilter, DjangoFilterBackend, OrderingFilter]
+    pagination_class = DefaultPagination
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'created_at']
 
