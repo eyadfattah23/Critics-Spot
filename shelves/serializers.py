@@ -9,7 +9,7 @@ class ShelfBookSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ShelfBook
-        fields = ['book', 'current_page']  # Include current_page
+        fields = ['book', 'current_page', 'notes']
 
 
 class ShelfSerializer(serializers.ModelSerializer):
@@ -46,7 +46,7 @@ class ShelfDeserializer(serializers.ModelSerializer):
 class ShelfBookDeserializer(serializers.ModelSerializer):
     class Meta:
         model = ShelfBook
-        fields = ['shelf', 'book', 'current_page']  # Include current_page
+        fields = ['shelf', 'book', 'current_page']
         extra_kwargs = {'shelf': {'read_only': True}}
 
 

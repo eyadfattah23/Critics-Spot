@@ -2,9 +2,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import CustomUser, Favorite
-from .serializers import CustomUserSerializer, UserCreateSerializer
+from .serializers import *
 from .serializers import FavoriteSerializer
 from rest_framework import status
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 # Create your views here.
 
@@ -53,3 +54,27 @@ def favorite_detail(request, pk, favorite_pk):
     elif request.method == 'DELETE':
         favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class BookReviewsList(ListCreateAPIView):
+    serializer_class = BookReviewSerializer
+    
+    def get_queryset(self):
+        book_id = self.kwargs['pk']
+        book = get_object_or_404(Book, pk=book_id)
+        return BookReview.objects.filter(book=book)
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+    def perform_create(self, serializer):
+        book_id = self.kwargs['pk']
+        book = get_object_or_404(Book, pk=book_id)
+        serializer.save(book=book)
+
+
+class BookReviewDetails(RetrieveUpdateDestroyAPIView):
+    queryset = BookReview.objects.all()
+    serializer_class = BookReviewSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request}
