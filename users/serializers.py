@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import CustomUser, Favorite
 from shelves.models import Shelf
 from books.models import Book
-
+from books.serializers import BookLightSerializer
 
 class CustomUserSerializer(serializers.ModelSerializer):
     shelves = serializers.HyperlinkedRelatedField(
@@ -11,11 +11,14 @@ class CustomUserSerializer(serializers.ModelSerializer):
         many=True,
         view_name='shelf-details',
     )
-
+    favorites = serializers.HyperlinkedIdentityField(
+        view_name='user-favorites',
+        lookup_field='pk',
+    )
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'email',
-                  'first_name', 'last_name', 'date_joined', 'image', 'shelves']
+                  'first_name', 'last_name', 'date_joined', 'image', 'shelves', 'favorites']
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -44,10 +47,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
         view_name='user-details',
     )
 
-    book = serializers.HyperlinkedRelatedField(
-        queryset=Book.objects.all(),
-        view_name='book-details',
-    )
+    book = BookLightSerializer()
 
     class Meta:
         model = Favorite
