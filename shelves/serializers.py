@@ -21,7 +21,7 @@ class ShelfSerializer(serializers.ModelSerializer):
         read_only=True
     )
     user = serializers.HyperlinkedRelatedField(
-        queryset=CustomUser.objects.all(),
+        queryset=CustomUser.objects.prefetch_related('shelves').all(),
         view_name='user-details',
     )
 

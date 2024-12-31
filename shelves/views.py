@@ -3,6 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.filters import SearchFilter
 from .models import Shelf
 from users.models import CustomUser
 from .serializers import *
@@ -11,10 +12,11 @@ from .filters import *
 
 class ShelfList(ListCreateAPIView):
     queryset = Shelf.objects.select_related(
-        'user').prefetch_related('shelfbook_set__book').all()
+        'user').prefetch_related('shelfbook_set__book').prefetch_related('shelfbook_set__book__author').all()
     serializer_class = ShelfSerializer
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = ShelfFilter
+    search_fields = ['name']
 
     def get_serializer_context(self):
         return {'request': self.request}
@@ -31,8 +33,9 @@ def shelves_list(request):
 
 
 class UserShelfList(ListCreateAPIView):
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = ShelfFilter
+    search_fields = ['name']
 
     def get_queryset(self):
         user_id = self.kwargs['user_id']
