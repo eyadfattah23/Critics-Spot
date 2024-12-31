@@ -5,9 +5,10 @@ from shelves.models import Shelf
 from books.models import Book
 from books.serializers import BookLightSerializer
 
+
 class CustomUserSerializer(serializers.ModelSerializer):
     shelves = serializers.HyperlinkedRelatedField(
-        queryset=Shelf.objects.all(),
+        queryset=Shelf.objects.select_related('user').all(),
         many=True,
         view_name='shelf-details',
     )
@@ -19,6 +20,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         view_name='user-details',
         lookup_field='pk',
     )
+
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'email',
@@ -47,7 +49,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 class FavoriteSerializer(serializers.ModelSerializer):
     user = serializers.HyperlinkedRelatedField(
-        queryset=CustomUser.objects.all(),
+        queryset=CustomUser.objects.prefetch_related('favorite_set').all(),
         view_name='user-details',
     )
 
@@ -59,23 +61,26 @@ class FavoriteSerializer(serializers.ModelSerializer):
         read_only_fields = ['user']
 
 
-
 class UserSerializer(serializers.ModelSerializer):
-    
+
     url = serializers.HyperlinkedIdentityField(
         view_name='user-details',
         lookup_field='pk'
     )
+
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'email', 'image', 'url']
-        
-        read_only_fields = [ 'email', 'image', 'id']
+
+        read_only_fields = ['email', 'image', 'id']
+
+
 class BookReviewSerializer(serializers.ModelSerializer):
     book = serializers.HyperlinkedRelatedField(
         view_name='book-details',
         read_only=True,
     )
+
     class Meta:
         model = BookReview
         fields = ['id', 'book', 'rating', 'content', 'created_at', 'user']

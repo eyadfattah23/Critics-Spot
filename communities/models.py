@@ -26,7 +26,8 @@ class Like(models.Model):
     """Like model."""
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name='likes')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -65,7 +66,7 @@ class Community(models.Model):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(max_length=1000)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
-                              on_delete=models.CASCADE)  # Creator of the Community
+                              on_delete=models.CASCADE, related_name='communities')  # Creator of the Community
     date_added = models.DateTimeField(auto_now_add=True)
     members = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name='member_of_communities')  # users in each Community
