@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 from .models import CustomUser, Favorite
 from .serializers import *
 from .filters import CustomUserFilter, BookReviewFilter
@@ -70,9 +70,10 @@ def favorite_detail(request, pk, favorite_pk):
 
 class BookReviewsList(ListCreateAPIView):
     serializer_class = BookReviewSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = BookReviewFilter
     search_fields = ['content']
+    ordering_fields = ['created_at', 'rating']
 
     def get_queryset(self):
         book_id = self.kwargs['pk']

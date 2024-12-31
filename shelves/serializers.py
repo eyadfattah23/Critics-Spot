@@ -34,6 +34,13 @@ class ShelfSerializer(serializers.ModelSerializer):
         model = Shelf
         fields = ['id', 'name', 'is_default', 'books', 'user', 'url']
 
+    def get_books(self, obj):
+        # Apply ordering based on the query parameter
+        ordering = self.context['request'].query_params.get(
+            'ordering', 'date_added')  # Default to 'date_added'
+        books = obj.shelfbook_set.all().order_by(ordering)
+        return ShelfBookSerializer(books, many=True).data
+
 
 class ShelfCreateSerializer(serializers.ModelSerializer):
     class Meta:

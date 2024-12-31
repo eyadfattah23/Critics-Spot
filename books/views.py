@@ -4,11 +4,11 @@
 # from rest_framework.views import APIView
 # from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import *
 from .serializers import *
 from .filters import *
-from rest_framework.filters import SearchFilter
 # Create your views here.
 
 
@@ -17,9 +17,10 @@ from rest_framework.filters import SearchFilter
 class BookList(ListCreateAPIView):
     queryset = Book.objects.select_related(
         'author').prefetch_related('genres').all()
-    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = BookFilter
     search_fields = ['title', 'description']
+    ordering_fields = ['publication_date', 'avg_rating', 'pages', 'title']
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -71,9 +72,10 @@ class BookDetails(RetrieveUpdateDestroyAPIView):
 class AuthorList(ListCreateAPIView):
     queryset = Author.objects.prefetch_related('books').all()
     serializer_class = AuthorLightSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = AuthorFilter
     search_fields = ['name', 'bio']
+    ordering_fields = ['name', 'birth_date', 'death_date']
 
     def get_serializer_context(self):
         return {'request': self.request}
