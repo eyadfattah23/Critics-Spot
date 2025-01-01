@@ -1,73 +1,50 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.views import APIView
-from rest_framework.filters import SearchFilter, OrderingFilter
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import action
 from .models import Community, Post, Comment, Like
-from .pagination import DefaultPagination
 from .serializers import *
-from users.models import CustomUser
-
 
 class CommunityViewSet(ModelViewSet):
-    """ Handels all communities' routes. """
+    """Handle all community routes."""
     queryset = Community.objects.all().select_related('owner').prefetch_related('members', 'posts')
     serializer_class = CustomCommunitySerializer
-    filter_backends = [SearchFilter, DjangoFilterBackend, OrderingFilter]
-    pagination_class = DefaultPagination
-    search_fields = ['name', 'description']
-    ordering_fields = ['name', 'created_at']
 
-    def get_serializer_context(self):
-        return {'request': self.request}
+    @action(detail=True, methods=['get'])
+    def posts(self, request, pk=None):
+        """Return the posts of a specific community."""
+        community = get_object_or_404(Community, pk=pk)
+        posts = Post.objects.filter(community=community)
+        serializer = PostSerializer(posts, many=True, context={'request': request})
+        return Response(serializer.data)
 
-
-class CommunityPostViewSet(ModelViewSet):
-    """ Handels all the routes posts of a specific community. """
+class PostViewSet(ModelViewSet):
+    """Handle all post routes."""
     queryset = Post.objects.all().select_related('user', 'community').prefetch_related('likes', 'comments')
     serializer_class = PostSerializer
-    filter_backends = [OrderingFilter]
-    ordering_fields = ['updated_at']
 
-    def get_serializer_context(self):
-        return {'request': self.request}
+    @action(detail=True, methods=['get'])
+    def comments(self, request, pk=None):
+        """Return the comments of a specific post."""
+        post = get_object_or_404(Post, pk=pk)
+        comments = Comment.objects.filter(post=post)
+        serializer = CommunityPostCommentSerializer(comments, many=True, context={'request': request})
+        return Response(serializer.data)
 
+    @action(detail=True, methods=['get'])
+    def likes(self, request, pk=None):
+        """Return the likes of a specific post."""
+        post = get_object_or_404(Post, pk=pk)
+        likes = Like.objects.filter(post=post)
+        serializer = CommunityPostLikeSerializer(likes, many=True, context={'request': request})
+        return Response(serializer.data)
 
-class CommunityPostCommentsViewSet(ModelViewSet):
-    """ Handels all the routes comments of a specific post in a specific community. """
+class CommentViewSet(ModelViewSet):
+    """Handle all comment routes."""
     queryset = Comment.objects.all().select_related('user', 'post')
     serializer_class = CommunityPostCommentSerializer
-    filter_backends = [OrderingFilter]
-    ordering_fields = ['updated_at']
-    def get_serializer_context(self):
-        return {'request': self.request}
 
-
-class CommunityPostLikesViewSet(ModelViewSet):
-    """ Handels all the routes likes of a specific post in a specific community. """
+class LikeViewSet(ModelViewSet):
+    """Handle all like routes."""
     queryset = Like.objects.all().select_related('user', 'post')
     serializer_class = LikeSerializer
-    filter_backends = [OrderingFilter]
-    ordering_fields = ['created_at']
-
-    def get_serializer_context(self):
-        return {'request': self.request}
-
-
-class CommunityMemberList(APIView):
-    """Return all the members of a specific community."""
-    def post(self, request, pk):
-        """Add or remove a member from a specific community."""
-        community = get_object_or_404(Community, pk=pk)
-        user = get_object_or_404(CustomUser, pk=request.data['user_id'])
-        if 'join' in request.path:
-            if user in community.members.all():
-                return Response({'error': 'User is already a member of the community.'}, status=400)
-            community.members.add(user)
-            return Response(status=201)
-        elif 'leave' in request.path:
-            if user not in community.members.all():
-                return Response({'error': 'User is not a member of the community.'}, status=400)
-            community.members.remove(user)
-            return Response(status=204)
