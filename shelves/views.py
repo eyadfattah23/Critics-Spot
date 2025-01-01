@@ -2,8 +2,10 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+from rest_framework.views import APIView
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework import status
 from .models import Shelf
 from users.models import CustomUser
 from .serializers import *
@@ -63,36 +65,54 @@ class ShelfDetails(RetrieveUpdateDestroyAPIView):
         return {'request': self.request}
 
 
-@api_view(['POST', 'DELETE', 'PUT', 'PATCH'])
-def book_to_shelf(request, pk, book_id=None):
-    """Add a book to a shelf OR REMOVE it."""
-    shelf = get_object_or_404(
-        Shelf.objects.prefetch_related('shelfbook_set__book'), pk=pk)
-
-    if request.method == 'POST' and not book_id:
+class ShelfBookView(APIView):
+    def post(self, request, pk):
+        shelf = get_object_or_404(
+            Shelf.objects.prefetch_related('shelfbook_set__book'),
+            pk=pk
+        )
         data = request.data.copy()
         data['shelf'] = shelf.id
         serializer = ShelfBookDeserializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save(shelf=shelf)
-        return Response(serializer.data, status=201)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    elif request.method == 'DELETE' and book_id:
-        shelf_book = get_object_or_404(
-            ShelfBook, shelf=shelf, book=book_id)
+    def delete(self, request, pk, book_id):
+        shelf = get_object_or_404(Shelf, pk=pk)
+        shelf_book = get_object_or_404(ShelfBook, shelf=shelf, book=book_id)
         shelf_book.delete()
-        return Response({"message": "Book removed from shelf"}, status=204)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-    elif request.method in ['PUT', 'PATCH']:
+    def patch(self, request, pk, book_id):
+        shelf = get_object_or_404(Shelf, pk=pk)
+        shelf_book = get_object_or_404(ShelfBook, shelf=shelf, book=book_id)
+        serializer = ShelfBookDeserializer(
+            shelf_book,
+            data=request.data,
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
         """
         PATCH /api/shelves/<shelf_id>/books/<book_id>/
 
         body: {"current_page": 100}
         """
-        shelf_book = get_object_or_404(ShelfBook, shelf=shelf, book=book_id)
-        partial = request.method == 'PATCH'
-        serializer = ShelfBookDeserializer(
-            shelf_book, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=200)
+
+
+class UserFavoritesList(ListAPIView):
+    serializer_class = ShelfBookSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        user = get_object_or_404(CustomUser, pk=user_id)
+        # Get the Favorites shelf and its books
+        favorites_shelf = get_object_or_404(Shelf, user=user, name='Favorites')
+        return ShelfBook.objects.select_related(
+            'book', 'book__author'
+        ).prefetch_related(
+            'book__genres'
+        ).filter(shelf=favorites_shelf)

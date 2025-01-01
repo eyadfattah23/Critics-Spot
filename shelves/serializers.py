@@ -6,40 +6,33 @@ from books.serializers import BookLightSerializer
 
 class ShelfBookSerializer(serializers.ModelSerializer):
     book = BookLightSerializer()
+    reading_progress = serializers.FloatField(read_only=True)
 
     class Meta:
         model = ShelfBook
         fields = ['book', 'current_page', 'notes',
-                  'date_added', 'date_finished']
+                  'date_added', 'date_finished', 'reading_progress']
 
 
 class ShelfSerializer(serializers.ModelSerializer):
-
     books = ShelfBookSerializer(
         source='shelfbook_set',
         many=True,
         read_only=True
     )
-    user = serializers.HyperlinkedRelatedField(
-        queryset=CustomUser.objects.prefetch_related('shelves').all(),
-        view_name='user-details',
+    book_count = serializers.IntegerField(
+        source='shelfbook_set.count',
+        read_only=True
     )
-
-    url = serializers.HyperlinkedIdentityField(
-        view_name='shelf-details',
-        lookup_field='pk'
+    user = serializers.HyperlinkedRelatedField(
+        view_name='user-details',
+        read_only=True
     )
 
     class Meta:
         model = Shelf
-        fields = ['id', 'name', 'is_default', 'books', 'user', 'url']
-
-    def get_books(self, obj):
-        # Apply ordering based on the query parameter
-        ordering = self.context['request'].query_params.get(
-            'ordering', 'date_added')  # Default to 'date_added'
-        books = obj.shelfbook_set.all().order_by(ordering)
-        return ShelfBookSerializer(books, many=True).data
+        fields = ['id', 'name', 'is_default',
+                  'books', 'book_count', 'user', 'url']
 
 
 class ShelfCreateSerializer(serializers.ModelSerializer):

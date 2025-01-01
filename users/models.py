@@ -5,7 +5,6 @@ from django.db import models
 from django.core.files.storage import default_storage
 from django.core.files import File
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from books.models import Book
 # Create your models here.
 
 

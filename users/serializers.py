@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 from rest_framework import serializers
-from .models import CustomUser
-from shelves.models import Shelf
+from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from books.models import Book
+from shelves.models import Shelf
+from .models import CustomUser
+
 from books.serializers import BookLightSerializer
 
 
@@ -10,7 +12,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     shelves = serializers.HyperlinkedRelatedField(
         queryset=Shelf.objects.select_related('user').all(),
         many=True,
-        view_name='shelf-details',
+        view_name='shelf-detail',
     )
     url = serializers.HyperlinkedIdentityField(
         view_name='user-details',
@@ -23,7 +25,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
                   'first_name', 'last_name', 'date_joined', 'image', 'shelves', 'url']
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
+""" class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'password', 'bio', 'image']
@@ -40,7 +42,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
             # if no image provided the get method will return the default image
             image=validated_data.get('image', 'default_user_image.png')
         )
-        return user
+        return user """
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -55,3 +57,10 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'image', 'url']
 
         read_only_fields = ['email', 'image', 'id']
+
+
+class UserCreateSerializer(BaseUserCreateSerializer):
+    class Meta(BaseUserCreateSerializer.Meta):
+        model = CustomUser
+        fields = ['id', 'username', 'first_name',
+                  'last_name', 'email', 'password', 'image', 'bio']

@@ -6,9 +6,9 @@ urlpatterns = [
     path('users/<user_id>/shelves/',
          UserShelfList.as_view(), name='user-shelves-list'),
 
-    path('shelves/<int:pk>/', ShelfDetails.as_view(), name='shelf-details'),
+    path('shelves/<int:pk>/', ShelfDetails.as_view(), name='shelf-detail'),
     path('shelves/<int:pk>/books/<int:book_id>/',
-         book_to_shelf, name='book-to-shelf'),
+         ShelfBookView.as_view(), name='book-to-shelf'),
     path('shelves/<int:pk>/books/',
-         book_to_shelf, name='book-to-shelf'),
+         ShelfBookView.as_view(), name='book-to-shelf'),
 ]

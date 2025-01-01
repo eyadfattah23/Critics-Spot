@@ -39,6 +39,13 @@ class ShelfBook(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     date_finished = models.DateTimeField(null=True, blank=True)
 
+    @property
+    def reading_progress(self):
+        """Calculate reading progress percentage"""
+        if self.book.pages:
+            return round((self.current_page / self.book.pages) * 100, 1)
+        return 0
+
     class Meta:
         # Prevent duplicate books in the same shelf
         unique_together = ('shelf', 'book')
