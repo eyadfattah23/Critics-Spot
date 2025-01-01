@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -18,6 +20,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+
+# In settings.py after MEDIA_ROOT definition
+DEFAULT_USER_IMAGE = os.path.join(
+    BASE_DIR, '/media/default_user_image.png')
+DEFAULT_MEDIA_IMAGE = os.path.join(MEDIA_ROOT, 'default_user_image.png')
+
+# Copy default image to media directory if it doesn't exist
+if not os.path.exists(DEFAULT_MEDIA_IMAGE) and os.path.exists(DEFAULT_USER_IMAGE):
+    os.makedirs(os.path.dirname(DEFAULT_MEDIA_IMAGE), exist_ok=True)
+    shutil.copy2(DEFAULT_USER_IMAGE, DEFAULT_MEDIA_IMAGE)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/

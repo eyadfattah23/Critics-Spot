@@ -194,3 +194,7 @@ duplicate key value violates unique constraint "users_customuser_pkey" DETAIL: K
 max(id) + 1
     ALTER SEQUENCE users_customuser_id_seq RESTART
     WITH max(id) + 1;
+---
+
+### to reverse a link to to another page
+reverse('admin:app_model_page')

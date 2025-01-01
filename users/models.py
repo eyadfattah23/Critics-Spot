@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 """User related models."""
+import os
 from django.db import models
+from django.core.files.storage import default_storage
+from django.core.files import File
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from books.models import Book
-import os
 # Create your models here.
 
 
@@ -76,14 +78,37 @@ class CustomUser(AbstractUser):
         return "{} | id:{}".format(self.username, self.id)
 
     def save(self, *args, **kwargs):
-        # Save once to generate an ID for the instance
-        if not self.id:
-            super().save(*args, **kwargs)
+        is_new = self.pk is None
 
-        # Update the file path using the ID and save again if the file path needs an ID
-        if self.image and f'profile_pictures/{self.username}' not in self.image.name:
-            self.image.name = user_image_upload_to(self, self.image.name)
-            super().save(*args, **kwargs)
+        # First save to get the ID
+        super().save(*args, **kwargs)
+
+        # Handle the default image for new users
+        if is_new and not self.image or self.image.name == 'default_user_image.png':
+            # Get the path to your default image
+            default_path = os.path.join('default_user_image.png')
+
+            if default_storage.exists(default_path):
+                # Create the user-specific path
+                user_specific_path = user_image_upload_to(
+                    self, 'default_user_image.png')
+
+                # Copy the default image to the user's directory if it doesn't exist
+                if not default_storage.exists(user_specific_path):
+                    with default_storage.open(default_path, 'rb') as default_file:
+                        default_storage.save(
+                            user_specific_path, File(default_file))
+
+                    # Update the image field with the new path
+                    self.image = user_specific_path
+                    super().save(update_fields=['image'])
+
+        # Handle custom uploaded images
+        elif self.image and self.image.name != 'default_user_image.png':
+            new_path = user_image_upload_to(self, self.image.name)
+            if self.image.name != new_path:
+                self.image.name = new_path
+                super().save(update_fields=['image'])
 
 
 class Favorite(models.Model):
