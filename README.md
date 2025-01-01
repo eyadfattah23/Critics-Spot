@@ -198,3 +198,9 @@ max(id) + 1
 
 ### to reverse a link to to another page
 reverse('admin:app_model_page')
+
+{
+    "email": "e33eddy@gamed.com",
+    "username": "eyad33",
+    "id": 18
+}
