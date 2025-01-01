@@ -106,3 +106,14 @@ class AuthorSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'birth_date',
                   'bio', 'death_date', 'books', 'photo']
         # read_only_fields = ['books']
+
+
+class BookReviewSerializer(serializers.ModelSerializer):
+    book = serializers.HyperlinkedRelatedField(
+        view_name='book-details',
+        read_only=True,
+    )
+
+    class Meta:
+        model = BookReview
+        fields = ['id', 'book', 'rating', 'content', 'created_at', 'user']

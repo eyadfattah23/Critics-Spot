@@ -4,8 +4,7 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.db.models import Avg
-from .models import Book
-from users.models import BookReview
+from .models import BookReview
 
 
 @receiver([post_save, post_delete], sender=BookReview)

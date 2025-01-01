@@ -2,8 +2,9 @@
 """Book related filters."""
 
 from django_filters.rest_framework import FilterSet
-from django_filters import filters
-from .models import Book, Author, Genre
+from django_filters import filters, IsoDateTimeFilter
+from django.db import models as django_models
+from .models import *
 
 
 class BookFilter(FilterSet):
@@ -48,3 +49,21 @@ class GenreFilter(FilterSet):
         fields = {
             'name': ['icontains'],
         }
+
+
+class BookReviewFilter(FilterSet):
+    """Book review filter."""
+
+    class Meta:
+        model = BookReview
+        fields = {
+            'user__username': ['icontains'],
+            'book__title': ['icontains'],
+            'created_at': ['gte', 'lte'],
+            'rating': ['gte', 'lte']
+        }
+    filter_overrides = {
+        django_models.DateTimeField: {
+            'filter_class': IsoDateTimeFilter
+        },
+    }

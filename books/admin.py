@@ -4,7 +4,6 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html, urlencode
 from .models import *
-from users.models import BookReview
 # Register your models here.
 
 
@@ -69,9 +68,20 @@ class BookAdmin(admin.ModelAdmin):
     def number_of_reviews(self, book):
         """Count the number of reviews of a book.
             redirect to reviews of the book"""
-        url = (reverse('admin:users_bookreview_changelist')
+        url = (reverse('admin:books_bookreview_changelist')
                + '?'
                + urlencode({'book__id': str(book.id)}))
         return format_html('<a href="{}">{}</a>', url, book.bookreview_set.count())
 
         return book.bookreview_set.count()
+
+
+@admin.register(BookReview)
+class BookReviewAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'book', 'rating', 'created_at']
+    list_filter = ['rating', 'created_at', 'book__title']
+    search_fields = ['book__title', 'user__email', 'user__username']
+    ordering = ['created_at']
+    autocomplete_fields = ['book', 'user']
+
+    list_select_related = ['book', 'user']

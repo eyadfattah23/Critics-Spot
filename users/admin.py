@@ -6,8 +6,7 @@ from django.contrib import admin
 # Register your models here.
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, Favorite, BookReview
-
+from .models import *
 # Customizing the UserAdmin to include additional fields
 
 
@@ -42,17 +41,5 @@ class CustomUserAdmin(UserAdmin):
     list_per_page = 10
 
 
-@admin.register(BookReview)
-class BookReviewAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'book', 'rating', 'created_at']
-    list_filter = ['rating', 'created_at', 'book__title']
-    search_fields = ['book__title', 'user__email', 'user__username']
-    ordering = ['created_at']
-    autocomplete_fields = ['book', 'user']
-
-    list_select_related = ['book', 'user']
-
-
 # Register the CustomUser model with the customized admin
 admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(Favorite)

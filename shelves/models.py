@@ -9,7 +9,8 @@ from books.models import Book
 
 class Shelf(models.Model):
     """Model to represent a user's book shelf."""
-    DEFAULT_SHELVES = ['Read', 'Currently Reading', 'Want To Read']
+    DEFAULT_SHELVES = ['Read', 'Currently Reading',
+                       'Want To Read', 'Favorites']
 
     name = models.CharField(max_length=128)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='shelves',

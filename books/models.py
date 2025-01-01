@@ -3,6 +3,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
+from django.conf import settings
 from django.utils import timezone
 from django.utils.text import slugify
 from decimal import Decimal
@@ -128,3 +129,26 @@ class Book(models.Model):
             str: string representation of the book
         """
         return "{}|{}, by: {}|{}".format(self.title, self.pk, self.author, self.author.id)
+
+
+class BookReview(models.Model):
+    """Model to represent a user's book review."""
+
+    RATING_CHOICES = [(i, str(i)) for i in range(1, 6)]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    content = models.TextField(max_length=1000)
+    rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # Prevent duplicate books in the same shelf
+        unique_together = ('user', 'book')
+        indexes = [
+            models.Index(fields=['user', 'book']),
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} reviewed {self.book.title} at {self.created_at} | id: {self.id}"

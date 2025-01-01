@@ -6,6 +6,7 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from django.shortcuts import get_object_or_404
 from .models import *
 from .serializers import *
 from .filters import *
@@ -143,3 +144,32 @@ class GenreDetails(RetrieveUpdateDestroyAPIView):
     "description": "A genre of speculative fiction set in a fictional universe, often inspired by real world myth and folklore."
 }
 '''
+
+
+class BookReviewsList(ListCreateAPIView):
+    serializer_class = BookReviewSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = BookReviewFilter
+    search_fields = ['content']
+    ordering_fields = ['created_at', 'rating']
+
+    def get_queryset(self):
+        book_id = self.kwargs['pk']
+        book = get_object_or_404(Book, pk=book_id)
+        return BookReview.objects.filter(book=book)
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+    def perform_create(self, serializer):
+        book_id = self.kwargs['pk']
+        book = get_object_or_404(Book, pk=book_id)
+        serializer.save(book=book)
+
+
+class BookReviewDetails(RetrieveUpdateDestroyAPIView):
+    queryset = BookReview.objects.all()
+    serializer_class = BookReviewSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request}

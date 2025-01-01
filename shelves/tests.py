@@ -115,7 +115,7 @@ class ShelfModelTest(TestCase):
 
     def test_default_shelves(self):
         self.assertEqual(Shelf.DEFAULT_SHELVES, [
-                         'Read', 'Currently Reading', 'Want To Read'])
+                         'Read', 'Currently Reading', 'Want To Read', 'Favorites'])
 
 
 class ShelfBookModelTest(TestCase):
