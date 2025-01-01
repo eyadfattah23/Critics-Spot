@@ -24,15 +24,11 @@ class ShelfSerializer(serializers.ModelSerializer):
         source='shelfbook_set.count',
         read_only=True
     )
-    user = serializers.HyperlinkedRelatedField(
-        view_name='user-details',
-        read_only=True
-    )
 
     class Meta:
         model = Shelf
         fields = ['id', 'name', 'is_default',
-                  'books', 'book_count', 'user', 'url']
+                  'books', 'book_count', 'url']
 
 
 class ShelfCreateSerializer(serializers.ModelSerializer):

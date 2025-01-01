@@ -65,6 +65,12 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
 
+    def get_by_natural_key(self, username):
+        return self.get(
+            models.Q(**{self.model.USERNAME_FIELD: username}) |
+            models.Q(**{self.model.EMAIL_FIELD: username})
+        )
+
 
 class CustomUser(AbstractUser):
     """User profile model"""
@@ -72,6 +78,7 @@ class CustomUser(AbstractUser):
     bio = models.TextField(max_length=500, blank=True)
     image = models.ImageField(
         upload_to=user_image_upload_to, default='default_user_image.png')
+    objects = CustomUserManager()
 
     def __str__(self):
         return "{} | id:{}".format(self.username, self.id)

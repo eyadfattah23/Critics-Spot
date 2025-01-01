@@ -1,10 +1,9 @@
-from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
 from .models import CustomUser
 from .serializers import *
 from .filters import CustomUserFilter
@@ -32,6 +31,14 @@ class CustomUserList(ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         self.serializer_class = UserCreateSerializer
         return self.create(request, *args, **kwargs)
+
+
+class CustomUserViewSet(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
+    queryset = CustomUser.objects.prefetch_related('shelves').all()
+    serializer_class = UserCreateSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 
 class CustomUserDetails(RetrieveUpdateDestroyAPIView):
