@@ -14,12 +14,12 @@ class CustomCommunitySerializer(serializers.ModelSerializer):
         queryset=CustomUser.objects.prefetch_related(
             'member_of_communities').all(),
         many=True,
-        view_name='user-details',
+        view_name='customuser-detail',
         lookup_field='pk'
     )
     owner = serializers.HyperlinkedRelatedField(
         queryset=CustomUser.objects.prefetch_related('communities').all(),
-        view_name='user-details',
+        view_name='customuser-detail',
         lookup_field='pk'
     )
 
@@ -32,7 +32,7 @@ class CustomCommunitySerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     user = serializers.HyperlinkedRelatedField(
         queryset=CustomUser.objects.prefetch_related('posts').all(),
-        view_name='user-details'
+        view_name='customuser-detail'
     )
     community = serializers.HyperlinkedRelatedField(
         queryset=Community.objects.prefetch_related('posts').all(),
@@ -58,7 +58,7 @@ class PostSerializer(serializers.ModelSerializer):
 class CommunityPostCommentSerializer(serializers.ModelSerializer):
     user = serializers.HyperlinkedRelatedField(
         queryset=CustomUser.objects.all(),
-        view_name='user-details'
+        view_name='customuser-detail'
     )
     post = serializers.HyperlinkedRelatedField(
         queryset=Post.objects.all(),
@@ -73,7 +73,7 @@ class CommunityPostCommentSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.HyperlinkedRelatedField(
         queryset=CustomUser.objects.prefetch_related('comments').all(),
-        view_name='user-details'
+        view_name='customuser-detail'
     )
 
     class Meta:
@@ -84,7 +84,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class PostDetailsSerializer(serializers.ModelSerializer):
     user = serializers.HyperlinkedRelatedField(
         queryset=CustomUser.objects.prefetch_related('posts').all(),
-        view_name='user-details'
+        view_name='customuser-detail'
     )
     community = serializers.HyperlinkedRelatedField(
         queryset=Community.objects.prefetch_related('posts').all(),
@@ -108,7 +108,7 @@ class PostDetailsSerializer(serializers.ModelSerializer):
 class LikeSerializer(serializers.ModelSerializer):
     user = serializers.HyperlinkedRelatedField(
         queryset=CustomUser.objects.prefetch_related('likes').all(),
-        view_name='user-details'
+        view_name='customuser-detail'
     )
     post = serializers.HyperlinkedRelatedField(
         queryset=Post.objects.prefetch_related('likes').all(),
