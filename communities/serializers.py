@@ -119,11 +119,11 @@ class PostDetailsSerializer(serializers.ModelSerializer):
 
 class LikeSerializer(serializers.ModelSerializer):
     user = serializers.HyperlinkedRelatedField(
-        queryset=CustomUser.objects.prefetch_related('like_set').all(),  # Use the correct related name
+        queryset=CustomUser.objects.prefetch_related('likes').all(),  # Use the correct related name
         view_name='customuser-detail'
     )
     post = serializers.HyperlinkedRelatedField(
-        queryset=Post.objects.prefetch_related('like_set').all(),  # Use the correct related name
+        queryset=Post.objects.prefetch_related('likes').all(),  # Use the correct related name
         view_name='post-detail'
     )
 
