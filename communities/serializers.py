@@ -1,112 +1,106 @@
+from users.models import CustomUser
 from rest_framework import serializers
 from .models import Community, Post, Comment, Like
-from users.models import CustomUser
 
-class CustomCommunitySerializer(serializers.ModelSerializer):
-    posts = serializers.HyperlinkedRelatedField(
-        queryset=Post.objects.select_related('community').all(),
-        many=True,
-        view_name='post-detail',
-        lookup_field='pk'
-    )
-    members = serializers.HyperlinkedRelatedField(
-        queryset=CustomUser.objects.prefetch_related('member_of_communities').all(),
-        many=True,
-        view_name='customuser-detail',
-        lookup_field='pk'
-    )
-    owner = serializers.HyperlinkedRelatedField(
-        queryset=CustomUser.objects.prefetch_related('communities').all(),
-        view_name='customuser-detail',
+
+class CommunityUserSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='users-detail',
         lookup_field='pk'
     )
 
     class Meta:
+        model = CustomUser
+        fields = ['id', 'first_name', 'last_name', 'image', 'username', 'url']
+
+
+class CustomCommunitySerializer(serializers.ModelSerializer):
+    members_count = serializers.SerializerMethodField()
+    owner = CommunityUserSerializer()
+
+    def get_members_count(self, obj):
+        return obj.members.count()
+
+    class Meta:
         model = Community
-        fields = ['id', 'name', 'description', 'members', 'image', 'owner', 'posts']
+        fields = ['id', 'name', 'description', 'members_count', 'image', 'owner']
+
 
 class PostSerializer(serializers.ModelSerializer):
-    user = serializers.HyperlinkedRelatedField(
-        queryset=CustomUser.objects.prefetch_related('posts').all(),
-        view_name='customuser-detail'
-    )
+    user = CommunityUserSerializer()
     community = serializers.HyperlinkedRelatedField(
-        queryset=Community.objects.prefetch_related('posts').all(),
-        view_name='community-detail'
+        queryset=Community.objects.all(),
+        view_name='community_details'
     )
-    likes_count = serializers.SerializerMethodField()
-    comments_count = serializers.SerializerMethodField()
+    likes = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
+    url = serializers.HyperlinkedIdentityField(
+        view_name='community_post_details',
+        lookup_field='pk'
+    )
 
     class Meta:
         model = Post
         fields = [
             'id', 'content', 'created_at', 'updated_at', 'user',
-            'community', 'likes_count', 'comments_count'
+            'community', 'likes', 'comments', 'url'
         ]
 
-    def get_likes_count(self, obj):
+    def get_likes(self, obj):
         return obj.likes.count()
 
-    def get_comments_count(self, obj):
+    def get_comments(self, obj):
         return obj.comments.count()
 
+
+class CustomCommunityDetailSerializer(serializers.ModelSerializer):
+    posts = PostSerializer(many=True)
+    members_count = serializers.SerializerMethodField()
+    members = CommunityUserSerializer(many=True)
+    owner = CommunityUserSerializer()
+
+    def get_members_count(self, obj):
+        return obj.members.count()
+
+    class Meta:
+        model = Community
+        fields = ['id', 'name', 'description', 'members', 'posts', 'members_count', 'image', 'owner']
+
+
 class CommunityPostCommentSerializer(serializers.ModelSerializer):
-    user = serializers.HyperlinkedRelatedField(
-        queryset=CustomUser.objects.all(),
-        view_name='customuser-detail'
-    )
+    user = CommunityUserSerializer()
     post = serializers.HyperlinkedRelatedField(
         queryset=Post.objects.all(),
-        view_name='post-detail'
-    )
-    url = serializers.HyperlinkedIdentityField(
-        view_name='comment-detail'
+        view_name='community_post_details'
     )
 
     class Meta:
         model = Comment
-        fields = ['id', 'content', 'created_at', 'updated_at', 'user', 'post', 'url']
+        fields = ['id', 'content', 'created_at', 'updated_at', 'user', 'post']
 
-class CommunityPostLikeSerializer(serializers.ModelSerializer):
-    user = serializers.HyperlinkedRelatedField(
-        queryset=CustomUser.objects.all(),
-        view_name='customuser-detail'
-    )
-    post = serializers.HyperlinkedRelatedField(
-        queryset=Post.objects.all(),
-        view_name='post-detail'
-    )
-    url = serializers.HyperlinkedIdentityField(
-        view_name='like-detail'
-    )
-
-    class Meta:
-        model = Like
-        fields = ['id', 'user', 'post', 'created_at', 'url']
 
 class CommentSerializer(serializers.ModelSerializer):
-    user = serializers.HyperlinkedRelatedField(
-        queryset=CustomUser.objects.prefetch_related('comments').all(),
-        view_name='customuser-detail'
+    user = CommunityUserSerializer()
+    url = serializers.HyperlinkedIdentityField(
+        view_name='community_post_comment_details',
+        lookup_field='pk'
     )
 
     class Meta:
         model = Comment
-        fields = ['id', 'content', 'created_at', 'updated_at', 'user']
+        fields = ['id', 'content', 'created_at', 'updated_at', 'user', 'url']
+
 
 class PostDetailsSerializer(serializers.ModelSerializer):
-    user = serializers.HyperlinkedRelatedField(
-        queryset=CustomUser.objects.prefetch_related('posts').all(),
-        view_name='customuser-detail'
-    )
+    user = CommunityUserSerializer()
     community = serializers.HyperlinkedRelatedField(
-        queryset=Community.objects.prefetch_related('posts').all(),
-        view_name='community-detail'
+        queryset=Community.objects.all(),
+        view_name='community_details'
     )
     likes = serializers.HyperlinkedRelatedField(
         queryset=Like.objects.all(),
         many=True,
-        view_name='like-detail',
+        view_name='community_post_like_details',
     )
     comments = CommentSerializer(many=True)
 
@@ -117,16 +111,18 @@ class PostDetailsSerializer(serializers.ModelSerializer):
             'community', 'likes', 'comments'
         ]
 
+
 class LikeSerializer(serializers.ModelSerializer):
-    user = serializers.HyperlinkedRelatedField(
-        queryset=CustomUser.objects.prefetch_related('likes').all(),  # Use the correct related name
-        view_name='customuser-detail'
-    )
+    user = CommunityUserSerializer()
     post = serializers.HyperlinkedRelatedField(
-        queryset=Post.objects.prefetch_related('likes').all(),  # Use the correct related name
-        view_name='post-detail'
+        queryset=Post.objects.all(),
+        view_name='community_post_details'
+    )
+    url = serializers.HyperlinkedIdentityField(
+        view_name='community_post_like_details',
+        lookup_field='pk'
     )
 
     class Meta:
         model = Like
-        fields = ['id', 'user', 'post', 'created_at']
+        fields = ['id', 'user', 'post', 'created_at', 'url']

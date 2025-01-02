@@ -16,8 +16,8 @@ from .filters import *
 # Books
 
 class BookList(ListCreateAPIView):
-    queryset = Book.objects.select_related(
-        'author').prefetch_related('genres').all()
+    queryset = Book.objects.select_related('author').prefetch_related(
+        'author__books').prefetch_related('genres').all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = BookFilter
     search_fields = ['title', 'description']
