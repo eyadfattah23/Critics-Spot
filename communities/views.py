@@ -107,7 +107,7 @@ class CommunityPostComments(APIView):
 
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        serializer = CommunityPostCommentSerializer(data=request.data, context={'request': request})
+        serializer = CommunityPostCommentCreateSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=201)
@@ -151,9 +151,12 @@ class CommunityPostLikes(APIView):
 
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        serializer = LikeSerializer(data=request.data, context={'request': request})
+        serializer = LikeCreateSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save(post=post)
+        user = CustomUser.objects.get(id=request.user)
+        new_like = Like.objects.create(user=user, post=post)
+        post.likes.add(new_like)
         return Response(serializer.data, status=201)
 
 

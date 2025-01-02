@@ -54,9 +54,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CustomCommunityDetailSerializer(serializers.ModelSerializer):
-    posts = PostSerializer(many=True)
     members_count = serializers.SerializerMethodField()
-    members = CommunityUserSerializer(many=True)
     owner = CommunityUserSerializer()
 
     def get_members_count(self, obj):
@@ -64,7 +62,7 @@ class CustomCommunityDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Community
-        fields = ['id', 'name', 'description', 'members', 'posts', 'members_count', 'image', 'owner']
+        fields = ['id', 'name', 'description', 'members_count', 'image', 'owner']
 
 
 class CommunityPostCommentSerializer(serializers.ModelSerializer):
@@ -79,6 +77,19 @@ class CommunityPostCommentSerializer(serializers.ModelSerializer):
         fields = ['id', 'content', 'created_at', 'updated_at', 'user', 'post']
 
 
+class CommunityPostCommentCreateSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=CustomUser.objects.all(),
+    )
+    post = serializers.PrimaryKeyRelatedField(
+        queryset=Post.objects.all(),
+    )
+
+    class Meta:
+        model = Comment
+        fields = ['content', 'user', 'post']
+
+
 class CommentSerializer(serializers.ModelSerializer):
     user = CommunityUserSerializer()
     url = serializers.HyperlinkedIdentityField(
@@ -91,25 +102,14 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ['id', 'content', 'created_at', 'updated_at', 'user', 'url']
 
 
-class PostDetailsSerializer(serializers.ModelSerializer):
-    user = CommunityUserSerializer()
-    community = serializers.HyperlinkedRelatedField(
-        queryset=Community.objects.all(),
-        view_name='community_details'
+class LikeCreateSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=CustomUser.objects.all(),
     )
-    likes = serializers.HyperlinkedRelatedField(
-        queryset=Like.objects.all(),
-        many=True,
-        view_name='community_post_like_details',
-    )
-    comments = CommentSerializer(many=True)
 
     class Meta:
-        model = Post
-        fields = [
-            'id', 'content', 'created_at', 'updated_at', 'user',
-            'community', 'likes', 'comments'
-        ]
+        model = Like
+        fields = ['user']
 
 
 class LikeSerializer(serializers.ModelSerializer):
@@ -126,3 +126,20 @@ class LikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Like
         fields = ['id', 'user', 'post', 'created_at', 'url']
+
+
+class PostDetailsSerializer(serializers.ModelSerializer):
+    user = CommunityUserSerializer()
+    community = serializers.HyperlinkedRelatedField(
+        queryset=Community.objects.all(),
+        view_name='community_details'
+    )
+    likes = LikeSerializer(many=True)
+    comments = CommentSerializer(many=True)
+
+    class Meta:
+        model = Post
+        fields = [
+            'id', 'content', 'created_at', 'updated_at', 'user',
+            'community', 'likes', 'comments'
+        ]
