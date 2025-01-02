@@ -57,7 +57,6 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'rest_framework',
     'djoser',
-    'api',
     'books',
     'users',
     'shelves',

@@ -13,8 +13,9 @@ from users.models import CustomUser
 
 
 class CommunitiesList(generics.ListCreateAPIView):
-    queryset = Community.objects.prefetch_related('members', 'owner', 'posts').all()
-    
+    queryset = Community.objects.prefetch_related(
+        'members', 'owner', 'posts').all()
+
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return CommunityCreateSerializer
@@ -51,7 +52,7 @@ class CommunityPosts(generics.ListCreateAPIView):
 
 class CommunityPostDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
-    
+
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return PostDetailsSerializer
@@ -73,7 +74,7 @@ class CommunityPostComments(generics.ListCreateAPIView):
 
 class CommunityPostCommentDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
-    
+
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return CommunityPostCommentSerializer

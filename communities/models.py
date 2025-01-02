@@ -77,11 +77,9 @@ class Community(models.Model):
         return f"{self.name}"
 
     def save(self, *args, **kwargs):
-        # Save once to generate an ID for the instance
-        if not self.id:
-            super().save(*args, **kwargs)
-
-        # Update the file path using the ID and save again if the file path needs an ID
-        if self.image and f'communities_images/{self.name}' not in self.image.name:
+        # Ensure `id` and `image` updates are not causing conflicts
+        if self.pk and self.image and f'community_images/{self.name}' not in self.image.name:
             self.image.name = community_image_upload_to(self, self.image.name)
+            super().save(update_fields=['image'])  # Save only the image field
+        else:
             super().save(*args, **kwargs)
