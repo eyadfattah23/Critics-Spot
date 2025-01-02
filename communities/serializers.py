@@ -14,6 +14,13 @@ class CommunityUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'first_name', 'last_name', 'image', 'username', 'url']
 
 
+class CommuntyCreateUserSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    class Meta:
+        model = Community
+        fields = ['id', 'user']
+
+
 class CustomCommunitySerializer(serializers.ModelSerializer):
     members_count = serializers.SerializerMethodField()
     owner = CommunityUserSerializer()
@@ -25,6 +32,12 @@ class CustomCommunitySerializer(serializers.ModelSerializer):
         model = Community
         fields = ['id', 'name', 'description', 'members_count', 'image', 'owner']
 
+
+class CommunityCreateSerializer(serializers.ModelSerializer):
+    owner = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    class Meta:
+        model = Community
+        fields = ['id', 'name', 'description', 'owner']
 
 class PostSerializer(serializers.ModelSerializer):
     user = CommunityUserSerializer()
@@ -53,6 +66,16 @@ class PostSerializer(serializers.ModelSerializer):
         return obj.comments.count()
 
 
+
+class PostCreateSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    community = serializers.PrimaryKeyRelatedField(queryset=Community.objects.all())
+    class Meta:
+        model = Post
+        fields = ['id', 'content', 'created_at', 'updated_at', 'user', 'community']
+
+
+
 class CustomCommunityDetailSerializer(serializers.ModelSerializer):
     members_count = serializers.SerializerMethodField()
     owner = CommunityUserSerializer()
@@ -78,12 +101,8 @@ class CommunityPostCommentSerializer(serializers.ModelSerializer):
 
 
 class CommunityPostCommentCreateSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=CustomUser.objects.all(),
-    )
-    post = serializers.PrimaryKeyRelatedField(
-        queryset=Post.objects.all(),
-    )
+    user = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    post = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all())
 
     class Meta:
         model = Comment
@@ -106,10 +125,13 @@ class LikeCreateSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(
         queryset=CustomUser.objects.all(),
     )
+    post = serializers.PrimaryKeyRelatedField(
+        queryset=Post.objects.all(),
+    )
 
     class Meta:
         model = Like
-        fields = ['user']
+        fields = ['user', 'post']
 
 
 class LikeSerializer(serializers.ModelSerializer):
