@@ -1,28 +1,82 @@
 #!/usr/bin/python3
 from rest_framework import serializers
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
-from books.models import Book
+from djoser.serializers import UserSerializer as BaseUserSerializer
 from shelves.models import Shelf
 from .models import CustomUser
 
-from books.serializers import BookLightSerializer
+
+class ShelfUserProfileSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='shelf-detail',
+        lookup_field='pk'
+    )
+
+    class Meta:
+        model = Shelf
+        fields = ['id', 'name', 'url', 'image']
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    shelves = serializers.HyperlinkedRelatedField(
-        queryset=Shelf.objects.select_related('user').all(),
-        many=True,
-        view_name='shelf-detail',
-    )
-    url = serializers.HyperlinkedIdentityField(
-        view_name='user-details',
-        lookup_field='pk',
-    )
+    shelves = ShelfUserProfileSerializer(many=True, read_only=True)
 
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'email',
-                  'first_name', 'last_name', 'date_joined', 'image', 'shelves', 'url']
+                  'first_name', 'last_name', 'date_joined', 'image', 'shelves']
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name='user-details',
+        lookup_field='pk'
+    )
+
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'email', 'image', 'url']
+
+        read_only_fields = ['email', 'image', 'id']
+
+
+class UserUpdateSerializer(BaseUserSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'first_name',
+                  'last_name', 'email', 'image', 'bio']
+        read_only_fields = ['email', 'id']
+
+
+class UserCreateSerializer(BaseUserCreateSerializer):
+    class Meta(BaseUserCreateSerializer.Meta):
+        model = CustomUser
+        fields = ['id', 'username', 'first_name',
+                  'last_name', 'email', 'password', 'image', 'bio']
+        extra_kwargs = {'password': {'write_only': True}}
+
+
+"""     def update(self, instance, validated_data):
+        # Remove password from validated_data if it wasn't provided
+        if 'password' not in self.initial_data:
+            validated_data.pop('password', None)
+        return super().update(instance, validated_data)
+
+    def validate_password(self, value):
+        if value is None and self.instance:  # If updating and no password provided
+            return self.instance.password  # Keep existing password
+        return super().validate_password(value)
+ """
+
+
+class UserProfileSerializer(BaseUserSerializer):
+    shelves = ShelfUserProfileSerializer(many=True, read_only=True)
+
+    class Meta(BaseUserSerializer.Meta):
+        model = CustomUser
+        fields = ['id', 'username', 'email',
+                  'first_name', 'last_name', 'date_joined', 'image', 'shelves']
+        read_only_fields = ['email', 'image', 'id']
 
 
 """ class UserCreateSerializer(serializers.ModelSerializer):
@@ -43,24 +97,3 @@ class CustomUserSerializer(serializers.ModelSerializer):
             image=validated_data.get('image', 'default_user_image.png')
         )
         return user """
-
-
-class UserSerializer(serializers.ModelSerializer):
-
-    url = serializers.HyperlinkedIdentityField(
-        view_name='user-details',
-        lookup_field='pk'
-    )
-
-    class Meta:
-        model = CustomUser
-        fields = ['id', 'username', 'email', 'image', 'url']
-
-        read_only_fields = ['email', 'image', 'id']
-
-
-class UserCreateSerializer(BaseUserCreateSerializer):
-    class Meta(BaseUserCreateSerializer.Meta):
-        model = CustomUser
-        fields = ['id', 'username', 'first_name',
-                  'last_name', 'email', 'password', 'image', 'bio']

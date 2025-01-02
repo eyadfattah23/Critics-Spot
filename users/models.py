@@ -80,6 +80,9 @@ class CustomUser(AbstractUser):
         upload_to=user_image_upload_to, default='default_user_image.png')
     objects = CustomUserManager()
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
     def __str__(self):
         return "{} | id:{}".format(self.username, self.id)
 
@@ -115,3 +118,10 @@ class CustomUser(AbstractUser):
             if self.image.name != new_path:
                 self.image.name = new_path
                 super().save(update_fields=['image'])
+
+    class Meta:
+
+        indexes = [
+            models.Index(fields=['email']),
+            models.Index(fields=['username']),
+        ]

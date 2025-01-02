@@ -14,7 +14,8 @@ class ShelfBookInline(admin.TabularInline):
 
 @admin.register(Shelf)
 class ShelfAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'user', 'number_of_books']
+    list_display = ['id', 'name', 'user',
+                    'number_of_books', 'is_default', 'image']
     list_select_related = ['user']
     search_fields = ['name', 'user__username']
     inlines = [ShelfBookInline]
