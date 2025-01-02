@@ -1,10 +1,16 @@
 #!/usr/bin/python3
 """Shelves related models."""
+import os
 from django.db import models
 from django.conf import settings
 from books.models import Book
-
 # Create your models here.
+
+
+def shelf_image_upload_to(instance, filename):
+    """Generate file path for shelf cover images."""
+    ext = filename.split('.')[-1]
+    return os.path.join(f"shelf_covers/{instance.user.username}/{instance.name}/cover.{ext}")
 
 
 class Shelf(models.Model):
@@ -16,6 +22,13 @@ class Shelf(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='shelves',
                              on_delete=models.CASCADE)
     # Distinguish between default and custom shelves
+
+    image = models.ImageField(
+        upload_to=shelf_image_upload_to,
+        null=True,
+        blank=True,
+        help_text="Cover image for the shelf"
+    )
     is_default = models.BooleanField(default=False)
 
     class Meta:

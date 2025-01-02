@@ -28,21 +28,21 @@ class ShelfSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shelf
         fields = ['id', 'name', 'is_default',
-                  'books', 'book_count', 'url']
+                  'books', 'book_count', 'url', 'image']
 
 
 class ShelfCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shelf
         user = serializers.PrimaryKeyRelatedField(read_only=True)
-        fields = ['name', 'user']
+        fields = ['name', 'user', 'image']
         extra_kwargs = {'user': {'read_only': True}}
 
 
 class ShelfDeserializer(serializers.ModelSerializer):
     class Meta:
         model = Shelf
-        fields = ['name', 'user']
+        fields = ['name', 'user', 'image']
 
 
 class ShelfBookDeserializer(serializers.ModelSerializer):
@@ -67,9 +67,5 @@ POST api/communities/<community_id>/leave
     "user": 1
 }
 community.members.delete(user_id=1)
-
-
-
-
 
 '''
