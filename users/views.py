@@ -42,12 +42,16 @@ class CustomUserViewSet(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, 
     def me(self, request):
         user = request.user
         if request.method == 'GET':
-            serializer = CustomUserSerializer(
+            serializer = UserProfileSerializer(
                 user, context={'request': request})
             return Response(serializer.data)
         elif request.method in ['PUT', 'PATCH']:
-            serializer = UserCreateSerializer(
-                user, data=request.data, partial=True, context={'request': request})
+            serializer = UserUpdateSerializer(
+                user,
+                data=request.data,
+                partial=True,
+                context={'request': request}
+            )
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)

@@ -12,13 +12,6 @@ class ShelfUserProfileSerializer(serializers.ModelSerializer):
         lookup_field='pk'
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        request = self.context.get('request', None)
-        if not request:
-            # Remove url field if no request in context
-            self.fields.pop('url', None)
-
     class Meta:
         model = Shelf
         fields = ['id', 'name', 'url', 'image']
@@ -47,11 +40,33 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ['email', 'image', 'id']
 
 
+class UserUpdateSerializer(BaseUserSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'first_name',
+                  'last_name', 'email', 'image', 'bio']
+        read_only_fields = ['email', 'id']
+
+
 class UserCreateSerializer(BaseUserCreateSerializer):
     class Meta(BaseUserCreateSerializer.Meta):
         model = CustomUser
         fields = ['id', 'username', 'first_name',
                   'last_name', 'email', 'password', 'image', 'bio']
+        extra_kwargs = {'password': {'write_only': True}}
+
+
+"""     def update(self, instance, validated_data):
+        # Remove password from validated_data if it wasn't provided
+        if 'password' not in self.initial_data:
+            validated_data.pop('password', None)
+        return super().update(instance, validated_data)
+
+    def validate_password(self, value):
+        if value is None and self.instance:  # If updating and no password provided
+            return self.instance.password  # Keep existing password
+        return super().validate_password(value)
+ """
 
 
 class UserProfileSerializer(BaseUserSerializer):
