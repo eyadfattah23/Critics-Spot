@@ -161,7 +161,6 @@ class BookReviewsList(ListCreateAPIView):
     filterset_class = BookReviewFilter
     search_fields = ['content']
     ordering_fields = ['created_at', 'rating']
-    permission_classes = [IsAdminOrReadOnly, IsAuthenticated]
 
     def get_queryset(self):
         book_id = self.kwargs['pk']
@@ -174,7 +173,7 @@ class BookReviewsList(ListCreateAPIView):
     def perform_create(self, serializer):
         book_id = self.kwargs['pk']
         book = get_object_or_404(Book, pk=book_id)
-        serializer.save(book=book)
+        serializer.save(book=book, user=self.request.user)
 
 
 class BookReviewDetails(RetrieveUpdateDestroyAPIView):
@@ -183,3 +182,12 @@ class BookReviewDetails(RetrieveUpdateDestroyAPIView):
 
     def get_serializer_context(self):
         return {'request': self.request}
+
+    def delete(self, request, *args, **kwargs):
+        review = self.get_object()
+        if review.user != request.user:
+            return Response(
+                {'error': 'You are not the author of this review'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().delete(request, *args, **kwargs)
