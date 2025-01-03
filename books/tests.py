@@ -205,3 +205,87 @@ def test_delete_author():
     response = client.delete(url)
     assert response.status_code == 204
     assert not Author.objects.filter(name='Test Author').exists()
+
+@pytest.mark.django_db
+def test_create_genre():
+    user = CustomUser.objects.create_user(
+        username='genreowner',
+        email='owner@example.com',
+        password='password123'
+    )
+    # Assign necessary permissions to the user
+    permissions = Permission.objects.filter(codename__in=['add_genre', 'view_genre', 'change_genre', 'delete_genre'])
+    user.user_permissions.add(*permissions)
+
+    client = APIClient()
+    client.force_authenticate(user=user)
+    url = reverse('genre-list')
+    data = {
+        'name': 'Test Genre'
+    }
+    response = client.post(url, data, format='json')
+    assert response.status_code == 201
+    assert Genre.objects.filter(name='Test Genre').exists()
+
+@pytest.mark.django_db
+def test_retrieve_genre():
+    user = CustomUser.objects.create_user(
+        username='genreowner',
+        email='owner@example.com',
+        password='password123'
+    )
+    # Assign necessary permissions to the user
+    permissions = Permission.objects.filter(codename__in=['add_genre', 'view_genre', 'change_genre', 'delete_genre'])
+    user.user_permissions.add(*permissions)
+
+    genre = Genre.objects.create(name='Test Genre')
+
+    client = APIClient()
+    client.force_authenticate(user=user)
+    url = reverse('genre-details', args=[genre.id])
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.data['name'] == 'Test Genre'
+
+@pytest.mark.django_db
+def test_update_genre():
+    user = CustomUser.objects.create_user(
+        username='genreowner',
+        email='owner@example.com',
+        password='password123'
+    )
+    # Assign necessary permissions to the user
+    permissions = Permission.objects.filter(codename__in=['add_genre', 'view_genre', 'change_genre', 'delete_genre'])
+    user.user_permissions.add(*permissions)
+
+    genre = Genre.objects.create(name='Test Genre')
+
+    client = APIClient()
+    client.force_authenticate(user=user)
+    url = reverse('genre-details', args=[genre.id])
+    data = {
+        'name': 'Updated Test Genre'
+    }
+    response = client.patch(url, data, format='json')
+    assert response.status_code == 200
+    assert response.data['name'] == 'Updated Test Genre'
+
+@pytest.mark.django_db
+def test_delete_genre():
+    user = CustomUser.objects.create_user(
+        username='genreowner',
+        email='owner@example.com',
+        password='password123'
+    )
+    # Assign necessary permissions to the user
+    permissions = Permission.objects.filter(codename__in=['add_genre', 'view_genre', 'change_genre', 'delete_genre'])
+    user.user_permissions.add(*permissions)
+
+    genre = Genre.objects.create(name='Test Genre')
+
+    client = APIClient()
+    client.force_authenticate(user=user)
+    url = reverse('genre-details', args=[genre.id])
+    response = client.delete(url)
+    assert response.status_code == 204
+    assert not Genre.objects.filter(name='Test Genre').exists()
