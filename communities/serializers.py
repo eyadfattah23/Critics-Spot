@@ -4,14 +4,10 @@ from .models import Community, Post, Comment, Like
 
 
 class CommunityUserSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(
-        view_name='users-detail',
-        lookup_field='pk'
-    )
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'first_name', 'last_name', 'image', 'username', 'url']
+        fields = ['id', 'first_name', 'last_name', 'image', 'username']
 
 
 class CommuntyCreateUserSerializer(serializers.ModelSerializer):
@@ -24,20 +20,25 @@ class CommuntyCreateUserSerializer(serializers.ModelSerializer):
 class CustomCommunitySerializer(serializers.ModelSerializer):
     members_count = serializers.SerializerMethodField()
     owner = CommunityUserSerializer()
+    url = serializers.HyperlinkedIdentityField(
+        view_name='community_details',
+        lookup_field='pk'
+    )
 
     def get_members_count(self, obj):
         return obj.members.count()
 
     class Meta:
         model = Community
-        fields = ['id', 'name', 'description', 'members_count', 'image', 'owner']
+        fields = ['id', 'name', 'description', 'members_count', 'image', 'owner', 'url']
 
 
 class CommunityCreateSerializer(serializers.ModelSerializer):
     owner = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
     class Meta:
         model = Community
-        fields = ['id', 'name', 'description', 'owner']
+        fields = ['name', 'description', 'owner']
+
 
 class PostSerializer(serializers.ModelSerializer):
     user = CommunityUserSerializer()
@@ -45,8 +46,8 @@ class PostSerializer(serializers.ModelSerializer):
         queryset=Community.objects.all(),
         view_name='community_details'
     )
-    likes = serializers.SerializerMethodField()
-    comments = serializers.SerializerMethodField()
+    likes_count = serializers.IntegerField(read_only=True)
+    comments_count = serializers.IntegerField(read_only=True)
     url = serializers.HyperlinkedIdentityField(
         view_name='community_post_details',
         lookup_field='pk'
@@ -56,15 +57,8 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = [
             'id', 'content', 'created_at', 'updated_at', 'user',
-            'community', 'likes', 'comments', 'url'
+            'community', 'likes_count', 'comments_count', 'url'
         ]
-
-    def get_likes(self, obj):
-        return obj.likes.count()
-
-    def get_comments(self, obj):
-        return obj.comments.count()
-
 
 
 class PostCreateSerializer(serializers.ModelSerializer):
@@ -79,13 +73,17 @@ class PostCreateSerializer(serializers.ModelSerializer):
 class CustomCommunityDetailSerializer(serializers.ModelSerializer):
     members_count = serializers.SerializerMethodField()
     owner = CommunityUserSerializer()
+    url = serializers.HyperlinkedIdentityField(
+        view_name='community_posts',
+        lookup_field='pk'
+    )
 
     def get_members_count(self, obj):
         return obj.members.count()
 
     class Meta:
         model = Community
-        fields = ['id', 'name', 'description', 'members_count', 'image', 'owner']
+        fields = ['id', 'name', 'description', 'members_count', 'image', 'owner', 'url']
 
 
 class CommunityPostCommentSerializer(serializers.ModelSerializer):
@@ -94,10 +92,14 @@ class CommunityPostCommentSerializer(serializers.ModelSerializer):
         queryset=Post.objects.all(),
         view_name='community_post_details'
     )
+    url = serializers.HyperlinkedIdentityField(
+        view_name='community_post_comment_details',
+        lookup_field='pk'
+    )
 
     class Meta:
         model = Comment
-        fields = ['id', 'content', 'created_at', 'updated_at', 'user', 'post']
+        fields = ['id', 'content', 'created_at', 'updated_at', 'user', 'post', 'url']
 
 
 class CommunityPostCommentCreateSerializer(serializers.ModelSerializer):
@@ -108,6 +110,11 @@ class CommunityPostCommentCreateSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ['content', 'user', 'post']
 
+
+class CommunityPostCommentUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['content']
 
 class CommentSerializer(serializers.ModelSerializer):
     user = CommunityUserSerializer()
