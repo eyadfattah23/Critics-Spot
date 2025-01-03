@@ -179,3 +179,144 @@ def test_delete_post():
     response = client.delete(url)
     assert response.status_code == 204
     assert not Post.objects.filter(content='This is a test post').exists()
+
+@pytest.mark.django_db
+def test_create_comment():
+    user = CustomUser.objects.create_user(
+        username='commentowner',
+        email='owner@example.com',
+        password='password123'
+    )
+    community = Community.objects.create(
+        name='Test Community',
+        description='A community for testing purposes',
+        owner=user
+    )
+    post = Post.objects.create(
+        content='This is a test post',
+        user=user,
+        community=community
+    )
+    client = APIClient()
+    client.force_authenticate(user=user)
+    url = reverse('post-comments-list', args=[community.id, post.id])
+    data = {
+        'content': 'This is a test comment'
+    }
+    response = client.post(url, data, format='json')
+    assert response.status_code == 201
+    assert Comment.objects.filter(content='This is a test comment').exists()
+
+@pytest.mark.django_db
+def test_retrieve_comment():
+    user = CustomUser.objects.create_user(
+        username='commentowner',
+        email='owner@example.com',
+        password='password123'
+    )
+    community = Community.objects.create(
+        name='Test Community',
+        description='A community for testing purposes',
+        owner=user
+    )
+    post = Post.objects.create(
+        content='This is a test post',
+        user=user,
+        community=community
+    )
+    comment = Comment.objects.create(
+        content='This is a test comment',
+        user=user,
+        post=post
+    )
+    client = APIClient()
+    client.force_authenticate(user=user)
+    url = reverse('post-comments-detail', args=[community.id, post.id, comment.id])
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.data['content'] == 'This is a test comment'
+
+@pytest.mark.django_db
+def test_update_comment():
+    user = CustomUser.objects.create_user(
+        username='commentowner',
+        email='owner@example.com',
+        password='password123'
+    )
+    community = Community.objects.create(
+        name='Test Community',
+        description='A community for testing purposes',
+        owner=user
+    )
+    post = Post.objects.create(
+        content='This is a test post',
+        user=user,
+        community=community
+    )
+    comment = Comment.objects.create(
+        content='This is a test comment',
+        user=user,
+        post=post
+    )
+    client = APIClient()
+    client.force_authenticate(user=user)
+    url = reverse('post-comments-detail', args=[community.id, post.id, comment.id])
+    data = {
+        'content': 'Updated test comment'
+    }
+    response = client.patch(url, data, format='json')
+    assert response.status_code == 200
+    assert response.data['content'] == 'Updated test comment'
+
+@pytest.mark.django_db
+def test_delete_comment():
+    user = CustomUser.objects.create_user(
+        username='commentowner',
+        email='owner@example.com',
+        password='password123'
+    )
+    community = Community.objects.create(
+        name='Test Community',
+        description='A community for testing purposes',
+        owner=user
+    )
+    post = Post.objects.create(
+        content='This is a test post',
+        user=user,
+        community=community
+    )
+    comment = Comment.objects.create(
+        content='This is a test comment',
+        user=user,
+        post=post
+    )
+    client = APIClient()
+    client.force_authenticate(user=user)
+    url = reverse('post-comments-detail', args=[community.id, post.id, comment.id])
+    response = client.delete(url)
+    assert response.status_code == 204
+    assert not Comment.objects.filter(content='This is a test comment').exists()
+
+@pytest.mark.django_db
+def test_like_post():
+    user = CustomUser.objects.create_user(
+        username='likeowner',
+        email='owner@example.com',
+        password='password123'
+    )
+    community = Community.objects.create(
+        name='Test Community',
+        description='A community for testing purposes',
+        owner=user
+    )
+    post = Post.objects.create(
+        content='This is a test post',
+        user=user,
+        community=community
+    )
+    client = APIClient()
+    client.force_authenticate(user=user)
+    url = reverse('community-posts-like', args=[community.id, post.id])
+    response = client.post(url)
+    assert response.status_code == 201
+    assert Like.objects.filter(post=post, user=user).exists()
