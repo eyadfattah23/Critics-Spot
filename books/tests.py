@@ -119,3 +119,89 @@ def test_delete_book():
     response = client.delete(url)
     assert response.status_code == 204
     assert not Book.objects.filter(title='Test Book').exists()
+
+
+@pytest.mark.django_db
+def test_create_author():
+    user = CustomUser.objects.create_user(
+        username='authorowner',
+        email='owner@example.com',
+        password='password123'
+    )
+    # Assign necessary permissions to the user
+    permissions = Permission.objects.filter(codename__in=['add_author', 'view_author', 'change_author', 'delete_author'])
+    user.user_permissions.add(*permissions)
+
+    client = APIClient()
+    client.force_authenticate(user=user)
+    url = reverse('author-list')
+    data = {
+        'name': 'Test Author',
+        'birth_date': '1980-01-01'
+    }
+    response = client.post(url, data, format='json')
+    assert response.status_code == 201
+    assert Author.objects.filter(name='Test Author').exists()
+
+@pytest.mark.django_db
+def test_retrieve_author():
+    user = CustomUser.objects.create_user(
+        username='authorowner',
+        email='owner@example.com',
+        password='password123'
+    )
+    # Assign necessary permissions to the user
+    permissions = Permission.objects.filter(codename__in=['add_author', 'view_author', 'change_author', 'delete_author'])
+    user.user_permissions.add(*permissions)
+
+    author = Author.objects.create(name='Test Author', birth_date='1980-01-01')
+
+    client = APIClient()
+    client.force_authenticate(user=user)
+    url = reverse('author-details', args=[author.id])
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.data['name'] == 'Test Author'
+
+@pytest.mark.django_db
+def test_update_author():
+    user = CustomUser.objects.create_user(
+        username='authorowner',
+        email='owner@example.com',
+        password='password123'
+    )
+    # Assign necessary permissions to the user
+    permissions = Permission.objects.filter(codename__in=['add_author', 'view_author', 'change_author', 'delete_author'])
+    user.user_permissions.add(*permissions)
+
+    author = Author.objects.create(name='Test Author', birth_date='1980-01-01')
+
+    client = APIClient()
+    client.force_authenticate(user=user)
+    url = reverse('author-details', args=[author.id])
+    data = {
+        'name': 'Updated Test Author'
+    }
+    response = client.patch(url, data, format='json')
+    assert response.status_code == 200
+    assert response.data['name'] == 'Updated Test Author'
+
+@pytest.mark.django_db
+def test_delete_author():
+    user = CustomUser.objects.create_user(
+        username='authorowner',
+        email='owner@example.com',
+        password='password123'
+    )
+    # Assign necessary permissions to the user
+    permissions = Permission.objects.filter(codename__in=['add_author', 'view_author', 'change_author', 'delete_author'])
+    user.user_permissions.add(*permissions)
+
+    author = Author.objects.create(name='Test Author', birth_date='1980-01-01')
+
+    client = APIClient()
+    client.force_authenticate(user=user)
+    url = reverse('author-details', args=[author.id])
+    response = client.delete(url)
+    assert response.status_code == 204
+    assert not Author.objects.filter(name='Test Author').exists()
