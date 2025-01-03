@@ -11,7 +11,9 @@ class CommunityUserSerializer(serializers.ModelSerializer):
 
 
 class CommuntyCreateUserSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=CustomUser.objects.all())
+
     class Meta:
         model = Community
         fields = ['id', 'user']
@@ -30,11 +32,14 @@ class CustomCommunitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Community
+
         fields = ['id', 'name', 'description', 'members_count', 'image', 'owner', 'url']
 
 
 class CommunityCreateSerializer(serializers.ModelSerializer):
-    owner = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    owner = serializers.PrimaryKeyRelatedField(
+        queryset=CustomUser.objects.all())
+
     class Meta:
         model = Community
         fields = ['name', 'description', 'owner']
@@ -60,14 +65,16 @@ class PostSerializer(serializers.ModelSerializer):
             'community', 'likes_count', 'comments_count', 'url'
         ]
 
-
 class PostCreateSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
-    community = serializers.PrimaryKeyRelatedField(queryset=Community.objects.all())
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=CustomUser.objects.all())
+    community = serializers.PrimaryKeyRelatedField(
+        queryset=Community.objects.all())
+
     class Meta:
         model = Post
-        fields = ['id', 'content', 'created_at', 'updated_at', 'user', 'community']
-
+        fields = ['id', 'content', 'created_at',
+                  'updated_at', 'user', 'community']
 
 
 class CustomCommunityDetailSerializer(serializers.ModelSerializer):
@@ -83,9 +90,10 @@ class CustomCommunityDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Community
+        
         fields = ['id', 'name', 'description', 'members_count', 'image', 'owner', 'url']
-
-
+        
+        
 class CommunityPostCommentSerializer(serializers.ModelSerializer):
     user = CommunityUserSerializer()
     post = serializers.HyperlinkedRelatedField(
@@ -103,7 +111,8 @@ class CommunityPostCommentSerializer(serializers.ModelSerializer):
 
 
 class CommunityPostCommentCreateSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=CustomUser.objects.all())
     post = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all())
 
     class Meta:

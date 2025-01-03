@@ -27,7 +27,7 @@ class ShelfSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Shelf
-        fields = ['id', 'name', 'is_default',
+        fields = ['id', 'name', 'user', 'is_default',
                   'books', 'book_count', 'url', 'image']
 
 

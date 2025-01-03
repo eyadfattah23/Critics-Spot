@@ -15,12 +15,15 @@ from users.models import CustomUser
 
 
 class CommunitiesList(generics.ListCreateAPIView):
+
     # Optimize by adding posts__user to get post authors in a single query
     queryset = Community.objects.prefetch_related(
         'members',
         'owner',
         Prefetch('posts', queryset=Post.objects.select_related('user'))
     ).all()
+
+
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -69,6 +72,7 @@ class CommunityPosts(generics.ListCreateAPIView):
 
 
 class CommunityPostDetails(generics.RetrieveUpdateDestroyAPIView):
+
     queryset = Post.objects.select_related(
         'user',
         'community'
@@ -105,6 +109,7 @@ class CommunityPostComments(generics.ListCreateAPIView):
 
 
 class CommunityPostCommentDetails(generics.RetrieveUpdateDestroyAPIView):
+
     queryset = Comment.objects.select_related(
         'post__user',  # Get post and its user in one join
         'post__community',  # Get community in the same query

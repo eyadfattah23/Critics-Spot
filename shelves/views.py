@@ -5,11 +5,14 @@ from rest_framework.decorators import api_view
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.views import APIView
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 from rest_framework import status
-from .models import Shelf
 from users.models import CustomUser
+from .models import Shelf
 from .serializers import *
 from .filters import *
+from .permissions import *
 
 
 class ShelfList(ListCreateAPIView):
@@ -19,6 +22,7 @@ class ShelfList(ListCreateAPIView):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = ShelfFilter
     search_fields = ['name']
+    permission_classes = [IsAdminUser]
 
     def get_serializer_context(self):
         return {'request': self.request}
@@ -31,6 +35,7 @@ class UserShelfList(ListCreateAPIView):
     ordering_fields = ['shelfbook', 'name', 'shelfbook__book',
                        'shelfbook__date_added', 'shelfbook__date_finished',
                        ]
+    permission_classes = [IsShelvesOwnerOrAdmin]
 
     def get_queryset(self):
         user_id = self.kwargs['user_id']
@@ -55,6 +60,7 @@ class ShelfDetails(RetrieveUpdateDestroyAPIView):
     queryset = Shelf.objects.select_related(
         'user').prefetch_related('shelfbook_set__book').all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    permission_classes = [IsShelfOwnerOrAdmin]
 
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'PATCH']:
@@ -66,6 +72,8 @@ class ShelfDetails(RetrieveUpdateDestroyAPIView):
 
 
 class ShelfBookView(APIView):
+    permission_classes = [IsAuthenticated, CanManageShelfBooks]
+
     def post(self, request, pk):
         shelf = get_object_or_404(
             Shelf.objects.prefetch_related('shelfbook_set__book'),
@@ -96,20 +104,33 @@ class ShelfBookView(APIView):
         serializer.save()
         return Response(serializer.data)
 
-        """
-        PATCH /api/shelves/<shelf_id>/books/<book_id>/
-
-        body: {"current_page": 100}
-        """
+    def get(self, request, pk, book_id=None):
+        if book_id is None:
+            shelf = get_object_or_404(
+                Shelf.objects.prefetch_related('shelfbook_set__book'),
+                pk=pk
+            )
+            serializer = ShelfSerializer(shelf, context={'request': request})
+            return Response(serializer.data)
+        else:
+            shelf = get_object_or_404(Shelf, pk=pk)
+            shelf_book = get_object_or_404(
+                ShelfBook, shelf=shelf, book=book_id)
+            serializer = ShelfBookSerializer(
+                shelf_book, context={'request': request})
+            return Response(serializer.data)
 
 
 class UserFavoritesList(ListAPIView):
     serializer_class = ShelfBookSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user_id = self.kwargs['user_id']
+        # Check if the user is requesting their own favorites or is staff
+        if not (self.request.user.is_staff or self.request.user.id == int(user_id)):
+            raise PermissionDenied("You can only view your own favorites")
         user = get_object_or_404(CustomUser, pk=user_id)
-        # Get the Favorites shelf and its books
         favorites_shelf = get_object_or_404(Shelf, user=user, name='Favorites')
         return ShelfBook.objects.select_related(
             'book', 'book__author'
