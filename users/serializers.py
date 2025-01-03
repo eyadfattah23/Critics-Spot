@@ -75,7 +75,7 @@ class UserProfileSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
         model = CustomUser
         fields = ['id', 'username', 'email',
-                  'first_name', 'last_name', 'date_joined', 'image', 'shelves']
+                  'first_name', 'last_name', 'date_joined', 'image', 'shelves', 'is_staff']
         read_only_fields = ['email', 'image', 'id']
 
 

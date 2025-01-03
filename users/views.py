@@ -2,12 +2,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.filters import SearchFilter
-from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import CustomUser
 from .serializers import *
 from .filters import CustomUserFilter
+from .permissions import *
 # Create your views here.
 
 
@@ -34,11 +35,12 @@ class CustomUserList(ListCreateAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class CustomUserViewSet(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
+class CustomUserViewSet(ModelViewSet):
     queryset = CustomUser.objects.prefetch_related('shelves').all()
     serializer_class = CustomUserSerializer
+    permission_classes = [IsAdminUser]
 
-    @action(detail=False, methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+    @action(detail=False, methods=['GET', 'PUT', 'PATCH', 'DELETE'], permission_classes=[IsAuthenticated])
     def me(self, request):
         user = request.user
         if request.method == 'GET':
@@ -58,6 +60,14 @@ class CustomUserViewSet(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, 
         elif request.method == 'DELETE':
             user.delete()
             return Response(status=204)
+
+    @action(detail=False, methods=['POST'], permission_classes=[])
+    def register(self, request):
+        serializer = UserCreateSerializer(
+            data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=201)
 
     def get_serializer_context(self):
         return {'request': self.request}

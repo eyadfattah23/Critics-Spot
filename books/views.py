@@ -5,11 +5,13 @@
 # from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from .models import *
 from .serializers import *
 from .filters import *
+from .permissions import IsAdminOrReadOnly
 # Create your views here.
 
 
@@ -22,6 +24,7 @@ class BookList(ListCreateAPIView):
     filterset_class = BookFilter
     search_fields = ['title', 'description']
     ordering_fields = ['publication_date', 'avg_rating', 'pages', 'title']
+    permission_classes = [DjangoModelPermissions]
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -56,7 +59,8 @@ class BookList(ListCreateAPIView):
 
 class BookDetails(RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.select_related(
-        'author').prefetch_related('genres').all()
+        'author').prefetch_related('genres__books').all()
+    permission_classes = [DjangoModelPermissions]
 
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'PATCH']:
@@ -75,6 +79,8 @@ class AuthorList(ListCreateAPIView):
     serializer_class = AuthorLightSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = AuthorFilter
+    permission_classes = [DjangoModelPermissions]
+
     search_fields = ['name', 'bio']
     ordering_fields = ['name', 'birth_date', 'death_date']
 
@@ -98,6 +104,7 @@ class AuthorList(ListCreateAPIView):
 class AuthorDetails(RetrieveUpdateDestroyAPIView):
     queryset = Author.objects.prefetch_related('books').all()
     serializer_class = AuthorSerializer
+    permission_classes = [DjangoModelPermissions]
 
     def get_serializer_context(self):
         return {'request': self.request}
@@ -112,6 +119,7 @@ class GenreList(ListCreateAPIView):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = GenreFilter
     search_fields = ['name', 'description']
+    permission_classes = [DjangoModelPermissions]
 
     def get_serializer_context(self):
         return {'request': self.request}
@@ -133,6 +141,7 @@ class GenreList(ListCreateAPIView):
 class GenreDetails(RetrieveUpdateDestroyAPIView):
     queryset = Genre.objects.prefetch_related('books').all()
     serializer_class = GenreSerializer
+    permission_classes = [DjangoModelPermissions]
 
     def get_serializer_context(self):
         return {'request': self.request}
@@ -152,6 +161,7 @@ class BookReviewsList(ListCreateAPIView):
     filterset_class = BookReviewFilter
     search_fields = ['content']
     ordering_fields = ['created_at', 'rating']
+    permission_classes = [IsAdminOrReadOnly, IsAuthenticated]
 
     def get_queryset(self):
         book_id = self.kwargs['pk']
