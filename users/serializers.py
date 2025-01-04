@@ -48,14 +48,6 @@ class UserUpdateSerializer(BaseUserSerializer):
         read_only_fields = ['email', 'id']
 
 
-class UserCreateSerializer(BaseUserCreateSerializer):
-    class Meta(BaseUserCreateSerializer.Meta):
-        model = CustomUser
-        fields = ['id', 'username', 'first_name',
-                  'last_name', 'email', 'password', 'image', 'bio']
-        extra_kwargs = {'password': {'write_only': True}}
-
-
 """     def update(self, instance, validated_data):
         # Remove password from validated_data if it wasn't provided
         if 'password' not in self.initial_data:
