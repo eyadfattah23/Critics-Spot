@@ -5,8 +5,12 @@ from django.contrib.auth.models import Permission
 from books.models import Book, Author, Genre
 from users.models import CustomUser
 
+
 @pytest.mark.django_db
 def test_create_book():
+    """
+    Test creating a new book.
+    """
     user = CustomUser.objects.create_user(
         username='bookowner',
         email='owner@example.com',
@@ -33,8 +37,12 @@ def test_create_book():
     assert response.status_code == 201
     assert Book.objects.filter(title='Test Book').exists()
 
+
 @pytest.mark.django_db
 def test_retrieve_book():
+    """
+    Test retrieving a book.
+    """
     user = CustomUser.objects.create_user(
         username='bookowner',
         email='owner@example.com',
@@ -61,8 +69,12 @@ def test_retrieve_book():
     assert response.status_code == 200
     assert response.data['title'] == 'Test Book'
 
+
 @pytest.mark.django_db
 def test_update_book():
+    """
+    Test updating a book.
+    """
     user = CustomUser.objects.create_user(
         username='bookowner',
         email='owner@example.com',
@@ -92,8 +104,12 @@ def test_update_book():
     assert response.status_code == 200
     assert response.data['title'] == 'Updated Test Book'
 
+
 @pytest.mark.django_db
 def test_delete_book():
+    """
+    Test deleting a book.
+    """
     user = CustomUser.objects.create_user(
         username='bookowner',
         email='owner@example.com',
@@ -123,6 +139,9 @@ def test_delete_book():
 
 @pytest.mark.django_db
 def test_create_author():
+    """
+    Test creating a new author.
+    """
     user = CustomUser.objects.create_user(
         username='authorowner',
         email='owner@example.com',
@@ -143,8 +162,12 @@ def test_create_author():
     assert response.status_code == 201
     assert Author.objects.filter(name='Test Author').exists()
 
+
 @pytest.mark.django_db
 def test_retrieve_author():
+    """
+    Test retrieving an author.
+    """
     user = CustomUser.objects.create_user(
         username='authorowner',
         email='owner@example.com',
@@ -163,8 +186,12 @@ def test_retrieve_author():
     assert response.status_code == 200
     assert response.data['name'] == 'Test Author'
 
+
 @pytest.mark.django_db
 def test_update_author():
+    """
+    Test updating an author.
+    """
     user = CustomUser.objects.create_user(
         username='authorowner',
         email='owner@example.com',
@@ -186,8 +213,12 @@ def test_update_author():
     assert response.status_code == 200
     assert response.data['name'] == 'Updated Test Author'
 
+
 @pytest.mark.django_db
 def test_delete_author():
+    """
+    Test deleting an author.
+    """
     user = CustomUser.objects.create_user(
         username='authorowner',
         email='owner@example.com',
@@ -206,8 +237,12 @@ def test_delete_author():
     assert response.status_code == 204
     assert not Author.objects.filter(name='Test Author').exists()
 
+
 @pytest.mark.django_db
 def test_create_genre():
+    """
+    Test creating a new genre.
+    """
     user = CustomUser.objects.create_user(
         username='genreowner',
         email='owner@example.com',
@@ -227,8 +262,12 @@ def test_create_genre():
     assert response.status_code == 201
     assert Genre.objects.filter(name='Test Genre').exists()
 
+
 @pytest.mark.django_db
 def test_retrieve_genre():
+    """
+    Test retrieving a genre.
+    """
     user = CustomUser.objects.create_user(
         username='genreowner',
         email='owner@example.com',
@@ -247,8 +286,12 @@ def test_retrieve_genre():
     assert response.status_code == 200
     assert response.data['name'] == 'Test Genre'
 
+
 @pytest.mark.django_db
 def test_update_genre():
+    """
+    Test updating a genre.
+    """
     user = CustomUser.objects.create_user(
         username='genreowner',
         email='owner@example.com',
@@ -270,8 +313,12 @@ def test_update_genre():
     assert response.status_code == 200
     assert response.data['name'] == 'Updated Test Genre'
 
+
 @pytest.mark.django_db
 def test_delete_genre():
+    """
+    Test deleting a genre.
+    """
     user = CustomUser.objects.create_user(
         username='genreowner',
         email='owner@example.com',

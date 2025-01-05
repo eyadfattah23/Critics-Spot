@@ -1,23 +1,36 @@
-# from django.shortcuts import get_object_or_404
-# from rest_framework.decorators import api_view
-# from rest_framework.response import Response
-# from rest_framework.views import APIView
-# from rest_framework import status
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+#!/usr/bin/python3
+"""
+Views for the books app.
+"""
+from rest_framework.generics import (
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView
+)
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
+from rest_framework.permissions import DjangoModelPermissions
+from rest_framework.response import Response
+from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from .models import *
-from .serializers import *
-from .filters import *
-from .permissions import IsAdminOrReadOnly
-# Create your views here.
-
+from .models import Book, Author, Genre, BookReview
+from .serializers import (
+    BookLightSerializer, BookDeserializer, BookSerializer,
+    AuthorLightSerializer, AuthorSerializer,
+    GenreLightSerializer, GenreSerializer, BookReviewSerializer
+)
+from .filters import BookFilter, AuthorFilter, GenreFilter, BookReviewFilter
 
 # Books
 
 class BookList(ListCreateAPIView):
+    """
+    API view to retrieve list of books or create a new book.
+
+    get:
+    Return a list of all the existing books.
+
+    post:
+    Create a new book instance.
+    """
     queryset = Book.objects.select_related('author').prefetch_related(
         'author__books').prefetch_related('genres').all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -43,21 +56,22 @@ class BookList(ListCreateAPIView):
         return self.create(request, *args, **kwargs)
 
 
-'''
-{
-    "title": "The Lord of the Rings",
-    "description": "A hobbit goes on an adventure",
-    "author": 1,
-    "genres": [1, 2],
-    "publication_date": "1954-07-29",
-    "buy_link": "https://www.google.com",
-    "pages": 100
-}
-
-'''
-
-
 class BookDetails(RetrieveUpdateDestroyAPIView):
+    """
+    API view to retrieve, update or delete a book instance.
+
+    get:
+    Return the details of a specific book.
+
+    put:
+    Update the details of a specific book.
+
+    patch:
+    Partially update the details of a specific book.
+
+    delete:
+    Delete a specific book instance.
+    """
     queryset = Book.objects.select_related(
         'author').prefetch_related('genres__books').all()
     permission_classes = [DjangoModelPermissions]
@@ -73,8 +87,16 @@ class BookDetails(RetrieveUpdateDestroyAPIView):
 
 # Authors
 
-
 class AuthorList(ListCreateAPIView):
+    """
+    API view to retrieve list of authors or create a new author.
+
+    get:
+    Return a list of all the existing authors.
+
+    post:
+    Create a new author instance.
+    """
     queryset = Author.objects.prefetch_related('books').all()
     serializer_class = AuthorLightSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -102,6 +124,21 @@ class AuthorList(ListCreateAPIView):
 
 
 class AuthorDetails(RetrieveUpdateDestroyAPIView):
+    """
+    API view to retrieve, update or delete an author instance.
+
+    get:
+    Return the details of a specific author.
+
+    put:
+    Update the details of a specific author.
+
+    patch:
+    Partially update the details of a specific author.
+
+    delete:
+    Delete a specific author instance.
+    """
     queryset = Author.objects.prefetch_related('books').all()
     serializer_class = AuthorSerializer
     permission_classes = [DjangoModelPermissions]
@@ -112,8 +149,16 @@ class AuthorDetails(RetrieveUpdateDestroyAPIView):
 
 # Genres
 
-
 class GenreList(ListCreateAPIView):
+    """
+    API view to retrieve list of genres or create a new genre.
+
+    get:
+    Return a list of all the existing genres.
+
+    post:
+    Create a new genre instance.
+    """
     queryset = Genre.objects.prefetch_related('books').all()
     serializer_class = GenreLightSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
@@ -139,6 +184,21 @@ class GenreList(ListCreateAPIView):
 
 
 class GenreDetails(RetrieveUpdateDestroyAPIView):
+    """
+    API view to retrieve, update or delete a genre instance.
+
+    get:
+    Return the details of a specific genre.
+
+    put:
+    Update the details of a specific genre.
+
+    patch:
+    Partially update the details of a specific genre.
+
+    delete:
+    Delete a specific genre instance.
+    """
     queryset = Genre.objects.prefetch_related('books').all()
     serializer_class = GenreSerializer
     permission_classes = [DjangoModelPermissions]
@@ -147,15 +207,18 @@ class GenreDetails(RetrieveUpdateDestroyAPIView):
         return {'request': self.request}
 
 
-'''
-{
-    "name": "Fantasy",
-    "description": "A genre of speculative fiction set in a fictional universe, often inspired by real world myth and folklore."
-}
-'''
-
+# Book Reviews
 
 class BookReviewsList(ListCreateAPIView):
+    """
+    API view to retrieve list of book reviews or create a new review for a specific book.
+
+    get:
+    Return a list of all the existing reviews for a specific book.
+
+    post:
+    Create a new review for a specific book.
+    """
     serializer_class = BookReviewSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = BookReviewFilter
@@ -177,6 +240,21 @@ class BookReviewsList(ListCreateAPIView):
 
 
 class BookReviewDetails(RetrieveUpdateDestroyAPIView):
+    """
+    API view to retrieve, update or delete a book review instance.
+
+    get:
+    Return the details of a specific book review.
+
+    put:
+    Update the details of a specific book review.
+
+    patch:
+    Partially update the details of a specific book review.
+
+    delete:
+    Delete a specific book review instance.
+    """
     queryset = BookReview.objects.all()
     serializer_class = BookReviewSerializer
 

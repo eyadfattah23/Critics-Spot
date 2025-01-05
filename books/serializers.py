@@ -3,11 +3,14 @@
 Book related serializers.
 '''
 from rest_framework import serializers
-from .models import *
-from users.models import *
+from .models import Book, Author, Genre, BookReview
+from users.models import CustomUser
 
 
 class AuthorLightSerializer(serializers.ModelSerializer):
+    """
+    Serializer for listing authors with light details.
+    """
     books = serializers.HyperlinkedRelatedField(
         many=True,
         read_only=True,
@@ -24,6 +27,9 @@ class AuthorLightSerializer(serializers.ModelSerializer):
 
 
 class BookLightSerializer(serializers.ModelSerializer):
+    """
+    Serializer for listing books with light details.
+    """
     author = AuthorLightSerializer()
     genres_names = serializers.SerializerMethodField()
 
@@ -42,24 +48,19 @@ class BookLightSerializer(serializers.ModelSerializer):
 
 
 class BookDeserializer(serializers.ModelSerializer):
+    """
+    Serializer for creating or updating book details.
+    """
     class Meta:
         model = Book
         fields = ['title', 'cover', 'description',
                   'author', 'genres', 'publication_date', 'buy_link', 'pages', 'author']
 
 
-class VeryLightBookSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(
-        view_name='book-details',
-        lookup_field='pk'
-    )
-
-    class Meta:
-        model = Book
-        fields = ['id', 'title', 'cover', 'description', 'url']
-
-
 class GenreLightSerializer(serializers.ModelSerializer):
+    """
+    Serializer for listing genres with light details.
+    """
     books = serializers.HyperlinkedRelatedField(
         many=True,
         read_only=True,
@@ -76,45 +77,53 @@ class GenreLightSerializer(serializers.ModelSerializer):
 
 
 class BookSerializer(serializers.ModelSerializer):
+    """
+    Serializer for retrieving detailed book information.
+    """
     author = AuthorLightSerializer()
-    """ genres = serializers.HyperlinkedRelatedField(
-        many=True,
-        read_only=True,
-        view_name='genre-details',
-    ) """
     genres = GenreLightSerializer(many=True)
 
     class Meta:
         model = Book
-        fields = ['id', 'title', 'pages',
-                  'author', 'cover', 'genres', 'avg_rating', 'description', 'publication_date', 'buy_link', 'added_date']
+        fields = '__all__'
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    books = VeryLightBookSerializer(many=True, read_only=True)
+    """
+    Serializer for retrieving detailed genre information.
+    """
+    books = BookLightSerializer(many=True, read_only=True)
 
     class Meta:
         model = Genre
-        fields = ['id', 'name', 'description', 'books', 'added_date']
+        fields = '__all__'
 
 
 class AuthorSerializer(serializers.ModelSerializer):
-    books = VeryLightBookSerializer(many=True, read_only=True)
+    """
+    Serializer for retrieving detailed author information.
+    """
+    books = BookLightSerializer(many=True, read_only=True)
 
     class Meta:
         model = Author
         fields = ['id', 'name', 'birth_date',
                   'bio', 'death_date', 'books', 'photo']
-        # read_only_fields = ['books']
 
 
 class UserReviewSerializer(serializers.ModelSerializer):
+    """
+    Serializer for user details in a review.
+    """
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'first_name', 'last_name', 'image']
 
 
 class BookReviewSerializer(serializers.ModelSerializer):
+    """
+    Serializer for book reviews.
+    """
     book = serializers.HyperlinkedRelatedField(
         view_name='book-details',
         read_only=True,
