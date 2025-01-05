@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 import debug_toolbar
 from . import settings
 
-admin.site.site_header = 'Goodreads-clone Admin'
+admin.site.site_header = 'Critics-Spot Admin'
 admin.site.index_title = 'Admin'
 urlpatterns = [
     path('admin/', admin.site.urls),

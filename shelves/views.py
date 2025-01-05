@@ -126,7 +126,7 @@ class UserFavoritesList(ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user_id = self.kwargs['user_id']
+        user_id = self.kwargs['pk']
         # Check if the user is requesting their own favorites or is staff
         if not (self.request.user.is_staff or self.request.user.id == int(user_id)):
             raise PermissionDenied("You can only view your own favorites")

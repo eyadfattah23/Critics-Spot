@@ -5,10 +5,11 @@ from rest_framework.filters import SearchFilter
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from .models import CustomUser
 from .serializers import (
-     CustomUserSerializer, UserCreateSerializer,
-     UserProfileSerializer, UserUpdateSerializer
+    CustomUserSerializer, UserCreateSerializer,
+    UserProfileSerializer, UserUpdateSerializer
 )
 from .filters import CustomUserFilter
 from .permissions import *
@@ -41,7 +42,13 @@ class CustomUserList(ListCreateAPIView):
 class CustomUserViewSet(ModelViewSet):
     queryset = CustomUser.objects.prefetch_related('shelves').all()
     serializer_class = CustomUserSerializer
-    permission_classes = [IsAdminUser]
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    permission_classes = [IsOwnerOrAdmin]
+
+    def get_permissions(self):
+        if self.action == 'register':
+            return []  # No permissions needed for registration
+        return [permission() for permission in self.permission_classes]
 
     @action(detail=False, methods=['GET', 'PUT', 'PATCH', 'DELETE'], permission_classes=[IsAuthenticated])
     def me(self, request):
@@ -64,12 +71,14 @@ class CustomUserViewSet(ModelViewSet):
             user.delete()
             return Response(status=204)
 
-    @action(detail=False, methods=['POST'], permission_classes=[])
+    @action(detail=False, methods=['POST'], permission_classes=[], throttle_classes=[AnonRateThrottle], serializer_class=UserCreateSerializer)
     def register(self, request):
         serializer = UserCreateSerializer(
             data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        user = serializer.save()
+        # Add this print statement
+        print(f"User created: {user.email}, Active: {user.is_active}")
         return Response(serializer.data, status=201)
 
     def get_serializer_context(self):

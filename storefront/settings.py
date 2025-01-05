@@ -193,10 +193,31 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
 }
 
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'console.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'edoellybeyhdo@gmail.com'
+EMAIL_HOST_PASSWORD = 'eyad12345678'
+DEFAULT_FROM_EMAIL = 'edoellybeyhdo@gmail.com'
+# Djoser Settings
 DJOSER = {
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'SEND_CONFIRMATION_EMAIL': True,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
+    'USERNAME_CHANGED_EMAIL_CONFIRMATION': True,
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'SET_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
+    'TOKEN_MODEL': None,
     'SERIALIZERS': {
         'user_create': 'users.serializers.UserCreateSerializer',
+        'user': 'users.serializers.CustomUserSerializer',
         'current_user': 'users.serializers.UserProfileSerializer',
     },
-    'LOGIN_FIELD': 'email',
 }

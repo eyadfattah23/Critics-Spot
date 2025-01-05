@@ -18,26 +18,18 @@ class CustomUserManager(BaseUserManager):
     """Custom user manager to handle email as username."""
 
     def create_user(self, email, password=None, **extra_fields):
-        """#+
-        Create and save a new user with the given email and password.#+
-#+
-        Args:#+
-            email (str): The email address for the new user. This is required.#+
-            password (str, optional): The password for the new user. If not provided, the user will have no password.#+
-            **extra_fields: Additional fields to be set on the new user model.#+
-#+
-        Raises:#+
-            ValueError: If the email is not provided.#+
-#+
-        Returns:#+
-            CustomUser: The newly created user instance.#+
-        """  # +
         if not email:
             raise ValueError("The Email field must be set")
         email = self.normalize_email(email)
+        # Make sure is_active is set to False by default
+        extra_fields.setdefault('is_active', False)
         user = self.model(email=email, **extra_fields)
-        user.set_password(password)
+        if password:
+            user.set_password(password)
         user.save(using=self._db)
+        # Add print statement
+        print(
+            f"User created in manager: {email}, Active: {extra_fields.get('is_active')}")
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):

@@ -75,20 +75,31 @@ class UserProfileSerializer(BaseUserSerializer):
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        write_only=True, style={'input_type': 'password'})
+    password_confirm = serializers.CharField(
+        write_only=True, style={'input_type': 'password'})
+
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'password', 'bio', 'image']
-        # Hide the password when sending the data
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['email', 'username', 'password',
+                  'password_confirm', 'first_name', 'last_name']
 
     def create(self, validated_data):
+        validated_data.pop('password_confirm', None)
+        password = validated_data.pop('password', None)
+
+        # Explicitly set is_active to False
+        validated_data['is_active'] = False
+
         user = CustomUser.objects.create_user(
-            email=validated_data['email'],
-            username=validated_data['username'],
-            password=validated_data['password'],
-            # if no bio provided the get method will return an empty string
-            bio=validated_data.get('bio', ''),
-            # if no image provided the get method will return the default image
-            image=validated_data.get('image', 'default_user_image.png')
+            **validated_data
         )
+
+        if password:
+            user.set_password(password)
+            user.save()
+
+        # Add print statement
+        print(f"Sending activation email to: {user.email}")
         return user
