@@ -6,7 +6,10 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import CustomUser
-from .serializers import *
+from .serializers import (
+     CustomUserSerializer, UserCreateSerializer,
+     UserProfileSerializer, UserUpdateSerializer
+)
 from .filters import CustomUserFilter
 from .permissions import *
 # Create your views here.

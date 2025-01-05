@@ -1,29 +1,63 @@
-from django.test import TestCase
-from django.contrib.auth import get_user_model
+import pytest
+from rest_framework.test import APIClient
+from django.urls import reverse
+from django.contrib.auth.models import Permission
+from users.models import CustomUser
 
-User = get_user_model()
+@pytest.mark.django_db
+def test_create_user():
+    client = APIClient()
+    url = reverse('user-list')
+    data = {
+        'username': 'testuser',
+        'email': 'testuser@example.com',
+        'password': 'testpassword123'
+    }
+    response = client.post(url, data, format='json')
+    assert response.status_code == 201
+    assert CustomUser.objects.filter(username='testuser').exists()
 
+@pytest.mark.django_db
+def test_retrieve_user():
+    user = CustomUser.objects.create_user(
+        username='testuser',
+        email='testuser@example.com',
+        password='testpassword123'
+    )
+    client = APIClient()
+    client.force_authenticate(user=user)
+    url = reverse('user-details', args=[user.id])
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.data['username'] == 'testuser'
 
-class UserModelTest(TestCase):
-    """ Test User model. """
-    def test_user_creation(self):
-        user = User.objects.create_user(
-            username="sampleuser",
-            email="sampleuser@example.com",
-            password="samplepassword"
-        )
-        self.assertEqual(user.username, "sampleuser")
-        self.assertEqual(user.email, "sampleuser@example.com")
-        self.assertTrue(user.check_password("samplepassword"))
+@pytest.mark.django_db
+def test_update_user():
+    user = CustomUser.objects.create_user(
+        username='testuser',
+        email='testuser@example.com',
+        password='testpassword123'
+    )
+    client = APIClient()
+    client.force_authenticate(user=user)
+    url = reverse('user-details', args=[user.id])
+    data = {
+        'first_name': 'UpdatedName'
+    }
+    response = client.patch(url, data, format='json')
+    assert response.status_code == 200
+    assert response.data['first_name'] == 'UpdatedName'
 
-    def test_superuser_creation(self):
-        admin_user = User.objects.create_superuser(
-            username="adminuser",
-            email="adminuser@example.com",
-            password="adminpassword"
-        )
-        self.assertEqual(admin_user.username, "adminuser")
-        self.assertEqual(admin_user.email, "adminuser@example.com")
-        self.assertTrue(admin_user.check_password("adminpassword"))
-        self.assertTrue(admin_user.is_staff)
-        self.assertTrue(admin_user.is_superuser)
+@pytest.mark.django_db
+def test_delete_user():
+    user = CustomUser.objects.create_user(
+        username='testuser',
+        email='testuser@example.com',
+        password='testpassword123'
+    )
+    client = APIClient()
+    client.force_authenticate(user=user)
+    url = reverse('user-details', args=[user.id])
+    response = client.delete(url)
+    assert response.status_code == 204
+    assert not CustomUser.objects.filter(username='testuser').exists()

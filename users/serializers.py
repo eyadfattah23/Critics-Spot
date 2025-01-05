@@ -19,11 +19,14 @@ class ShelfUserProfileSerializer(serializers.ModelSerializer):
 
 class CustomUserSerializer(serializers.ModelSerializer):
     shelves = ShelfUserProfileSerializer(many=True, read_only=True)
+    date_joined = serializers.DateTimeField(read_only=True)
+    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'email',
-                  'first_name', 'last_name', 'date_joined', 'image', 'shelves']
+                  'first_name', 'last_name', 'date_joined', 'password',
+                  'image', 'shelves']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -71,7 +74,7 @@ class UserProfileSerializer(BaseUserSerializer):
         read_only_fields = ['email', 'image', 'id']
 
 
-""" class UserCreateSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'password', 'bio', 'image']
@@ -88,4 +91,4 @@ class UserProfileSerializer(BaseUserSerializer):
             # if no image provided the get method will return the default image
             image=validated_data.get('image', 'default_user_image.png')
         )
-        return user """
+        return user
