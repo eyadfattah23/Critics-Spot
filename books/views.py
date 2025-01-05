@@ -5,7 +5,7 @@
 # from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
+from rest_framework.permissions import DjangoModelPermissions
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from .models import *
@@ -118,8 +118,9 @@ class GenreList(ListCreateAPIView):
     serializer_class = GenreLightSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = GenreFilter
-    search_fields = ['name', 'description']
     permission_classes = [DjangoModelPermissions]
+    search_fields = ['name', 'description']
+    ordering_fields = ['name']
 
     def get_serializer_context(self):
         return {'request': self.request}

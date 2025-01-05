@@ -194,18 +194,18 @@ SIMPLE_JWT = {
 }
 
 # Email Configuration
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = 'console.gmail.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'edoellybeyhdo@gmail.com'
-EMAIL_HOST_PASSWORD = 'eyad12345678'
-DEFAULT_FROM_EMAIL = 'edoellybeyhdo@gmail.com'
-# Djoser Settings
+EMAIL_HOST_USER = 'edoellybeyhdo55555@gmail.com'
+EMAIL_HOST_PASSWORD = 'knve modo ogmq rkmb '
+DEFAULT_FROM_EMAIL = 'edoellybeyhdo55555@gmail.com'
+
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
     'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'ACTIVATION_URL': 'auth/users/activation/{uid}/{token}/',
     'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
     'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
@@ -220,4 +220,6 @@ DJOSER = {
         'user': 'users.serializers.CustomUserSerializer',
         'current_user': 'users.serializers.UserProfileSerializer',
     },
+    'SITE_NAME': 'Critics-Spot',
+    'DOMAIN': 'localhost:8000',
 }
