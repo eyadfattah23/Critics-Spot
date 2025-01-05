@@ -163,8 +163,9 @@ class GenreList(ListCreateAPIView):
     serializer_class = GenreLightSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = GenreFilter
-    search_fields = ['name', 'description']
     permission_classes = [DjangoModelPermissions]
+    search_fields = ['name', 'description']
+    ordering_fields = ['name']
 
     def get_serializer_context(self):
         return {'request': self.request}

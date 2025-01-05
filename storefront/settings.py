@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+from dotenv import load_dotenv
 from datetime import timedelta
 import os
 import shutil
@@ -193,19 +194,23 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
 }
 
+
+# Load environment variables from .env file
+load_dotenv()
+
 # Email Configuration
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = 'console.gmail.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'edoellybeyhdo@gmail.com'
-EMAIL_HOST_PASSWORD = 'eyad12345678'
-DEFAULT_FROM_EMAIL = 'edoellybeyhdo@gmail.com'
-# Djoser Settings
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
+
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
     'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'ACTIVATION_URL': 'auth/users/activation/{uid}/{token}/',
     'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
     'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
@@ -220,4 +225,6 @@ DJOSER = {
         'user': 'users.serializers.CustomUserSerializer',
         'current_user': 'users.serializers.UserProfileSerializer',
     },
+    'SITE_NAME': 'Critics-Spot',
+    'DOMAIN': 'localhost:8000',
 }
