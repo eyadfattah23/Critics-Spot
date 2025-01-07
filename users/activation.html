@@ -1,0 +1,39 @@
+{% load i18n %}
+
+{% block subject %}
+{% blocktrans %}Account activation on Critics-Spot{% endblocktrans %}
+{% endblock subject %}
+
+{% block text_body %}
+{% blocktrans %}You're receiving this email because you need to finish the activation process on Critics-Spot.{%
+endblocktrans %}
+
+{% trans "Please activate your account by clicking the button below:" %}
+
+<form action="http://localhost:8000/auth/users/activation/" method="post">
+    <input type="hidden" name="uid" value="{{ uid }}" />
+    <input type="hidden" name="token" value="{{ token }}" />
+    <button type="submit">Activate Account</button>
+</form>
+
+{% trans "Thanks for using Critics-Spot!" %}
+
+{% trans "The Critics-Spot Team" %}
+{% endblock text_body %}
+
+{% block html_body %}
+<h1>{% trans "Account Activation" %}</h1>
+<p>{% trans "You're receiving this email because you need to finish the activation process on Critics-Spot." %}</p>
+
+<form action="http://localhost:8000/auth/users/activation/" method="post">
+    <input type="hidden" name="uid" value="{{ uid }}" />
+    <input type="hidden" name="token" value="{{ token }}" />
+    <button type="submit"
+        style="background-color: #4CAF50; color: white; padding: 14px 20px; border: none; cursor: pointer; border-radius: 4px;">
+        {% trans "Activate Account" %}
+    </button>
+</form>
+
+<p>{% trans "Thanks for using Critics-Spot!" %}</p>
+<p>{% trans "The Critics-Spot Team" %}</p>
+{% endblock html_body %}

@@ -74,32 +74,44 @@ class UserProfileSerializer(BaseUserSerializer):
         read_only_fields = ['email', 'image', 'id']
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
+class CustomUserCreateSerializer(BaseUserCreateSerializer):
     password = serializers.CharField(
-        write_only=True, style={'input_type': 'password'})
+        style={'input_type': 'password'}, write_only=True)
     password_confirm = serializers.CharField(
-        write_only=True, style={'input_type': 'password'})
+        style={'input_type': 'password'}, write_only=True)
+    image = serializers.ImageField(required=False)
+    first_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
 
-    class Meta:
+    class Meta(BaseUserCreateSerializer.Meta):
         model = CustomUser
-        fields = ['email', 'username', 'password',
-                  'password_confirm', 'first_name', 'last_name']
+        fields = tuple(list(BaseUserCreateSerializer.Meta.fields) + [
+            'password_confirm',
+            'first_name',
+            'last_name',
+            'image'
+        ])
+
+    def validate(self, attrs):
+        # Validate that passwords match
+        if attrs.get('password') != attrs.get('password_confirm'):
+            raise serializers.ValidationError(
+                {"password": "Password fields didn't match."})
+
+        # Remove password_confirm from attrs before parent validation
+        attrs.pop('password_confirm', None)
+
+        # Call parent validation
+        attrs = super().validate(attrs)
+        return attrs
 
     def create(self, validated_data):
-        validated_data.pop('password_confirm', None)
-        password = validated_data.pop('password', None)
+        # Create the user using the parent class method
+        user = super().create(validated_data)
 
-        # Explicitly set is_active to False
-        validated_data['is_active'] = False
-
-        user = CustomUser.objects.create_user(
-            **validated_data
-        )
-
-        if password:
-            user.set_password(password)
+        # Update additional fields
+        if 'image' in validated_data:
+            user.image = validated_data['image']
             user.save()
 
-        # Add print statement
-        print(f"Sending activation email to: {user.email}")
         return user

@@ -1,4 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet as DjoserUserViewSet
 from rest_framework.decorators import action
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.filters import SearchFilter
@@ -7,48 +8,30 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from .models import CustomUser
-from .serializers import (
-    CustomUserSerializer, UserCreateSerializer,
-    UserProfileSerializer, UserUpdateSerializer
-)
+from .serializers import *
 from .filters import CustomUserFilter
 from .permissions import *
 # Create your views here.
 
 
-class CustomUserList(ListCreateAPIView):
+class CustomUserViewSet(DjoserUserViewSet):
     queryset = CustomUser.objects.prefetch_related('shelves').all()
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    filterset_class = CustomUserFilter
-    search_fields = ['username', 'first_name', 'last_name', 'email']
-
-    def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return UserCreateSerializer
-        return CustomUserSerializer
-
-    def get_serializer_context(self):
-        return {'request': self.request}
-
-    def get(self, request, *args, **kwargs):
-        self.serializer_class = CustomUserSerializer
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        self.serializer_class = UserCreateSerializer
-        return self.create(request, *args, **kwargs)
-
-
-class CustomUserViewSet(ModelViewSet):
-    queryset = CustomUser.objects.prefetch_related('shelves').all()
-    serializer_class = CustomUserSerializer
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
     permission_classes = [IsOwnerOrAdmin]
 
     def get_permissions(self):
-        if self.action == 'register':
-            return []  # No permissions needed for registration
+        if self.action in ['create', 'activation', 'reset_password', 'reset_password_confirm']:
+            return []  # No permissions needed for registration and activation
         return [permission() for permission in self.permission_classes]
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return CustomUserCreateSerializer
+        elif self.action == "me":
+            return UserProfileSerializer
+        elif self.action in ["update", "partial_update"]:
+            return UserUpdateSerializer
+        return CustomUserSerializer
 
     @action(detail=False, methods=['GET', 'PUT', 'PATCH', 'DELETE'], permission_classes=[IsAuthenticated])
     def me(self, request):
@@ -61,7 +44,7 @@ class CustomUserViewSet(ModelViewSet):
             serializer = UserUpdateSerializer(
                 user,
                 data=request.data,
-                partial=True,
+                partial=(request.method == 'PUT'),
                 context={'request': request}
             )
             serializer.is_valid(raise_exception=True)
@@ -71,26 +54,8 @@ class CustomUserViewSet(ModelViewSet):
             user.delete()
             return Response(status=204)
 
-    @action(detail=False, methods=['POST'], permission_classes=[], throttle_classes=[AnonRateThrottle], serializer_class=UserCreateSerializer)
-    def register(self, request):
-        serializer = UserCreateSerializer(
-            data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        # Add this print statement
-        print(f"User created: {user.email}, Active: {user.is_active}")
-        return Response(serializer.data, status=201)
-
     def get_serializer_context(self):
         return {'request': self.request}
-
-    def get_serializer(self, *args, **kwargs):
-        """
-        Return the serializer instance that should be used for validating and
-        deserializing input, and for serializing output.
-        """
-        kwargs['context'] = self.get_serializer_context()
-        return super().get_serializer(*args, **kwargs)
 
 
 class CustomUserDetails(RetrieveUpdateDestroyAPIView):

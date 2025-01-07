@@ -1,0 +1,50 @@
+{% load i18n %}
+
+{% block subject %}
+{% blocktrans %}Account activation on Critics-Spot{% endblocktrans %}
+{% endblock subject %}
+
+{% block text_body %}
+{% blocktrans %}You're receiving this email because you need to finish activation process on Critics-Spot.{%
+endblocktrans %}
+
+{% trans "Please use the following UID and token to activate your account:" %}
+
+UID: {{ uid }}
+Token: {{ token }}
+
+{% trans "You can activate your account by making a POST request to:" %}
+{{ protocol }}://{{ domain }}/auth/users/activation/
+
+{% trans "With the following data:" %}
+{
+"uid": "{{ uid }}",
+"token": "{{ token }}"
+}
+
+{% trans "Thanks for using our site!" %}
+
+{% blocktrans %}The Critics-Spot team{% endblocktrans %}
+{% endblock text_body %}
+
+{% block html_body %}
+<h1>{% trans "Account Activation on Critics-Spot" %}</h1>
+<p>{% trans "You're receiving this email because you need to finish activation process on Critics-Spot." %}</p>
+
+<h2>{% trans "Activation Instructions" %}</h2>
+<p>{% trans "To activate your account, send a POST request to:" %}</p>
+<pre style="background-color: #f5f5f5; padding: 15px; border-radius: 5px;">
+{{ protocol }}://{{ domain }}/auth/users/activation/
+</pre>
+
+<p>{% trans "With the following data:" %}</p>
+<pre style="background-color: #f5f5f5; padding: 15px; border-radius: 5px;">
+{
+    "uid": "{{ uid }}",
+    "token": "{{ token }}"
+}
+</pre>
+
+<p>{% trans "Thanks for using our site!" %}</p>
+<p>{% trans "The Critics-Spot team" %}</p>
+{% endblock html_body %}
