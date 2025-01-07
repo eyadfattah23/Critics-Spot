@@ -4,7 +4,8 @@ from .models import Shelf
 
 class IsShelfOwnerOrAdmin(BasePermission):
     def has_object_permission(self, request, view, obj):
-        return ((request.user.is_authenticated) and (obj.user == request.user)) \
+        return ((request.user.is_authenticated) and (
+            obj.user.id == request.user.id)) \
             or (request.user.is_staff)
 
 
@@ -12,7 +13,7 @@ class IsShelvesOwnerOrAdmin(BasePermission):
 
     def has_permission(self, request, view):
         return ((request.user.is_authenticated) and (request.user.is_staff)) \
-            or (view.kwargs['user_id'] == request.user.id)
+            or (int(view.kwargs['user_id']) == int(request.user.id))
 
 
 class CanManageShelfBooks(BasePermission):
