@@ -1,11 +1,18 @@
+#!/usr/bin/python3
+"""
+Tests for the users app.
+"""
 import pytest
 from rest_framework.test import APIClient
 from django.urls import reverse
-from django.contrib.auth.models import Permission
 from users.models import CustomUser
+
 
 @pytest.mark.django_db
 def test_create_user():
+    """
+    Test creating a user.
+    """
     client = APIClient()
     url = reverse('user-list')
     data = {
@@ -17,8 +24,12 @@ def test_create_user():
     assert response.status_code == 201
     assert CustomUser.objects.filter(username='testuser').exists()
 
+
 @pytest.mark.django_db
 def test_retrieve_user():
+    """
+    Test retrieving a user.
+    """
     user = CustomUser.objects.create_user(
         username='testuser',
         email='testuser@example.com',
@@ -31,8 +42,12 @@ def test_retrieve_user():
     assert response.status_code == 200
     assert response.data['username'] == 'testuser'
 
+
 @pytest.mark.django_db
 def test_update_user():
+    """
+    Test updating a user.
+    """
     user = CustomUser.objects.create_user(
         username='testuser',
         email='testuser@example.com',
@@ -48,8 +63,12 @@ def test_update_user():
     assert response.status_code == 200
     assert response.data['first_name'] == 'UpdatedName'
 
+
 @pytest.mark.django_db
 def test_delete_user():
+    """
+    Test deleting a user.
+    """
     user = CustomUser.objects.create_user(
         username='testuser',
         email='testuser@example.com',
