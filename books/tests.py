@@ -1,3 +1,7 @@
+#!/usr/bin/python3
+"""
+    Test creating a new book.
+"""
 import pytest
 from rest_framework.test import APIClient
 from django.urls import reverse
