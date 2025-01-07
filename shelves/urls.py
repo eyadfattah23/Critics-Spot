@@ -1,5 +1,9 @@
+#!/usr/bin/python3
+"""
+URL patterns for the shelves app.
+"""
 from django.urls import path
-from .views import *
+from .views import ShelfList, UserShelfList, ShelfDetails, ShelfBookView
 
 urlpatterns = [
     path('shelves/', ShelfList.as_view(), name='shelves-list'),

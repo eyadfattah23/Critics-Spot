@@ -1,10 +1,16 @@
+#!/usr/bin/python3
+"""
+Serializers for the shelves app.
+"""
 from rest_framework import serializers
-from users.models import CustomUser
 from .models import Shelf, ShelfBook
 from books.serializers import BookLightSerializer
 
 
 class ShelfBookSerializer(serializers.ModelSerializer):
+    """
+    Serializer for ShelfBook model.
+    """
     book = BookLightSerializer()
     reading_progress = serializers.FloatField(read_only=True)
 
@@ -15,6 +21,9 @@ class ShelfBookSerializer(serializers.ModelSerializer):
 
 
 class ShelfSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Shelf model.
+    """
     books = ShelfBookSerializer(
         source='shelfbook_set',
         many=True,
@@ -32,6 +41,9 @@ class ShelfSerializer(serializers.ModelSerializer):
 
 
 class ShelfCreateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating a Shelf.
+    """
     class Meta:
         model = Shelf
         user = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -40,32 +52,19 @@ class ShelfCreateSerializer(serializers.ModelSerializer):
 
 
 class ShelfDeserializer(serializers.ModelSerializer):
+    """
+    Deserializer for Shelf model.
+    """
     class Meta:
         model = Shelf
         fields = ['name', 'user', 'image']
 
 
 class ShelfBookDeserializer(serializers.ModelSerializer):
+    """
+    Deserializer for ShelfBook model.
+    """
     class Meta:
         model = ShelfBook
         fields = ['shelf', 'book', 'current_page', 'date_finished']
         extra_kwargs = {'shelf': {'read_only': True}}
-
-
-'''
-
-POST api/communities/<community_id>/join/
-
-{
-    "user": 1
-}
-
-community.members.add(user_id=1)
-
-POST api/communities/<community_id>/leave
-{
-    "user": 1
-}
-community.members.delete(user_id=1)
-
-'''

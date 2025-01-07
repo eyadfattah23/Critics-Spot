@@ -1,3 +1,7 @@
+#!/usr/bin/python3
+"""
+Tests for the shelves app.
+"""
 import pytest
 from rest_framework.test import APIClient
 from django.urls import reverse
@@ -9,6 +13,9 @@ from books.models import Book, Author
 
 @pytest.mark.django_db
 def test_create_shelf():
+    """
+    Test creating a shelf.
+    """
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -37,6 +44,9 @@ def test_create_shelf():
 
 @pytest.mark.django_db
 def test_retrieve_shelf():
+    """
+    Test retrieving a shelf.
+    """
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -53,8 +63,12 @@ def test_retrieve_shelf():
     assert response.status_code == 200
     assert response.data['name'] == 'Test Shelf'
 
+
 @pytest.mark.django_db
 def test_update_shelf():
+    """
+    Test updating a shelf.
+    """
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -74,8 +88,12 @@ def test_update_shelf():
     assert response.status_code == 200
     assert response.data['name'] == 'Updated Test Shelf'
 
+
 @pytest.mark.django_db
 def test_delete_shelf():
+    """
+    Test deleting a shelf.
+    """
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -92,8 +110,12 @@ def test_delete_shelf():
     assert response.status_code == 204
     assert not Shelf.objects.filter(name='Test Shelf').exists()
 
+
 @pytest.mark.django_db
 def test_add_book_to_shelf():
+    """
+    Test adding a book to a shelf.
+    """
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -121,8 +143,12 @@ def test_add_book_to_shelf():
     assert response.status_code == 201
     assert ShelfBook.objects.filter(shelf=shelf, book=book).exists()
 
+
 @pytest.mark.django_db
 def test_retrieve_books_from_shelf():
+    """
+    Test retrieving books from a shelf.
+    """
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -148,8 +174,12 @@ def test_retrieve_books_from_shelf():
     assert len(response.data['books']) == 1
     assert response.data['books'][0]['title'] == 'Test Book'
 
+
 @pytest.mark.django_db
 def test_update_book_in_shelf():
+    """
+    Test updating a book in a shelf.
+    """
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -177,8 +207,12 @@ def test_update_book_in_shelf():
     assert response.status_code == 200
     assert response.data['current_page'] == 100
 
+
 @pytest.mark.django_db
 def test_remove_book_from_shelf():
+    """
+    Test removing a book from a shelf.
+    """
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -203,8 +237,12 @@ def test_remove_book_from_shelf():
     assert response.status_code == 204
     assert not ShelfBook.objects.filter(shelf=shelf, book=book).exists()
 
+
 @pytest.mark.django_db
 def test_retrieve_all_shelves_for_user():
+    """
+    Test retrieving all shelves for a user.
+    """
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -212,7 +250,7 @@ def test_retrieve_all_shelves_for_user():
     )
     Shelf.objects.create(name='Test Shelf 1', user=user)
     Shelf.objects.create(name='Test Shelf 2', user=user)
-    
+
     client = APIClient()
     client.force_authenticate(user=user)
     url = reverse('user-shelves-list', args=[user.id])
@@ -225,6 +263,9 @@ def test_retrieve_all_shelves_for_user():
 
 @pytest.mark.django_db
 def test_unauthorized_user_cannot_access_or_modify_shelves():
+    """
+    Test that an unauthorized user cannot access or modify shelves.
+    """
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -254,8 +295,12 @@ def test_unauthorized_user_cannot_access_or_modify_shelves():
     response = client.delete(url)
     assert response.status_code == 403
 
+
 @pytest.mark.django_db
 def test_pagination_for_shelf_books():
+    """
+    Test pagination for books on a shelf.
+    """
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
