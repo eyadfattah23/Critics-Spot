@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """
 Django settings for storefront project.
 

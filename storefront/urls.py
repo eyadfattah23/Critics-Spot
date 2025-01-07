@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """
 URL configuration for storefront project.
 
