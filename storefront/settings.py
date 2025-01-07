@@ -210,7 +210,7 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
     'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': 'auth/users/activation/{uid}/{token}/',
+    'ACTIVATION_URL': 'auth/users/activation/',  # POST request with uid and token
     'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
     'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
@@ -227,4 +227,8 @@ DJOSER = {
     },
     'SITE_NAME': 'Critics-Spot',
     'DOMAIN': 'localhost:8000',
+    'EMAIL': {
+        'activation': 'core.email.ActivationEmail',
+        'confirmation': 'core.email.ConfirmationEmail',
+    },
 }

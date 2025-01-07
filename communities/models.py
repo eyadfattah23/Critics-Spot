@@ -35,6 +35,9 @@ class Like(models.Model):
             UniqueConstraint(fields=['post', 'user'],
                              name='unique_like_per_user_post')
         ]
+        indexes = [
+            models.Index(fields=['user', 'post']),
+        ]
 
     def __str__(self):
         return f"{self.user.username} liked {self.post} on {self.created_at}"
