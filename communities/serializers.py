@@ -1,23 +1,34 @@
-# serializers.py
+#!/usr/bin/python3
+"""
+Serializers for the communities app.
+"""
 from rest_framework import serializers
-from django.contrib.humanize.templatetags.humanize import naturaltime
 from users.models import CustomUser
 from .models import Community, Post, Comment, Like
 
 
 class CommunityUserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for user details in a community.
+    """
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'first_name', 'last_name', 'image']
 
 
 class CommunityCreateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating a new community.
+    """
     class Meta:
         model = Community
         fields = ['name', 'description', 'image']
 
 
 class CustomCommunitySerializer(serializers.ModelSerializer):
+    """
+    Serializer for retrieving detailed community information.
+    """
     owner = CommunityUserSerializer(read_only=True)
     members_count = serializers.SerializerMethodField()
     posts_count = serializers.SerializerMethodField()
@@ -44,6 +55,9 @@ class CustomCommunitySerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    """
+    Serializer for community posts.
+    """
     user = CommunityUserSerializer(read_only=True)
     likes_count = serializers.SerializerMethodField()
     comments_count = serializers.SerializerMethodField()
@@ -72,6 +86,9 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class PostDetailsSerializer(PostSerializer):
+    """
+    Serializer for detailed post information including comments.
+    """
     comments = serializers.SerializerMethodField()
 
     class Meta(PostSerializer.Meta):
@@ -83,6 +100,9 @@ class PostDetailsSerializer(PostSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """
+    Serializer for comments on posts.
+    """
     user = CommunityUserSerializer(read_only=True)
 
     class Meta:
@@ -92,12 +112,18 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CommunityPostCommentCreateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating a new comment on a post.
+    """
     class Meta:
         model = Comment
         fields = ['content']
 
 
 class LikeSerializer(serializers.ModelSerializer):
+    """
+    Serializer for likes on posts.
+    """
     user = CommunityUserSerializer(read_only=True)
 
     class Meta:
