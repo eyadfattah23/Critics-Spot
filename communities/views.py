@@ -1,3 +1,7 @@
+#!/usr/bin/python3
+"""
+Views for the communities app.
+"""
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from .models import Community, Post, Comment, Like
