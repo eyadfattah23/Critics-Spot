@@ -1,4 +1,4 @@
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.permissions import BasePermission
 from .models import Shelf
 
 
@@ -13,7 +13,7 @@ class IsShelvesOwnerOrAdmin(BasePermission):
 
     def has_permission(self, request, view):
         return ((request.user.is_authenticated) and (request.user.is_staff)) \
-            or (int(view.kwargs['user_id']) == int(request.user.id))
+            or (int(view.kwargs['user_id']) == request.user.id)
 
 
 class CanManageShelfBooks(BasePermission):

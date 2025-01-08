@@ -1,7 +1,7 @@
-# Goodreads Clone
+# Critics-Spot
 
 ## Overview
-Goodreads Clone is a web application that allows users to create and manage bookshelves, add books to their shelves, and interact with other users. The app provides functionalities for user registration, authentication, and managing user profiles. Users can also add comments and likes to posts within communities.
+Critics-Spot is a web application that allows users to create and manage bookshelves, add books to their shelves, and interact with other users. The app provides functionalities for user registration, authentication, and managing user profiles. Users can also add comments and likes to posts within communities.
 
 ## Features
 - **User Registration and Authentication**: Users can register, log in, and obtain authentication tokens.
@@ -13,8 +13,8 @@ Goodreads Clone is a web application that allows users to create and manage book
 ## Installation
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/goodreads-clone.git
-   cd goodreads-clone
+   git clone https://github.com/yourusername/critics-spot.git
+   cd critics-spot
    ```
 
 2. **Set up a virtual environment**:
@@ -51,7 +51,7 @@ Goodreads Clone is a web application that allows users to create and manage book
 The project follows a standard Django architecture with the following structure:
 
 ```
-goodreads-clone/
+critics-spot/
 ├── books/
 │   ├── migrations/
 │   ├── __init__.py
@@ -95,7 +95,7 @@ goodreads-clone/
 │   ├── tests.py
 │   ├── urls.py
 │   └── views.py
-├── goodreads_clone/
+├── critics_spot/
 │   ├── __init__.py
 │   ├── asgi.py
 │   ├── settings.py
@@ -104,6 +104,7 @@ goodreads-clone/
 ├── manage.py
 └── requirements.txt
 ```
+
 ## API Endpoints
 - `/api/users/`: User registration and management
 - `/api/token/`: Obtain JWT tokens
@@ -111,7 +112,6 @@ goodreads-clone/
 - `/api/books/`: Book management
 - `/api/communities/`: Community and post management
 
-For detailed API documentation, refer to the API docs at `/api/docs/` when the server is running.
 
 ## Testing
 Run the test suite using:
@@ -135,6 +135,22 @@ pytest for testing the api routes.
    git push origin feature/AmazingFeature
    ```
 5. **Open a Pull Request**
+
+## Challenges and Solutions
+
+### Issue with Applying Email Verification and Password Reset Features
+**Challenge**: During the implementation of email verification and password reset, integrating with an email-sending service proved tricky. Setting up the email backend and ensuring emails were properly delivered to users' inboxes (not spam) required adjustments to configurations.
+
+**Solution**: We used Django's and djoser’s built-in email utilities. Configurations for email templates and backend were fine-tuned. Testing with multiple email accounts helped ensure consistent delivery.
+
+### Dependencies and Environment Conflicts
+**Challenge**: The backend developers were using different operating systems—one on Linux and the other on Windows with WSL. This caused compatibility issues with dependencies (e.g., some Python packages behaving differently across platforms).
+
+**Solution**: We created two separate virtual environments for each OS, ensuring all required dependencies were correctly installed and configured. This avoided cross-platform conflicts without resorting to Docker.
+
+**Challenge**: Having a hard time making hyperlinks for nested routes for the api in some apps due to bugs in django rest-framework.
+
+**Solution**: Avoiding nested routes as much as possible and using other field options like dictionaries and strings.
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
