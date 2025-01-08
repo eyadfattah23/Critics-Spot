@@ -30,6 +30,7 @@ Critics-Spot is a web application that allows users to create and manage bookshe
 
 4. **Set up the database**:
    ```bash
+   python manage.py makemigrations
    python manage.py migrate
    ```
 
@@ -45,7 +46,7 @@ Critics-Spot is a web application that allows users to create and manage bookshe
    ```
 
 2. **Access the application**:
-   Open your web browser and navigate to [http://localhost:8000](http://localhost:8000)
+   Open your web browser and navigate to [http://localhost:8000/api/](http://localhost:8000/api/)
 
 ## Project Architecture
 The project follows a standard Django architecture with the following structure:
@@ -107,7 +108,7 @@ critics-spot/
 
 ## API Endpoints
 - `/api/users/`: User registration and management
-- `/api/token/`: Obtain JWT tokens
+- `/auth/jwt/`: Obtain JWT tokens
 - `/api/bookshelves/`: Bookshelf management
 - `/api/books/`: Book management
 - `/api/communities/`: Community and post management
@@ -116,8 +117,8 @@ critics-spot/
 ## Testing
 Run the test suite using:
 ```bash
-python manage.py test for testing the models.
-pytest for testing the api routes.
+python manage.py test # for testing the models.
+pytest # for testing the api routes.
 ```
 
 ## Contributing

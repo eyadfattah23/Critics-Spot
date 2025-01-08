@@ -20,7 +20,7 @@ from django.urls import path, include, re_path
 from django.conf.urls.static import static
 import debug_toolbar
 from . import settings
-
+from users.views import activate_user, reset_password_confirm
 admin.site.site_header = 'Critics-Spot Admin'
 admin.site.index_title = 'Admin'
 urlpatterns = [
@@ -29,6 +29,10 @@ urlpatterns = [
     path('api/', include('books.urls')),
     path('api/', include('shelves.urls')),
     path('api/', include('communities.urls')),
+    path('auth/users/activation/<str:uid>/<str:token>/',
+         activate_user, name='activate-user'),
+    path('auth/users/reset_password_confirm/<str:uid>/<str:token>/',
+         reset_password_confirm, name='password-reset-confirm'),
     re_path(r'^auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.jwt')),
     path('__debug__/', include(debug_toolbar.urls)),
