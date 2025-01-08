@@ -30,7 +30,8 @@ DEFAULT_USER_IMAGE = os.path.join(
 DEFAULT_MEDIA_IMAGE = os.path.join(MEDIA_ROOT, 'default_user_image.png')
 
 # Copy default image to media directory if it doesn't exist
-if not os.path.exists(DEFAULT_MEDIA_IMAGE) and os.path.exists(DEFAULT_USER_IMAGE):
+if not os.path.exists(DEFAULT_MEDIA_IMAGE) and os.path.exists(
+        DEFAULT_USER_IMAGE):
     os.makedirs(os.path.dirname(DEFAULT_MEDIA_IMAGE), exist_ok=True)
     shutil.copy2(DEFAULT_USER_IMAGE, DEFAULT_MEDIA_IMAGE)
 
@@ -187,8 +188,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-    ]
-}
+    ]}
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),

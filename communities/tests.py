@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""tests for the communities app."""
+"""Tests for the communities app."""
 import pytest
 from rest_framework.test import APIClient
 from django.urls import reverse
@@ -9,9 +9,7 @@ from users.models import CustomUser
 
 @pytest.mark.django_db
 def test_create_community():
-    """
-    Test creating a community.
-    """
+    """Test creating a community."""
     client = APIClient()
     user = CustomUser.objects.create_user(
         username='communityowner',
@@ -31,9 +29,7 @@ def test_create_community():
 
 @pytest.mark.django_db
 def test_retrieve_community():
-    """
-    Test retrieving a community.
-    """
+    """Test retrieving a community."""
     user = CustomUser.objects.create_user(
         username='communityowner',
         email='owner@example.com',
@@ -54,9 +50,7 @@ def test_retrieve_community():
 
 @pytest.mark.django_db
 def test_update_community():
-    """
-    Test updating a community.
-    """
+    """Test updating a community."""
     user = CustomUser.objects.create_user(
         username='communityowner',
         email='owner@example.com',
@@ -80,9 +74,7 @@ def test_update_community():
 
 @pytest.mark.django_db
 def test_delete_community():
-    """
-    Test deleting a community.
-    """
+    """Test deleting a community."""
     user = CustomUser.objects.create_user(
         username='communityowner',
         email='owner@example.com',
@@ -103,9 +95,7 @@ def test_delete_community():
 
 @pytest.mark.django_db
 def test_create_post():
-    """
-    Test creating a post in a community.
-    """
+    """Test creating a post in a community."""
     user = CustomUser.objects.create_user(
         username='postowner',
         email='owner@example.com',
@@ -129,9 +119,7 @@ def test_create_post():
 
 @pytest.mark.django_db
 def test_retrieve_post():
-    """
-    Test retrieving a post in a community.
-    """
+    """Test retrieving a post in a community."""
     user = CustomUser.objects.create_user(
         username='postowner',
         email='owner@example.com',
@@ -157,9 +145,7 @@ def test_retrieve_post():
 
 @pytest.mark.django_db
 def test_update_post():
-    """
-    Test updating a post in a community.
-    """
+    """Test updating a post in a community."""
     user = CustomUser.objects.create_user(
         username='postowner',
         email='owner@example.com',
@@ -188,9 +174,7 @@ def test_update_post():
 
 @pytest.mark.django_db
 def test_delete_post():
-    """
-    Test deleting a post in a community.
-    """
+    """Test deleting a post in a community."""
     user = CustomUser.objects.create_user(
         username='postowner',
         email='owner@example.com',
@@ -216,9 +200,7 @@ def test_delete_post():
 
 @pytest.mark.django_db
 def test_create_comment():
-    """
-    Test creating a comment on a post in a community.
-    """
+    """Test creating a comment on a post in a community."""
     user = CustomUser.objects.create_user(
         username='commentowner',
         email='owner@example.com',
@@ -247,9 +229,7 @@ def test_create_comment():
 
 @pytest.mark.django_db
 def test_retrieve_comment():
-    """
-    Test retrieving a comment on a post in a community.
-    """
+    """Test retrieving a comment on a post in a community."""
     user = CustomUser.objects.create_user(
         username='commentowner',
         email='owner@example.com',
@@ -272,7 +252,12 @@ def test_retrieve_comment():
     )
     client = APIClient()
     client.force_authenticate(user=user)
-    url = reverse('post-comments-detail', args=[community.id, post.id, comment.id])
+    url = reverse(
+        'post-comments-detail',
+        args=[
+            community.id,
+            post.id,
+            comment.id])
     response = client.get(url)
     assert response.status_code == 200
     assert response.data['content'] == 'This is a test comment'
@@ -280,9 +265,7 @@ def test_retrieve_comment():
 
 @pytest.mark.django_db
 def test_update_comment():
-    """
-    Test updating a comment on a post in a community.
-    """
+    """Test updating a comment on a post in a community."""
     user = CustomUser.objects.create_user(
         username='commentowner',
         email='owner@example.com',
@@ -305,7 +288,12 @@ def test_update_comment():
     )
     client = APIClient()
     client.force_authenticate(user=user)
-    url = reverse('post-comments-detail', args=[community.id, post.id, comment.id])
+    url = reverse(
+        'post-comments-detail',
+        args=[
+            community.id,
+            post.id,
+            comment.id])
     data = {
         'content': 'Updated test comment'
     }
@@ -316,9 +304,7 @@ def test_update_comment():
 
 @pytest.mark.django_db
 def test_delete_comment():
-    """
-    Test deleting a comment on a post in a community.
-    """
+    """Test deleting a comment on a post in a community."""
     user = CustomUser.objects.create_user(
         username='commentowner',
         email='owner@example.com',
@@ -341,17 +327,21 @@ def test_delete_comment():
     )
     client = APIClient()
     client.force_authenticate(user=user)
-    url = reverse('post-comments-detail', args=[community.id, post.id, comment.id])
+    url = reverse(
+        'post-comments-detail',
+        args=[
+            community.id,
+            post.id,
+            comment.id])
     response = client.delete(url)
     assert response.status_code == 204
-    assert not Comment.objects.filter(content='This is a test comment').exists()
+    assert not Comment.objects.filter(
+        content='This is a test comment').exists()
 
 
 @pytest.mark.django_db
 def test_like_post():
-    """
-    Test liking a post in a community.
-    """
+    """Test liking a post in a community."""
     user = CustomUser.objects.create_user(
         username='likeowner',
         email='owner@example.com',
@@ -373,3 +363,16 @@ def test_like_post():
     response = client.post(url)
     assert response.status_code == 201
     assert Like.objects.filter(post=post, user=user).exists()
+
+
+class CommunityTests(TestCase):
+    """Tests for the Community model."""
+
+    def test_community_creation(self):
+        """Test the creation of a community."""
+        community = Community.objects.create(
+            name="Test Community",
+            description="This is a test community."
+        )
+        self.assertEqual(community.name, "Test Community")
+        self.assertEqual(community.description, "This is a test community.")

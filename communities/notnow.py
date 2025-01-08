@@ -1,3 +1,4 @@
+"""Tests for the communities app models."""
 from django.test import TestCase
 from .models import Post, Like, Comment, Group, GroupMember
 from django.contrib.auth import get_user_model
@@ -6,9 +7,10 @@ User = get_user_model()
 
 
 class PostModelTest(TestCase):
-    """ Test Post model. """
+    """Tests for the Post model."""
+
     def test_post_creation(self):
-        """ Test creating a new post. """
+        """Test the creation of a post."""
         post = Post.objects.create(
             content='Test content'
         )
@@ -16,9 +18,10 @@ class PostModelTest(TestCase):
 
 
 class LikeModelTest(TestCase):
-    """ Test Like model. """
+    """Tests for the Like model."""
+
     def test_like_creation(self):
-        """ Test creating a new like. """
+        """Test the creation of a like."""
         user = User.objects.create_user(
             username="sampleuser",
             password="samplepassword"
@@ -35,9 +38,10 @@ class LikeModelTest(TestCase):
 
 
 class CommentModelTest(TestCase):
-    """ Test Comment model. """
+    """Tests for the Comment model."""
+
     def test_comment_creation(self):
-        """ Test creating a new comment. """
+        """Test the creation of a comment."""
         user = User.objects.create_user(
             username="sampleuser",
             password="samplepassword"
@@ -56,8 +60,10 @@ class CommentModelTest(TestCase):
 
 
 class GroupModelTest(TestCase):
-    """ Class for testing group models. """
+    """Tests for the Community model."""
+
     def test_group_creation(self):
+        """Test the creation of a community."""
         group = Group.objects.create(
             name="Sample Group",
             description="This is a sample group."
@@ -67,8 +73,10 @@ class GroupModelTest(TestCase):
 
 
 class GroupMemberModelTest(TestCase):
-    """ Class for testing group member models. """
+    """Tests for the Community members."""
+
     def test_group_member_creation(self):
+        """Test the addition of a member to a community."""
         user = User.objects.create_user(
             username="sampleuser",
             password="samplepassword"

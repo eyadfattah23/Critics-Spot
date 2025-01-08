@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-    Test creating a new book.
-"""
+"""Test creating a new book."""
 import pytest
 from rest_framework.test import APIClient
 from django.urls import reverse
@@ -12,16 +10,19 @@ from users.models import CustomUser
 
 @pytest.mark.django_db
 def test_create_book():
-    """
-    Test creating a new book.
-    """
+    """Test creating a new book."""
     user = CustomUser.objects.create_user(
         username='bookowner',
         email='owner@example.com',
         password='password123'
     )
     # Assign necessary permissions to the user
-    permissions = Permission.objects.filter(codename__in=['add_book', 'view_book', 'change_book', 'delete_book'])
+    permissions = Permission.objects.filter(
+        codename__in=[
+            'add_book',
+            'view_book',
+            'change_book',
+            'delete_book'])
     user.user_permissions.add(*permissions)
 
     author = Author.objects.create(name='Test Author', birth_date='1980-01-01')
@@ -44,16 +45,19 @@ def test_create_book():
 
 @pytest.mark.django_db
 def test_retrieve_book():
-    """
-    Test retrieving a book.
-    """
+    """Test retrieving a book."""
     user = CustomUser.objects.create_user(
         username='bookowner',
         email='owner@example.com',
         password='password123'
     )
     # Assign necessary permissions to the user
-    permissions = Permission.objects.filter(codename__in=['add_book', 'view_book', 'change_book', 'delete_book'])
+    permissions = Permission.objects.filter(
+        codename__in=[
+            'add_book',
+            'view_book',
+            'change_book',
+            'delete_book'])
     user.user_permissions.add(*permissions)
 
     author = Author.objects.create(name='Test Author', birth_date='1980-01-01')
@@ -76,16 +80,19 @@ def test_retrieve_book():
 
 @pytest.mark.django_db
 def test_update_book():
-    """
-    Test updating a book.
-    """
+    """Test updating a book."""
     user = CustomUser.objects.create_user(
         username='bookowner',
         email='owner@example.com',
         password='password123'
     )
     # Assign necessary permissions to the user
-    permissions = Permission.objects.filter(codename__in=['add_book', 'view_book', 'change_book', 'delete_book'])
+    permissions = Permission.objects.filter(
+        codename__in=[
+            'add_book',
+            'view_book',
+            'change_book',
+            'delete_book'])
     user.user_permissions.add(*permissions)
 
     author = Author.objects.create(name='Test Author', birth_date='1980-01-01')
@@ -111,16 +118,19 @@ def test_update_book():
 
 @pytest.mark.django_db
 def test_delete_book():
-    """
-    Test deleting a book.
-    """
+    """Test deleting a book."""
     user = CustomUser.objects.create_user(
         username='bookowner',
         email='owner@example.com',
         password='password123'
     )
     # Assign necessary permissions to the user
-    permissions = Permission.objects.filter(codename__in=['add_book', 'view_book', 'change_book', 'delete_book'])
+    permissions = Permission.objects.filter(
+        codename__in=[
+            'add_book',
+            'view_book',
+            'change_book',
+            'delete_book'])
     user.user_permissions.add(*permissions)
 
     author = Author.objects.create(name='Test Author', birth_date='1980-01-01')
@@ -143,16 +153,19 @@ def test_delete_book():
 
 @pytest.mark.django_db
 def test_create_author():
-    """
-    Test creating a new author.
-    """
+    """Test creating a new author."""
     user = CustomUser.objects.create_user(
         username='authorowner',
         email='owner@example.com',
         password='password123'
     )
     # Assign necessary permissions to the user
-    permissions = Permission.objects.filter(codename__in=['add_author', 'view_author', 'change_author', 'delete_author'])
+    permissions = Permission.objects.filter(
+        codename__in=[
+            'add_author',
+            'view_author',
+            'change_author',
+            'delete_author'])
     user.user_permissions.add(*permissions)
 
     client = APIClient()
@@ -169,16 +182,19 @@ def test_create_author():
 
 @pytest.mark.django_db
 def test_retrieve_author():
-    """
-    Test retrieving an author.
-    """
+    """Test retrieving an author."""
     user = CustomUser.objects.create_user(
         username='authorowner',
         email='owner@example.com',
         password='password123'
     )
     # Assign necessary permissions to the user
-    permissions = Permission.objects.filter(codename__in=['add_author', 'view_author', 'change_author', 'delete_author'])
+    permissions = Permission.objects.filter(
+        codename__in=[
+            'add_author',
+            'view_author',
+            'change_author',
+            'delete_author'])
     user.user_permissions.add(*permissions)
 
     author = Author.objects.create(name='Test Author', birth_date='1980-01-01')
@@ -193,16 +209,19 @@ def test_retrieve_author():
 
 @pytest.mark.django_db
 def test_update_author():
-    """
-    Test updating an author.
-    """
+    """Test updating an author."""
     user = CustomUser.objects.create_user(
         username='authorowner',
         email='owner@example.com',
         password='password123'
     )
     # Assign necessary permissions to the user
-    permissions = Permission.objects.filter(codename__in=['add_author', 'view_author', 'change_author', 'delete_author'])
+    permissions = Permission.objects.filter(
+        codename__in=[
+            'add_author',
+            'view_author',
+            'change_author',
+            'delete_author'])
     user.user_permissions.add(*permissions)
 
     author = Author.objects.create(name='Test Author', birth_date='1980-01-01')
@@ -220,16 +239,19 @@ def test_update_author():
 
 @pytest.mark.django_db
 def test_delete_author():
-    """
-    Test deleting an author.
-    """
+    """Test deleting an author."""
     user = CustomUser.objects.create_user(
         username='authorowner',
         email='owner@example.com',
         password='password123'
     )
     # Assign necessary permissions to the user
-    permissions = Permission.objects.filter(codename__in=['add_author', 'view_author', 'change_author', 'delete_author'])
+    permissions = Permission.objects.filter(
+        codename__in=[
+            'add_author',
+            'view_author',
+            'change_author',
+            'delete_author'])
     user.user_permissions.add(*permissions)
 
     author = Author.objects.create(name='Test Author', birth_date='1980-01-01')
@@ -244,16 +266,19 @@ def test_delete_author():
 
 @pytest.mark.django_db
 def test_create_genre():
-    """
-    Test creating a new genre.
-    """
+    """Test creating a new genre."""
     user = CustomUser.objects.create_user(
         username='genreowner',
         email='owner@example.com',
         password='password123'
     )
     # Assign necessary permissions to the user
-    permissions = Permission.objects.filter(codename__in=['add_genre', 'view_genre', 'change_genre', 'delete_genre'])
+    permissions = Permission.objects.filter(
+        codename__in=[
+            'add_genre',
+            'view_genre',
+            'change_genre',
+            'delete_genre'])
     user.user_permissions.add(*permissions)
 
     client = APIClient()
@@ -269,16 +294,19 @@ def test_create_genre():
 
 @pytest.mark.django_db
 def test_retrieve_genre():
-    """
-    Test retrieving a genre.
-    """
+    """Test retrieving a genre."""
     user = CustomUser.objects.create_user(
         username='genreowner',
         email='owner@example.com',
         password='password123'
     )
     # Assign necessary permissions to the user
-    permissions = Permission.objects.filter(codename__in=['add_genre', 'view_genre', 'change_genre', 'delete_genre'])
+    permissions = Permission.objects.filter(
+        codename__in=[
+            'add_genre',
+            'view_genre',
+            'change_genre',
+            'delete_genre'])
     user.user_permissions.add(*permissions)
 
     genre = Genre.objects.create(name='Test Genre')
@@ -293,16 +321,19 @@ def test_retrieve_genre():
 
 @pytest.mark.django_db
 def test_update_genre():
-    """
-    Test updating a genre.
-    """
+    """Test updating a genre."""
     user = CustomUser.objects.create_user(
         username='genreowner',
         email='owner@example.com',
         password='password123'
     )
     # Assign necessary permissions to the user
-    permissions = Permission.objects.filter(codename__in=['add_genre', 'view_genre', 'change_genre', 'delete_genre'])
+    permissions = Permission.objects.filter(
+        codename__in=[
+            'add_genre',
+            'view_genre',
+            'change_genre',
+            'delete_genre'])
     user.user_permissions.add(*permissions)
 
     genre = Genre.objects.create(name='Test Genre')
@@ -320,16 +351,19 @@ def test_update_genre():
 
 @pytest.mark.django_db
 def test_delete_genre():
-    """
-    Test deleting a genre.
-    """
+    """Test deleting a genre."""
     user = CustomUser.objects.create_user(
         username='genreowner',
         email='owner@example.com',
         password='password123'
     )
     # Assign necessary permissions to the user
-    permissions = Permission.objects.filter(codename__in=['add_genre', 'view_genre', 'change_genre', 'delete_genre'])
+    permissions = Permission.objects.filter(
+        codename__in=[
+            'add_genre',
+            'view_genre',
+            'change_genre',
+            'delete_genre'])
     user.user_permissions.add(*permissions)
 
     genre = Genre.objects.create(name='Test Genre')

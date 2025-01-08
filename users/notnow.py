@@ -8,7 +8,7 @@ User = get_user_model()
 
 class UserModelTest(TestCase):
     """Tests for the User model."""
-    
+
     def test_user_creation(self):
         """Test creating a user."""
         user = User.objects.create_user(

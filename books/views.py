@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-Views for the books app.
-"""
+"""Views for the books app."""
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView
 )
@@ -21,9 +19,9 @@ from .filters import BookFilter, AuthorFilter, GenreFilter, BookReviewFilter
 
 # Books
 
+
 class BookList(ListCreateAPIView):
-    """
-    API view to retrieve list of books or create a new book.
+    """API view to retrieve list of books or create a new book.
 
     get:
     Return a list of all the existing books.
@@ -57,8 +55,7 @@ class BookList(ListCreateAPIView):
 
 
 class BookDetails(RetrieveUpdateDestroyAPIView):
-    """
-    API view to retrieve, update or delete a book instance.
+    """API view to retrieve, update or delete a book instance.
 
     get:
     Return the details of a specific book.
@@ -88,8 +85,7 @@ class BookDetails(RetrieveUpdateDestroyAPIView):
 # Authors
 
 class AuthorList(ListCreateAPIView):
-    """
-    API view to retrieve list of authors or create a new author.
+    """API view to retrieve list of authors or create a new author.
 
     get:
     Return a list of all the existing authors.
@@ -124,8 +120,7 @@ class AuthorList(ListCreateAPIView):
 
 
 class AuthorDetails(RetrieveUpdateDestroyAPIView):
-    """
-    API view to retrieve, update or delete an author instance.
+    """API view to retrieve, update or delete an author instance.
 
     get:
     Return the details of a specific author.
@@ -150,8 +145,7 @@ class AuthorDetails(RetrieveUpdateDestroyAPIView):
 # Genres
 
 class GenreList(ListCreateAPIView):
-    """
-    API view to retrieve list of genres or create a new genre.
+    """API view to retrieve list of genres or create a new genre.
 
     get:
     Return a list of all the existing genres.
@@ -185,8 +179,7 @@ class GenreList(ListCreateAPIView):
 
 
 class GenreDetails(RetrieveUpdateDestroyAPIView):
-    """
-    API view to retrieve, update or delete a genre instance.
+    """API view to retrieve, update or delete a genre instance.
 
     get:
     Return the details of a specific genre.
@@ -211,8 +204,8 @@ class GenreDetails(RetrieveUpdateDestroyAPIView):
 # Book Reviews
 
 class BookReviewsList(ListCreateAPIView):
-    """
-    API view to retrieve list of book reviews or create a new review for a specific book.
+    """API view to retrieve list of book reviews or create a new review for a
+    specific book.
 
     get:
     Return a list of all the existing reviews for a specific book.
@@ -241,8 +234,7 @@ class BookReviewsList(ListCreateAPIView):
 
 
 class BookReviewDetails(RetrieveUpdateDestroyAPIView):
-    """
-    API view to retrieve, update or delete a book review instance.
+    """API view to retrieve, update or delete a book review instance.
 
     get:
     Return the details of a specific book review.

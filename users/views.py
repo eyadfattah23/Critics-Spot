@@ -21,7 +21,7 @@ from .permissions import IsOwnerOrAdmin
 
 class CustomUserViewSet(DjoserUserViewSet):
     """Viewset for viewing and editing user instances."""
-    
+
     queryset = CustomUser.objects.prefetch_related('shelves').all()
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
     permission_classes = [IsOwnerOrAdmin]

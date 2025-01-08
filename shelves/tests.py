@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-Tests for the shelves app.
-"""
+"""Tests for the shelves app."""
 import pytest
 from rest_framework.test import APIClient
 from django.urls import reverse
@@ -13,16 +11,19 @@ from books.models import Book, Author
 
 @pytest.mark.django_db
 def test_create_shelf():
-    """
-    Test creating a shelf.
-    """
+    """Test creating a shelf."""
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
         password='password123'
     )
     # Assign necessary permissions to the user
-    permissions = Permission.objects.filter(codename__in=['add_shelf', 'view_shelf', 'change_shelf', 'delete_shelf'])
+    permissions = Permission.objects.filter(
+        codename__in=[
+            'add_shelf',
+            'view_shelf',
+            'change_shelf',
+            'delete_shelf'])
     user.user_permissions.add(*permissions)
 
     client = APIClient()
@@ -44,9 +45,7 @@ def test_create_shelf():
 
 @pytest.mark.django_db
 def test_retrieve_shelf():
-    """
-    Test retrieving a shelf.
-    """
+    """Test retrieving a shelf."""
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -66,9 +65,7 @@ def test_retrieve_shelf():
 
 @pytest.mark.django_db
 def test_update_shelf():
-    """
-    Test updating a shelf.
-    """
+    """Test updating a shelf."""
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -91,9 +88,7 @@ def test_update_shelf():
 
 @pytest.mark.django_db
 def test_delete_shelf():
-    """
-    Test deleting a shelf.
-    """
+    """Test deleting a shelf."""
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -113,9 +108,7 @@ def test_delete_shelf():
 
 @pytest.mark.django_db
 def test_add_book_to_shelf():
-    """
-    Test adding a book to a shelf.
-    """
+    """Test adding a book to a shelf."""
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -146,9 +139,7 @@ def test_add_book_to_shelf():
 
 @pytest.mark.django_db
 def test_retrieve_books_from_shelf():
-    """
-    Test retrieving books from a shelf.
-    """
+    """Test retrieving books from a shelf."""
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -177,9 +168,7 @@ def test_retrieve_books_from_shelf():
 
 @pytest.mark.django_db
 def test_update_book_in_shelf():
-    """
-    Test updating a book in a shelf.
-    """
+    """Test updating a book in a shelf."""
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -196,7 +185,8 @@ def test_update_book_in_shelf():
         name='Test Shelf',
         user=user
     )
-    shelf_book = ShelfBook.objects.create(shelf=shelf, book=book, current_page=50)
+    shelf_book = ShelfBook.objects.create(
+        shelf=shelf, book=book, current_page=50)
     client = APIClient()
     client.force_authenticate(user=user)
     url = reverse('book-to-shelf', args=[shelf.id, book.id])
@@ -210,9 +200,7 @@ def test_update_book_in_shelf():
 
 @pytest.mark.django_db
 def test_remove_book_from_shelf():
-    """
-    Test removing a book from a shelf.
-    """
+    """Test removing a book from a shelf."""
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -229,7 +217,8 @@ def test_remove_book_from_shelf():
         name='Test Shelf',
         user=user
     )
-    shelf_book = ShelfBook.objects.create(shelf=shelf, book=book, current_page=50)
+    shelf_book = ShelfBook.objects.create(
+        shelf=shelf, book=book, current_page=50)
     client = APIClient()
     client.force_authenticate(user=user)
     url = reverse('book-to-shelf', args=[shelf.id, book.id])
@@ -240,9 +229,7 @@ def test_remove_book_from_shelf():
 
 @pytest.mark.django_db
 def test_retrieve_all_shelves_for_user():
-    """
-    Test retrieving all shelves for a user.
-    """
+    """Test retrieving all shelves for a user."""
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -263,9 +250,7 @@ def test_retrieve_all_shelves_for_user():
 
 @pytest.mark.django_db
 def test_unauthorized_user_cannot_access_or_modify_shelves():
-    """
-    Test that an unauthorized user cannot access or modify shelves.
-    """
+    """Test that an unauthorized user cannot access or modify shelves."""
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -298,9 +283,7 @@ def test_unauthorized_user_cannot_access_or_modify_shelves():
 
 @pytest.mark.django_db
 def test_pagination_for_shelf_books():
-    """
-    Test pagination for books on a shelf.
-    """
+    """Test pagination for books on a shelf."""
     user = CustomUser.objects.create_user(
         username='shelfowner',
         email='owner@example.com',
@@ -310,7 +293,11 @@ def test_pagination_for_shelf_books():
     shelf = Shelf.objects.create(name='Test Shelf', user=user)
 
     for i in range(15):
-        book = Book.objects.create(title=f'Test Book {i}', author=author, publication_date='2023-01-01', pages=100)
+        book = Book.objects.create(
+            title=f'Test Book {i}',
+            author=author,
+            publication_date='2023-01-01',
+            pages=100)
         ShelfBook.objects.create(shelf=shelf, book=book, current_page=50)
 
     client = APIClient()

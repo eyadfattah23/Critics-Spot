@@ -12,7 +12,11 @@ import re
 
 def validate_isbn(value):
     """Validate ISBN-13 format."""
-    if not re.match(r'^(?=(?:\D*\d){13}(?:(?:\D*\d){0})?$)[\d-]+$', value.replace("-", "")):
+    if not re.match(
+        r'^(?=(?:\D*\d){13}(?:(?:\D*\d){0})?$)[\d-]+$',
+        value.replace(
+            "-",
+            "")):
         raise ValidationError('Invalid ISBN format. Must be ISBN-13 format.')
 
 
@@ -128,7 +132,8 @@ class Book(models.Model):
         Returns:
             str: string representation of the book
         """
-        return "{}|{}, by: {}|{}".format(self.title, self.pk, self.author, self.author.id)
+        return "{}|{}, by: {}|{}".format(
+            self.title, self.pk, self.author, self.author.id)
 
 
 class BookReview(models.Model):
@@ -151,4 +156,8 @@ class BookReview(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.user.username} reviewed {self.book.title} at {self.created_at} | id: {self.id}"
+        return f"{
+            self.user.username} reviewed {
+            self.book.title} at {
+            self.created_at} | id: {
+                self.id}"

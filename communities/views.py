@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-Views for the communities app.
-"""
+"""Views for the communities app."""
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from .models import Community, Post, Comment, Like
@@ -22,9 +20,8 @@ from .serializers import (
 
 
 class CommunityViewSet(viewsets.ModelViewSet):
-    """
-    A viewset for viewing and editing community instances.
-    """
+    """A viewset for viewing and editing community instances."""
+
     queryset = Community.objects.all()
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend,
@@ -34,23 +31,19 @@ class CommunityViewSet(viewsets.ModelViewSet):
     ordering = ['-date_added']
 
     def get_serializer_class(self):
-        """
-        Return the serializer class to be used for the request.
-        """
+        """Return the serializer class to be used for the request."""
         if self.action in ['create', 'update', 'partial_update']:
             return CommunityCreateSerializer
         return CustomCommunitySerializer
 
     def perform_create(self, serializer):
-        """
-        Save the new community instance and add the creator as a member.
-        """
+        """Save the new community instance and add the creator as a member."""
         community = serializer.save(owner=self.request.user)
         community.members.add(self.request.user)
 
     def destroy(self, request, *args, **kwargs):
-        """
-        Delete a community instance.
+        """Delete a community instance.
+
         Only the owner or an admin can delete the community.
         """
         community = self.get_object()
@@ -60,8 +53,8 @@ class CommunityViewSet(viewsets.ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
-        """
-        Update a community instance.
+        """Update a community instance.
+
         Only the owner can update the community.
         """
         community = self.get_object()
@@ -72,9 +65,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'])
     def members(self, request, pk=None):
-        """
-        Retrieve the members of the community.
-        """
+        """Retrieve the members of the community."""
         community = self.get_object()
         members = community.members.all()
         serializer = CommunityUserSerializer(members, many=True)
@@ -82,9 +73,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def join(self, request, pk=None):
-        """
-        Join the community.
-        """
+        """Join the community."""
         community = self.get_object()
         if request.user in community.members.all():
             return Response(
@@ -96,9 +85,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def leave(self, request, pk=None):
-        """
-        Leave the community.
-        """
+        """Leave the community."""
         community = self.get_object()
         if request.user == community.owner:
             return Response(
@@ -115,8 +102,8 @@ class CommunityViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['delete'])
     def delete(self, request, pk=None):
-        """
-        Delete the community.
+        """Delete the community.
+
         Only the owner can delete the community.
         """
         community = self.get_object()
@@ -126,9 +113,8 @@ class CommunityViewSet(viewsets.ModelViewSet):
 
 
 class CommunityPostViewSet(viewsets.ModelViewSet):
-    """
-    A viewset for viewing and editing community post instances.
-    """
+    """A viewset for viewing and editing community post instances."""
+
     permission_classes = [IsAuthenticated,
                           IsOwnerOrAdminOrReadOnly,
                           IsCommunityMemberForInteraction
@@ -139,9 +125,7 @@ class CommunityPostViewSet(viewsets.ModelViewSet):
     ordering = ['-created_at']
 
     def get_queryset(self):
-        """
-        Return the queryset of posts for the community.
-        """
+        """Return the queryset of posts for the community."""
         return Post.objects.filter(
             community_id=self.kwargs['community_pk']
         ).select_related(
@@ -154,16 +138,14 @@ class CommunityPostViewSet(viewsets.ModelViewSet):
         )
 
     def get_serializer_class(self):
-        """
-        Return the serializer class to be used for the request.
-        """
+        """Return the serializer class to be used for the request."""
         if self.action == 'retrieve':
             return PostDetailsSerializer
         return PostSerializer
 
     def perform_create(self, serializer):
-        """
-        Save the new post instance.
+        """Save the new post instance.
+
         Only community members can create posts.
         """
         community = get_object_or_404(
@@ -174,9 +156,7 @@ class CommunityPostViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def like(self, request, community_pk=None, pk=None):
-        """
-        Like a post.
-        """
+        """Like a post."""
         post = self.get_object()
         if Like.objects.filter(user=request.user, post=post).exists():
             return Response(
@@ -188,18 +168,15 @@ class CommunityPostViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def unlike(self, request, community_pk=None, pk=None):
-        """
-        Unlike a post.
-        """
+        """Unlike a post."""
         post = self.get_object()
         Like.objects.filter(user=request.user, post=post).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class PostCommentViewSet(viewsets.ModelViewSet):
-    """
-    A viewset for viewing and editing post comment instances.
-    """
+    """A viewset for viewing and editing post comment instances."""
+
     permission_classes = [IsAuthenticated,
                           IsOwnerOrAdminOrReadOnly,
                           IsCommunityMemberForInteraction
@@ -209,25 +186,21 @@ class PostCommentViewSet(viewsets.ModelViewSet):
     ordering = ['-created_at']
 
     def get_queryset(self):
-        """
-        Return the queryset of comments for the post.
-        """
+        """Return the queryset of comments for the post."""
         return Comment.objects.filter(
             post_id=self.kwargs['post_pk'],
             post__community_id=self.kwargs['community_pk']
         ).select_related('user', 'post')
 
     def get_serializer_class(self):
-        """
-        Return the serializer class to be used for the request.
-        """
+        """Return the serializer class to be used for the request."""
         if self.action in ['create', 'update', 'partial_update']:
             return CommunityPostCommentCreateSerializer
         return CommentSerializer
 
     def perform_create(self, serializer):
-        """
-        Save the new comment instance.
+        """Save the new comment instance.
+
         Only community members can comment.
         """
         post = get_object_or_404(

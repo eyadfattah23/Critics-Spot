@@ -22,9 +22,7 @@ class BookFilter(FilterSet):
         }
 
     def filter_by_multiple_genres(self, queryset, name, value):
-        """
-        Filter books by multiple genres (comma-separated).
-        """
+        """Filter books by multiple genres (comma-separated)."""
         genre_list = value.split(",")  # Split the input into a list
         return queryset.filter(genres__name__in=genre_list).distinct()
 

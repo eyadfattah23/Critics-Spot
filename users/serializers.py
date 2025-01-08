@@ -10,7 +10,7 @@ from .models import CustomUser
 
 class ShelfUserProfileSerializer(serializers.ModelSerializer):
     """Serializer for Shelf model in user profile."""
-    
+
     url = serializers.HyperlinkedIdentityField(
         view_name='shelf-detail',
         lookup_field='pk'
@@ -25,7 +25,7 @@ class ShelfUserProfileSerializer(serializers.ModelSerializer):
 
 class CustomUserSerializer(serializers.ModelSerializer):
     """Serializer for CustomUser model."""
-    
+
     shelves = ShelfUserProfileSerializer(many=True, read_only=True)
     date_joined = serializers.DateTimeField(read_only=True)
     password = serializers.CharField(write_only=True)
@@ -41,7 +41,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for user details."""
-    
+
     url = serializers.HyperlinkedIdentityField(
         view_name='user-details',
         lookup_field='pk'
@@ -57,7 +57,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserUpdateSerializer(BaseUserSerializer):
     """Serializer for updating user details."""
-    
+
     class Meta:
         """Meta options for UserUpdateSerializer."""
 
@@ -69,7 +69,7 @@ class UserUpdateSerializer(BaseUserSerializer):
 
 class UserProfileSerializer(BaseUserSerializer):
     """Serializer for user profile."""
-    
+
     shelves = ShelfUserProfileSerializer(many=True, read_only=True)
 
     class Meta(BaseUserSerializer.Meta):
@@ -85,7 +85,7 @@ class UserProfileSerializer(BaseUserSerializer):
 
 class CustomUserCreateSerializer(BaseUserCreateSerializer):
     """Serializer for creating a new user."""
-    
+
     password = serializers.CharField(
         style={'input_type': 'password'}, write_only=True)
     password_confirm = serializers.CharField(

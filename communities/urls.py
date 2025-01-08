@@ -1,7 +1,6 @@
 #!/usr/bin/python3
-"""
-URL patterns for the communities app.
-"""
+"""URL patterns for the communities app."""
+
 from rest_framework_nested import routers
 from . import views
 

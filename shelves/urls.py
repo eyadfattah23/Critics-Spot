@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-URL patterns for the shelves app.
-"""
+"""URL patterns for the shelves app."""
 from django.urls import path
 from .views import ShelfList, UserShelfList, ShelfDetails, ShelfBookView
 
