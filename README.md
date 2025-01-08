@@ -1,5 +1,5 @@
 # Critics-Spot
-
+![alt text](image.png)
 ## Overview
 Critics-Spot is a web application that allows users to create and manage bookshelves, add books to their shelves, and interact with other users. The app provides functionalities for user registration, authentication, and managing user profiles. Users can also add comments and likes to posts within communities.
 
@@ -109,7 +109,7 @@ critics-spot/
 ## API Endpoints
 - `/api/users/`: User registration and management
 - `/auth/jwt/`: Obtain JWT tokens
-- `/api/bookshelves/`: Bookshelf management
+- `/api/users/user_id/shelves/`: Bookshelf management
 - `/api/books/`: Book management
 - `/api/communities/`: Community and post management
 
