@@ -13,6 +13,8 @@ class BookFilter(FilterSet):
     genres = filters.CharFilter(method='filter_by_multiple_genres')
 
     class Meta:
+        """Meta class for BookFilter."""
+
         model = Book
         fields = {
             'title': ['icontains', 'exact'],
@@ -31,6 +33,8 @@ class AuthorFilter(FilterSet):
     """Author filter."""
 
     class Meta:
+        """Meta class for AuthorFilter."""
+
         model = Author
         fields = {
             'name': ['icontains'],
@@ -43,6 +47,8 @@ class GenreFilter(FilterSet):
     """Genre filter."""
 
     class Meta:
+        """Meta class for GenreFilter."""
+
         model = Genre
         fields = {
             'name': ['icontains'],
@@ -53,6 +59,8 @@ class BookReviewFilter(FilterSet):
     """Book review filter."""
 
     class Meta:
+        """Meta class for BookReviewFilter."""
+
         model = BookReview
         fields = {
             'user__username': ['icontains'],

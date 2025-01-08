@@ -1,4 +1,6 @@
-# books/tests.py
+#!/usr/bin/python3
+"""Tests for the books app."""
+
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -9,7 +11,10 @@ from .models import Author, Genre, Book
 
 
 class AuthorModelTest(TestCase):
+    """Test case for the Author model."""
+
     def setUp(self):
+        """Set up the test case."""
         self.author = Author.objects.create(
             name="J.R.R. Tolkien",
             birth_date=date(1892, 1, 3),
@@ -74,7 +79,10 @@ class AuthorModelTest(TestCase):
 
 
 class GenreModelTest(TestCase):
+    """Test case for the Genre model."""
+
     def setUp(self):
+        """Set up the test case."""
         self.genre = Genre.objects.create(
             name="Fantasy",
             description="Fantasy literature"
@@ -88,7 +96,7 @@ class GenreModelTest(TestCase):
 
     def test_unique_name_constraint(self):
         """Test that genre names must be unique."""
-        with self.assertRaises(Exception):  # Could be IntegrityError or ValidationError
+        with self.assertRaises(Exception):
             Genre.objects.create(
                 name="Fantasy",
                 description="Another fantasy description"
@@ -96,7 +104,10 @@ class GenreModelTest(TestCase):
 
 
 class BookModelTest(TestCase):
+    """Test case for the Book model."""
+
     def setUp(self):
+        """Set up the test case."""
         self.author = Author.objects.create(
             name="J.K. Rowling",
             birth_date=date(1965, 7, 31)
@@ -128,12 +139,13 @@ class BookModelTest(TestCase):
         self.assertIn(self.genre, self.book.genres.all())
         self.assertEqual(
             str(self.book),
-            f"{self.book.title}|{self.book.pk}, by: {self.author}|{self.author.id}"
+            f"{self.book.title}|{self.book.pk}, by: "
+            f"{self.author}|{self.author.id}"
         )
 
     def test_unique_title_constraint(self):
         """Test that book titles must be unique."""
-        with self.assertRaises(Exception):  # Could be IntegrityError or ValidationError
+        with self.assertRaises(Exception):
             Book.objects.create(
                 title="Harry Potter and the Philosopher's Stone",
                 pages=223,

@@ -29,6 +29,7 @@ class BookList(ListCreateAPIView):
     post:
     Create a new book instance.
     """
+
     queryset = Book.objects.select_related('author').prefetch_related(
         'author__books').prefetch_related('genres').all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -38,18 +39,22 @@ class BookList(ListCreateAPIView):
     permission_classes = [DjangoModelPermissions]
 
     def get_serializer_class(self):
+        """Get the serializer class for the view."""
         if self.request.method == 'POST':
             return BookDeserializer
         return BookLightSerializer
 
     def get_serializer_context(self):
+        """Get the serializer context for the view."""
         return {'request': self.request}
 
     def get(self, request, *args, **kwargs):
+        """Handle GET requests."""
         self.serializer_class = BookLightSerializer
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        """Handle POST requests."""
         self.serializer_class = BookDeserializer
         return self.create(request, *args, **kwargs)
 
@@ -69,16 +74,19 @@ class BookDetails(RetrieveUpdateDestroyAPIView):
     delete:
     Delete a specific book instance.
     """
+
     queryset = Book.objects.select_related(
         'author').prefetch_related('genres__books').all()
     permission_classes = [DjangoModelPermissions]
 
     def get_serializer_class(self):
+        """Get the serializer class for the view."""
         if self.request.method in ['PUT', 'PATCH']:
             return BookDeserializer
         return BookSerializer
 
     def get_serializer_context(self):
+        """Get the serializer context for the view."""
         return {'request': self.request}
 
 
@@ -93,6 +101,7 @@ class AuthorList(ListCreateAPIView):
     post:
     Create a new author instance.
     """
+
     queryset = Author.objects.prefetch_related('books').all()
     serializer_class = AuthorLightSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -103,18 +112,22 @@ class AuthorList(ListCreateAPIView):
     ordering_fields = ['name', 'birth_date', 'death_date']
 
     def get_serializer_context(self):
+        """Get the serializer context for the view."""
         return {'request': self.request}
 
     def get_serializer_class(self):
+        """Get the serializer class for the view."""
         if self.request.method == 'POST':
             return AuthorSerializer
         return AuthorLightSerializer
 
     def get(self, request, *args, **kwargs):
+        """Handle GET requests."""
         self.serializer_class = AuthorLightSerializer
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        """Handle POST requests."""
         self.serializer_class = AuthorSerializer
         return self.create(request, *args, **kwargs)
 
@@ -134,11 +147,13 @@ class AuthorDetails(RetrieveUpdateDestroyAPIView):
     delete:
     Delete a specific author instance.
     """
+
     queryset = Author.objects.prefetch_related('books').all()
     serializer_class = AuthorSerializer
     permission_classes = [DjangoModelPermissions]
 
     def get_serializer_context(self):
+        """Get the serializer context for the view."""
         return {'request': self.request}
 
 
@@ -153,6 +168,7 @@ class GenreList(ListCreateAPIView):
     post:
     Create a new genre instance.
     """
+
     queryset = Genre.objects.prefetch_related('books').all()
     serializer_class = GenreLightSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
@@ -162,18 +178,22 @@ class GenreList(ListCreateAPIView):
     ordering_fields = ['name']
 
     def get_serializer_context(self):
+        """Get the serializer context for the view."""
         return {'request': self.request}
 
     def get_serializer_class(self):
+        """Get the serializer class for the view."""
         if self.request.method == 'POST':
             return GenreSerializer
         return GenreLightSerializer
 
     def get(self, request, *args, **kwargs):
+        """Handle GET requests."""
         self.serializer_class = GenreLightSerializer
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        """Handle POST requests."""
         self.serializer_class = GenreSerializer
         return self.create(request, *args, **kwargs)
 
@@ -193,19 +213,21 @@ class GenreDetails(RetrieveUpdateDestroyAPIView):
     delete:
     Delete a specific genre instance.
     """
+
     queryset = Genre.objects.prefetch_related('books').all()
     serializer_class = GenreSerializer
     permission_classes = [DjangoModelPermissions]
 
     def get_serializer_context(self):
+        """Get the serializer context for the view."""
         return {'request': self.request}
 
 
 # Book Reviews
 
 class BookReviewsList(ListCreateAPIView):
-    """API view to retrieve list of book reviews or create a new review for a
-    specific book.
+    """
+    API view to retrieve list of book reviews.
 
     get:
     Return a list of all the existing reviews for a specific book.
@@ -213,6 +235,7 @@ class BookReviewsList(ListCreateAPIView):
     post:
     Create a new review for a specific book.
     """
+
     serializer_class = BookReviewSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = BookReviewFilter
@@ -220,14 +243,17 @@ class BookReviewsList(ListCreateAPIView):
     ordering_fields = ['created_at', 'rating']
 
     def get_queryset(self):
+        """Get the queryset for the view."""
         book_id = self.kwargs['pk']
         book = get_object_or_404(Book, pk=book_id)
         return BookReview.objects.filter(book=book)
 
     def get_serializer_context(self):
+        """Get the serializer context for the view."""
         return {'request': self.request}
 
     def perform_create(self, serializer):
+        """Perform the creation of a new review."""
         book_id = self.kwargs['pk']
         book = get_object_or_404(Book, pk=book_id)
         serializer.save(book=book, user=self.request.user)
@@ -248,13 +274,16 @@ class BookReviewDetails(RetrieveUpdateDestroyAPIView):
     delete:
     Delete a specific book review instance.
     """
+
     queryset = BookReview.objects.all()
     serializer_class = BookReviewSerializer
 
     def get_serializer_context(self):
+        """Get the serializer context for the view."""
         return {'request': self.request}
 
     def delete(self, request, *args, **kwargs):
+        """Handle DELETE requests."""
         review = self.get_object()
         if review.user != request.user:
             return Response(

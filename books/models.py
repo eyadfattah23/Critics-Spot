@@ -33,7 +33,8 @@ def validate_death_date(value):
 
 
 class Author(models.Model):
-    """Author model."""
+    """Model representing an author."""
+
     name = models.CharField(max_length=128)
     birth_date = models.DateField(validators=[validate_future_date])
     death_date = models.DateField(
@@ -48,53 +49,56 @@ class Author(models.Model):
     slug = models.SlugField(max_length=128, unique=True, blank=True, null=True)
 
     class Meta:
+        """Meta class for Author."""
+
         indexes = [
             models.Index(fields=['name']),
             models.Index(fields=['slug']),
         ]
 
     def save(self, *args, **kwargs):
+        """Save the author instance."""
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
     def clean(self):
+        """Clean the author instance."""
         super().clean()
         if self.death_date and self.death_date < self.birth_date:
             raise ValidationError('Death date must be after birth date.')
 
     def __str__(self):
+        """Return a string representation of the author."""
         return self.name
 
 
 class Genre(models.Model):
-    """Genre model."""
+    """Model representing a genre."""
 
     name = models.CharField(max_length=128, unique=True)
     description = models.TextField(blank=True, null=True)
     added_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        """Meta class for Genre."""
+
         indexes = [
             models.Index(fields=['name']),
         ]
 
     def __str__(self):
-        """Return the name of the genre.
-
-        Returns:
-            str: string representation of the genre
-        """
+        """Return a string representation of the genre."""
         return f"{self.name}"
 
 
 class Book(models.Model):
-    """Book model."""
+    """Model representing a book."""
 
     title = models.CharField(max_length=255, unique=True)
     buy_link = models.URLField(max_length=255, null=True, blank=True)
     description = models.TextField(blank=True)
-    pages = models.PositiveIntegerField()  # for limiting the current_page feature
+    pages = models.PositiveIntegerField()
     publication_date = models.DateField(validators=[validate_future_date])
     added_date = models.DateTimeField(auto_now_add=True)
     cover = models.ImageField(upload_to='covers/', default='default_book.png')
@@ -112,13 +116,9 @@ class Book(models.Model):
     )
     slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
-        super().save(*args, **kwargs)
-    # isbn = models.CharField(max_length=13)  # maybe make this a primary key
-
     class Meta:
+        """Meta class for Book."""
+
         indexes = [
             models.Index(fields=['title']),
             models.Index(fields=['author']),
@@ -126,12 +126,14 @@ class Book(models.Model):
         ]
         ordering = ["-added_date", 'title']
 
-    def __str__(self):
-        """Return the title of the book.
+    def save(self, *args, **kwargs):
+        """Save the book instance."""
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
-        Returns:
-            str: string representation of the book
-        """
+    def __str__(self):
+        """Return a string representation of the book."""
         return "{}|{}, by: {}|{}".format(
             self.title, self.pk, self.author, self.author.id)
 
@@ -149,13 +151,15 @@ class BookReview(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        # Prevent duplicate books in the same shelf
+        """Meta class for BookReview."""
+
         unique_together = ('user', 'book')
         indexes = [
             models.Index(fields=['user', 'book']),
         ]
 
     def __str__(self):
+        """Return a string representation of the book review."""
         return f"{
             self.user.username} reviewed {
             self.book.title} at {

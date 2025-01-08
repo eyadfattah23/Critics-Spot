@@ -8,17 +8,23 @@ from .models import *
 
 
 class BookBookReviewInline(admin.TabularInline):
+    """Inline admin class for book reviews."""
+
     model = BookReview
     autocomplete_fields = ['user']
 
 
 class AuthorBookInline(admin.TabularInline):
+    """Inline admin class for books by an author."""
+
     model = Book
     extra = 1
 
 
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
+    """Admin class for managing authors."""
+
     list_display = ['id', 'name', 'birth_date', 'death_date',
                     'number_of_books']
     search_fields = ['name']
@@ -28,7 +34,7 @@ class AuthorAdmin(admin.ModelAdmin):
     def number_of_books(self, author):
         """Count the number of books written by an author.
 
-        redirect to books only written by the author
+        Redirect to books only written by the author.
         """
         url = (reverse('admin:books_book_changelist')
                + '?'
@@ -41,12 +47,14 @@ class AuthorAdmin(admin.ModelAdmin):
 
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
+    """Admin class for managing genres."""
+
     list_display = ['id', 'name', 'number_of_books']
 
     def number_of_books(self, genre):
         """Count the number of books in a genre.
 
-        redirect to books only in the genre
+        Redirect to books only in the genre.
         """
         url = (reverse('admin:books_book_changelist')
                + '?'
@@ -59,6 +67,8 @@ class GenreAdmin(admin.ModelAdmin):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
+    """Admin class for managing books."""
+
     list_display = ['id', 'title', 'pages', 'author',
                     'avg_rating', 'number_of_reviews']
     search_fields = ['title', 'pages', 'author__name__istartswith']
@@ -72,7 +82,7 @@ class BookAdmin(admin.ModelAdmin):
     def number_of_reviews(self, book):
         """Count the number of reviews of a book.
 
-        redirect to reviews of the book
+        Redirect to reviews of the book.
         """
         url = (reverse('admin:books_bookreview_changelist')
                + '?'
@@ -87,6 +97,8 @@ class BookAdmin(admin.ModelAdmin):
 
 @admin.register(BookReview)
 class BookReviewAdmin(admin.ModelAdmin):
+    """Admin class for managing book reviews."""
+
     list_display = ['id', 'user', 'book', 'rating', 'created_at']
     list_filter = ['rating', 'created_at', 'book__title']
     search_fields = ['book__title', 'user__email', 'user__username']

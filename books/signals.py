@@ -9,8 +9,12 @@ from .models import BookReview
 
 @receiver([post_save, post_delete], sender=BookReview)
 def update_avg_rating(sender, instance, **kwargs):
-    """Signal to update avg_rating field on Book when a BookReview is created,
-    updated, or deleted."""
+    """
+    Update the average rating of a book.
+
+    This function updates the average rating
+    of a book whenever a review is added or updated.
+    """
     book = instance.book
     avg_rating = book.bookreview_set.aggregate(Avg('rating'))[
         'rating__avg'] or 0
