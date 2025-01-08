@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-Tests for the users app.
-"""
+"""Tests for the users app."""
 import pytest
 from rest_framework.test import APIClient
 from django.urls import reverse
@@ -10,9 +8,7 @@ from users.models import CustomUser
 
 @pytest.mark.django_db
 def test_create_user():
-    """
-    Test creating a user.
-    """
+    """Test creating a user."""
     client = APIClient()
     url = reverse('user-list')
     data = {
@@ -27,9 +23,7 @@ def test_create_user():
 
 @pytest.mark.django_db
 def test_retrieve_user():
-    """
-    Test retrieving a user.
-    """
+    """Test retrieving a user."""
     user = CustomUser.objects.create_user(
         username='testuser',
         email='testuser@example.com',
@@ -45,9 +39,7 @@ def test_retrieve_user():
 
 @pytest.mark.django_db
 def test_update_user():
-    """
-    Test updating a user.
-    """
+    """Test updating a user."""
     user = CustomUser.objects.create_user(
         username='testuser',
         email='testuser@example.com',
@@ -66,9 +58,7 @@ def test_update_user():
 
 @pytest.mark.django_db
 def test_delete_user():
-    """
-    Test deleting a user.
-    """
+    """Test deleting a user."""
     user = CustomUser.objects.create_user(
         username='testuser',
         email='testuser@example.com',

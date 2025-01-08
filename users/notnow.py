@@ -1,3 +1,5 @@
+"""Tests for the User model."""
+
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
@@ -5,8 +7,10 @@ User = get_user_model()
 
 
 class UserModelTest(TestCase):
-    """ Test User model. """
+    """Tests for the User model."""
+    
     def test_user_creation(self):
+        """Test creating a user."""
         user = User.objects.create_user(
             username="sampleuser",
             email="sampleuser@example.com",
@@ -17,6 +21,7 @@ class UserModelTest(TestCase):
         self.assertTrue(user.check_password("samplepassword"))
 
     def test_superuser_creation(self):
+        """Test creating a superuser."""
         admin_user = User.objects.create_superuser(
             username="adminuser",
             email="adminuser@example.com",

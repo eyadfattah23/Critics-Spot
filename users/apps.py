@@ -1,9 +1,14 @@
+#!/usr/bin/python3
+"""App configuration for the users app."""
+
 from django.apps import AppConfig
 
 
 class UsersConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
+    """Configuration for the users app."""
+
     name = 'users'
 
     def ready(self):
+        """Import signals when the app is ready."""
         import users.signals

@@ -1,7 +1,6 @@
 #!/usr/bin/python3
-"""
-Views for the users app.
-"""
+"""Views for the users app."""
+
 import requests
 from django.http import HttpResponseRedirect
 from djoser.views import UserViewSet as DjoserUserViewSet
@@ -21,17 +20,14 @@ from .permissions import IsOwnerOrAdmin
 
 
 class CustomUserViewSet(DjoserUserViewSet):
-    """
-    A viewset for viewing and editing user instances.
-    """
+    """Viewset for viewing and editing user instances."""
+    
     queryset = CustomUser.objects.prefetch_related('shelves').all()
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
     permission_classes = [IsOwnerOrAdmin]
 
     def get_permissions(self):
-        """
-        Returns the list of permissions that this view requires.
-        """
+        """Return the list of permissions that this view requires."""
         if self.action in [
             'create', 'activation',
             'reset_password', 'reset_password_confirm'
@@ -40,9 +36,7 @@ class CustomUserViewSet(DjoserUserViewSet):
         return [permission() for permission in self.permission_classes]
 
     def get_serializer_class(self):
-        """
-        Returns the serializer class to be used for the request.
-        """
+        """Return the serializer class to be used for the request."""
         if self.action == "create":
             return CustomUserCreateSerializer
         elif self.action == "me":
@@ -56,9 +50,7 @@ class CustomUserViewSet(DjoserUserViewSet):
         permission_classes=[IsAuthenticated]
     )
     def me(self, request):
-        """
-        Handles the 'me' action for the user.
-        """
+        """Handle the 'me' action for the user."""
         user = request.user
         if request.method == 'GET':
             serializer = UserProfileSerializer(
@@ -79,18 +71,14 @@ class CustomUserViewSet(DjoserUserViewSet):
             return Response(status=204)
 
     def get_serializer_context(self):
-        """
-        Returns the context for the serializer.
-        """
+        """Return the context for the serializer."""
         return {'request': self.request}
 
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def activate_user(request, uid, token):
-    """
-    Handle activation link from email.
-    """
+    """Handle activation link from email."""
     try:
         # Build the activation endpoint URL
         protocol = 'https' if request.is_secure() else 'http'
@@ -127,9 +115,7 @@ def activate_user(request, uid, token):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def reset_password_confirm(request, uid, token):
-    """
-    Handle password reset confirmation link from email.
-    """
+    """Handle password reset confirmation link from email."""
     try:
         # Build the reset password endpoint URL
         protocol = 'https' if request.is_secure() else 'http'
@@ -142,15 +128,17 @@ def reset_password_confirm(request, uid, token):
             json={
                 'uid': uid,
                 'token': token,
-                'new_password': 'your_new_password',  # This should come from your frontend
-                're_new_password': 'your_new_password'  # This should come from your frontend
+                'new_password': 'your_new_password',
+                're_new_password': 'your_new_password'
             },
             headers={'Content-Type': 'application/json'}
         )
 
         if response.status_code == 204:
             # Redirect to frontend password reset page
-            return HttpResponseRedirect(f'/reset-password/?uid={uid}&token={token}')
+            return HttpResponseRedirect(
+                f'/reset-password/?uid={uid}&token={token}'
+                )
         else:
             return Response({
                 "detail": "Password reset failed. Invalid token or UID."

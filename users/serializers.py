@@ -1,7 +1,6 @@
 #!/usr/bin/python3
-"""
-Serializers for the users app.
-"""
+"""Serializers for the users app."""
+
 from rest_framework import serializers
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
@@ -10,28 +9,30 @@ from .models import CustomUser
 
 
 class ShelfUserProfileSerializer(serializers.ModelSerializer):
-    """
-    Serializer for Shelf model in user profile.
-    """
+    """Serializer for Shelf model in user profile."""
+    
     url = serializers.HyperlinkedIdentityField(
         view_name='shelf-detail',
         lookup_field='pk'
     )
 
     class Meta:
+        """Meta options for ShelfUserProfileSerializer."""
+
         model = Shelf
         fields = ['id', 'name', 'url', 'image']
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    """
-    Serializer for CustomUser model.
-    """
+    """Serializer for CustomUser model."""
+    
     shelves = ShelfUserProfileSerializer(many=True, read_only=True)
     date_joined = serializers.DateTimeField(read_only=True)
     password = serializers.CharField(write_only=True)
 
     class Meta:
+        """Meta options for CustomUserSerializer."""
+
         model = CustomUser
         fields = ['id', 'username', 'email',
                   'first_name', 'last_name', 'date_joined', 'password',
@@ -39,25 +40,27 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """
-    Serializer for user details.
-    """
+    """Serializer for user details."""
+    
     url = serializers.HyperlinkedIdentityField(
         view_name='user-details',
         lookup_field='pk'
     )
 
     class Meta:
+        """Meta options for UserSerializer."""
+
         model = CustomUser
         fields = ['id', 'username', 'email', 'image', 'url']
         read_only_fields = ['email', 'image', 'id']
 
 
 class UserUpdateSerializer(BaseUserSerializer):
-    """
-    Serializer for updating user details.
-    """
+    """Serializer for updating user details."""
+    
     class Meta:
+        """Meta options for UserUpdateSerializer."""
+
         model = CustomUser
         fields = ['id', 'username', 'first_name',
                   'last_name', 'email', 'image', 'bio']
@@ -65,22 +68,24 @@ class UserUpdateSerializer(BaseUserSerializer):
 
 
 class UserProfileSerializer(BaseUserSerializer):
-    """
-    Serializer for user profile.
-    """
+    """Serializer for user profile."""
+    
     shelves = ShelfUserProfileSerializer(many=True, read_only=True)
 
     class Meta(BaseUserSerializer.Meta):
+        """Meta options for UserProfileSerializer."""
+
         model = CustomUser
         fields = ['id', 'username', 'email',
-                  'first_name', 'last_name', 'date_joined', 'image', 'shelves', 'is_staff']
+                  'first_name', 'last_name',
+                  'date_joined', 'image',
+                  'shelves', 'is_staff']
         read_only_fields = ['email', 'image', 'id']
 
 
 class CustomUserCreateSerializer(BaseUserCreateSerializer):
-    """
-    Serializer for creating a new user.
-    """
+    """Serializer for creating a new user."""
+    
     password = serializers.CharField(
         style={'input_type': 'password'}, write_only=True)
     password_confirm = serializers.CharField(
@@ -90,6 +95,8 @@ class CustomUserCreateSerializer(BaseUserCreateSerializer):
     last_name = serializers.CharField(required=False)
 
     class Meta(BaseUserCreateSerializer.Meta):
+        """Meta options for CustomUserCreateSerializer."""
+
         model = CustomUser
         fields = tuple(list(BaseUserCreateSerializer.Meta.fields) + [
             'password_confirm',
@@ -99,9 +106,7 @@ class CustomUserCreateSerializer(BaseUserCreateSerializer):
         ])
 
     def validate(self, attrs):
-        """
-        Validate that passwords match.
-        """
+        """Validate that passwords match."""
         if attrs.get('password') != attrs.get('password_confirm'):
             raise serializers.ValidationError(
                 {"password": "Password fields didn't match."})
@@ -114,9 +119,7 @@ class CustomUserCreateSerializer(BaseUserCreateSerializer):
         return attrs
 
     def create(self, validated_data):
-        """
-        Create the user using the parent class method.
-        """
+        """Create the user using the parent class method."""
         user = super().create(validated_data)
 
         # Update additional fields

@@ -11,6 +11,8 @@ class CustomUserFilter(FilterSet):
     """Custom user filter."""
 
     class Meta:
+        """Meta options for the CustomUserFilter class."""
+
         model = CustomUser
         fields = {
             'username': ['icontains'],

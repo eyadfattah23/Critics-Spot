@@ -1,16 +1,17 @@
 #!/usr/bin/python3
-"""admin User handler"""
+"""admin User handler."""
 
 from django.contrib import admin
 
 # Register your models here.
-from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import *
+from .models import CustomUser
 # Customizing the UserAdmin to include additional fields
 
 
 class CustomUserAdmin(UserAdmin):
+    """Custom user admin with additional fields."""
+
     model = CustomUser
     list_display = ['id', 'username', 'email',
                     'first_name', 'last_name', 'is_staff']
@@ -19,10 +20,15 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'password1', 'password2', 'image', 'first_name', 'last_name'),
+            'fields': (
+                'username', 'email', 'password1', 'password2',
+                'image', 'first_name', 'last_name'),
         }),
         ('Permissions', {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+            'fields': (
+                'is_active', 'is_staff',
+                'is_superuser', 'groups', 'user_permissions'
+            ),
         }),
     )
 
