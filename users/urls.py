@@ -15,5 +15,5 @@ urlpatterns = [
         'users/<pk>/favorites/',
         UserFavoritesList.as_view(),
         name='user-favorites'
-        ),
+    ),
 ]

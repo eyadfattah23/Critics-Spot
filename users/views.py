@@ -138,7 +138,7 @@ def reset_password_confirm(request, uid, token):
             # Redirect to frontend password reset page
             return HttpResponseRedirect(
                 f'/reset-password/?uid={uid}&token={token}'
-                )
+            )
         else:
             return Response({
                 "detail": "Password reset failed. Invalid token or UID."

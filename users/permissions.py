@@ -6,9 +6,7 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
 class IsAdminOrReadOnly(BasePermission):
-    """Custom permission to only allow admins to edit objects.
-    Read-only permissions are allowed for any request.
-    """
+    """Custom permission to only allow admins to edit objects."""
 
     def has_permission(self, request, view):
         """Check if the request has permission to proceed."""

@@ -26,8 +26,8 @@ class CommunityAdmin(admin.ModelAdmin):
         """Count the number of members in a community."""
         count = obj.members.count()
         url = (
-            reverse('admin:users_customuser_changelist') + "?" +
-            urlencode({'member_of_communities__id': str(obj.id)})
+            reverse('admin:users_customuser_changelist') + "?"
+            + urlencode({'member_of_communities__id': str(obj.id)})
         )
         return format_html('<a href="{}">{}</a>', url, count)
     number_of_members.short_description = 'Number of Members'
@@ -36,8 +36,8 @@ class CommunityAdmin(admin.ModelAdmin):
         """Count the number of posts in a community."""
         count = obj.posts.count()
         url = (
-            reverse('admin:communities_post_changelist') + "?" +
-            urlencode({'community__id': str(obj.id)})
+            reverse('admin:communities_post_changelist') + "?"
+            + urlencode({'community__id': str(obj.id)})
         )
         return format_html('<a href="{}">{}</a>', url, count)
     number_of_posts.short_description = 'Number of Posts'

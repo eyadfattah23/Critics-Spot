@@ -14,10 +14,7 @@ class IsOwnerOrAdminOrReadOnly(permissions.BasePermission):
 
 
 class IsCommunityOwnerOrAdminOrReadOnly(permissions.BasePermission):
-    """
-    Permission to allow only community owners or admins to edit,
-    others can only read.
-    """
+    """Permission to allow only community owners or admins to edit."""
 
     def has_object_permission(self, request, view, obj):
         """Check if the user has permission to access the object."""

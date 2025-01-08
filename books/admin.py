@@ -36,9 +36,9 @@ class AuthorAdmin(admin.ModelAdmin):
 
         Redirect to books only written by the author.
         """
-        url = (reverse('admin:books_book_changelist')
-               + '?'
-               + urlencode({'author__id': str(author.id)}))
+        url = (reverse('admin:books_book_changelist') +
+               '?' +
+               urlencode({'author__id': str(author.id)}))
         return format_html('<a href="{}">{}</a>', url, author.books.count())
 
         return author.book_set.count()
@@ -56,9 +56,9 @@ class GenreAdmin(admin.ModelAdmin):
 
         Redirect to books only in the genre.
         """
-        url = (reverse('admin:books_book_changelist')
-               + '?'
-               + urlencode({'genres__id': str(genre.id)}))
+        url = (reverse('admin:books_book_changelist') +
+               '?' +
+               urlencode({'genres__id': str(genre.id)}))
         return format_html('<a href="{}">{}</a>', url, genre.books.count())
 
         return genre.book_set.count()
@@ -84,9 +84,12 @@ class BookAdmin(admin.ModelAdmin):
 
         Redirect to reviews of the book.
         """
-        url = (reverse('admin:books_bookreview_changelist')
-               + '?'
-               + urlencode({'book__id': str(book.id)}))
+        url = (
+            reverse('admin:books_bookreview_changelist') +
+            '?' +
+            urlencode({'book__id': str(book.id)})
+        )
+
         return format_html(
             '<a href="{}">{}</a>',
             url,
