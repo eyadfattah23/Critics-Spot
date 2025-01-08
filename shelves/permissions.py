@@ -5,8 +5,11 @@ from .models import Shelf
 
 
 class IsShelfOwnerOrAdmin(BasePermission):
-    """Permission to check if the user is the owner of the shelf or an
-    admin."""
+    """Permission to check if the user is the owner of the shelf or an admin.
+
+    This permission allows access if the user is authenticated and is the
+    owner of the shelf or is a staff member.
+    """
 
     def has_object_permission(self, request, view, obj):
         """Check if the user has permission to access the object."""
@@ -15,12 +18,17 @@ class IsShelfOwnerOrAdmin(BasePermission):
 
 
 class IsShelvesOwnerOrAdmin(BasePermission):
-    """Permission to check if the user is the owner of the shelves or an
-    admin."""
+    """Permission to check if the user is the owner of the shelves or an admin.
+
+    This permission allows access if the user is authenticated and is the
+    owner of the shelves or is a staff member.
+    """
 
     def has_permission(self, request, view):
         """Check if the user has permission to access the view."""
-        return ((request.user.is_authenticated) and (request.user.is_staff)) or (
+        return (
+            (request.user.is_authenticated)
+            and (request.user.is_staff)) or (
             int(view.kwargs['user_id']) == request.user.id)
 
 

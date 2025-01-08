@@ -9,6 +9,7 @@ from .models import Shelf, ShelfBook
 
 class ShelfBookInline(admin.TabularInline):
     """Inline admin interface for ShelfBook model."""
+
     autocomplete_fields = ['book', 'shelf']
     model = ShelfBook
 
@@ -16,6 +17,7 @@ class ShelfBookInline(admin.TabularInline):
 @admin.register(Shelf)
 class ShelfAdmin(admin.ModelAdmin):
     """Admin interface for Shelf model."""
+
     list_display = ['id', 'name', 'user',
                     'number_of_books', 'is_default', 'image']
     list_select_related = ['user']
@@ -39,6 +41,7 @@ class ShelfAdmin(admin.ModelAdmin):
 @admin.register(ShelfBook)
 class ShelfBookAdmin(admin.ModelAdmin):
     """Admin interface for ShelfBook model."""
+
     autocomplete_fields = ['shelf', 'book']
     list_select_related = ['shelf', 'book']
     list_display = ['id', 'book', 'shelf', 'current_page']

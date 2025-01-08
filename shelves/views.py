@@ -3,7 +3,9 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+from rest_framework.generics import (
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+)
 from rest_framework.views import APIView
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -26,7 +28,8 @@ class ShelfList(ListCreateAPIView):
     """A view for listing and creating shelves."""
 
     queryset = Shelf.objects.select_related('user').prefetch_related(
-        'shelfbook_set__book').prefetch_related('shelfbook_set__book__author').all()
+        'shelfbook_set__book').prefetch_related(
+            'shelfbook_set__book__author').all()
     serializer_class = ShelfSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = ShelfFilter
@@ -156,7 +159,10 @@ class UserFavoritesList(ListAPIView):
     def get_queryset(self):
         """Return the queryset of favorite books for the user."""
         user_id = self.kwargs['pk']
-        if not (self.request.user.is_staff or self.request.user.id == int(user_id)):
+        if not (
+            self.request.user.is_staff or
+            self.request.user.id == int(user_id)
+        ):
             raise PermissionDenied("You can only view your own favorites")
         user = get_object_or_404(CustomUser, pk=user_id)
         favorites_shelf = get_object_or_404(Shelf, user=user, name='Favorites')

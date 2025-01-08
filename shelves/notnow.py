@@ -39,7 +39,7 @@ class GenreModelTest(TestCase):
         """Set up the test case."""
         self.genre = Genre.objects.create(
             name="Fiction",
-            description="Test description"  # Making sure we always provide a description
+            description="Test description"
         )
 
     def test_genre_creation(self):
@@ -83,7 +83,7 @@ class BookModelTest(TestCase):
         self.assertEqual(
             str(self.book),
             f"Test Book|{self.book.pk}, by: Test Author|{self.author.id}"
-            )
+        )
         self.assertEqual(self.book.pages, 200)
         self.assertEqual(self.book.avg_rating, Decimal("4.50"))
 
@@ -126,7 +126,8 @@ class ShelfModelTest(TestCase):
         """Test the creation of a shelf."""
         self.assertEqual(
             str(self.shelf),
-            f'shelf "Test Shelf":{self.shelf.pk} owned by "testuser":{self.user.pk}'
+            f'shelf "Test Shelf":{self.shelf.pk} owned by "testuser":'
+            f'{self.user.pk}'
         )
 
     def test_unique_name_per_user_constraint(self):

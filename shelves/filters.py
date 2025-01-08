@@ -8,6 +8,7 @@ from books.models import Book
 
 class ShelfFilter(django_filters.FilterSet):
     """Filter for the Shelf model."""
+
     name = django_filters.CharFilter(
         field_name='name', lookup_expr='icontains', label="Name contains"
     )
@@ -24,5 +25,6 @@ class ShelfFilter(django_filters.FilterSet):
 
     class Meta:
         """Meta options for ShelfFilter."""
+
         model = Shelf
         fields = ['name', 'is_default', 'book_title', 'book_id']

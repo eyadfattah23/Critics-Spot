@@ -35,6 +35,7 @@ class Shelf(models.Model):
 
     class Meta:
         """Meta options for Shelf model."""
+
         # User cannot have duplicate shelf names
         unique_together = ('name', 'user')
         indexes = [
@@ -70,6 +71,7 @@ class ShelfBook(models.Model):
 
     class Meta:
         """Meta options for ShelfBook model."""
+
         # Prevent duplicate books in the same shelf
         unique_together = ('shelf', 'book')
         indexes = [
