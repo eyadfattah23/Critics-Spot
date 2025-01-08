@@ -1,7 +1,7 @@
-# Goodreads Clone
+# Critics-Spot
 
 ## Overview
-Goodreads Clone is a web application that allows users to create and manage bookshelves, add books to their shelves, and interact with other users. The app provides functionalities for user registration, authentication, and managing user profiles. Users can also add comments and likes to posts within communities.
+Critics-Spot is a web application that allows users to create and manage bookshelves, add books to their shelves, and interact with other users. The app provides functionalities for user registration, authentication, and managing user profiles. Users can also add comments and likes to posts within communities.
 
 ## Features
 - **User Registration and Authentication**: Users can register, log in, and obtain authentication tokens.
@@ -13,8 +13,8 @@ Goodreads Clone is a web application that allows users to create and manage book
 ## Installation
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/goodreads-clone.git
-   cd goodreads-clone
+   git clone https://github.com/yourusername/critics-spot.git
+   cd critics-spot
    ```
 
 2. **Set up a virtual environment**:
@@ -30,6 +30,7 @@ Goodreads Clone is a web application that allows users to create and manage book
 
 4. **Set up the database**:
    ```bash
+   python manage.py makemigrations
    python manage.py migrate
    ```
 
@@ -45,13 +46,13 @@ Goodreads Clone is a web application that allows users to create and manage book
    ```
 
 2. **Access the application**:
-   Open your web browser and navigate to [http://localhost:8000](http://localhost:8000)
+   Open your web browser and navigate to [http://localhost:8000/api/](http://localhost:8000/api/)
 
 ## Project Architecture
 The project follows a standard Django architecture with the following structure:
 
 ```
-goodreads-clone/
+critics-spot/
 ├── books/
 │   ├── migrations/
 │   ├── __init__.py
@@ -106,7 +107,7 @@ goodreads-clone/
 ```
 ## API Endpoints
 - `/api/users/`: User registration and management
-- `/api/token/`: Obtain JWT tokens
+- `/auth/jwt/`: Obtain JWT tokens
 - `/api/bookshelves/`: Bookshelf management
 - `/api/books/`: Book management
 - `/api/communities/`: Community and post management
@@ -116,8 +117,8 @@ For detailed API documentation, refer to the API docs at `/api/docs/` when the s
 ## Testing
 Run the test suite using:
 ```bash
-python manage.py test for testing the models.
-pytest for testing the api routes.
+python manage.py test # for testing the models.
+pytest # for testing the api routes.
 ```
 
 ## Contributing
