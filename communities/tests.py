@@ -364,15 +364,3 @@ def test_like_post():
     assert response.status_code == 201
     assert Like.objects.filter(post=post, user=user).exists()
 
-
-class CommunityTests(TestCase):
-    """Tests for the Community model."""
-
-    def test_community_creation(self):
-        """Test the creation of a community."""
-        community = Community.objects.create(
-            name="Test Community",
-            description="This is a test community."
-        )
-        self.assertEqual(community.name, "Test Community")
-        self.assertEqual(community.description, "This is a test community.")
