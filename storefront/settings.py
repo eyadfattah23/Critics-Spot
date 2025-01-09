@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'django_filters',
     'debug_toolbar',
     'rest_framework',
+    'drf_yasg',
     'djoser',
     'books',
     'users',

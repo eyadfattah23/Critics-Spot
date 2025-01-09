@@ -363,4 +363,3 @@ def test_like_post():
     response = client.post(url)
     assert response.status_code == 201
     assert Like.objects.filter(post=post, user=user).exists()
-

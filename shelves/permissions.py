@@ -26,10 +26,12 @@ class IsShelvesOwnerOrAdmin(BasePermission):
 
     def has_permission(self, request, view):
         """Check if the user has permission to access the view."""
-        return (
-            (request.user.is_authenticated)
-            and (request.user.is_staff)) or (
-            int(view.kwargs['user_id']) == request.user.id)
+        if 'user_id' in view.kwargs:
+            return (
+                (request.user.is_authenticated)
+                and (request.user.is_staff)) or (
+                int(view.kwargs['user_id']) == request.user.id)
+        return False
 
 
 class CanManageShelfBooks(BasePermission):

@@ -21,8 +21,26 @@ from django.conf.urls.static import static
 import debug_toolbar
 from . import settings
 from users.views import activate_user, reset_password_confirm
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
 admin.site.site_header = 'Critics-Spot Admin'
 admin.site.index_title = 'Admin'
+
+# Swagger schema view
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Critics-Spot API",
+        default_version='v1',
+        description="API for Critics-Spot project",
+        contact=openapi.Contact(email="mohamdhamza123467890@gmail.com"),
+        license=openapi.License(name="MIT License"),
+    ),
+    public=False,
+    permission_classes=(permissions.AllowAny,),
+)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('users.urls')),
@@ -36,8 +54,10 @@ urlpatterns = [
     re_path(r'^auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.jwt')),
     path('__debug__/', include(debug_toolbar.urls)),
-
+    path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
+
 if settings.DEBUG:  # Serve media files in development
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)

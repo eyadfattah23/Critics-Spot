@@ -129,6 +129,7 @@ class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         """Meta class for AuthorSerializer."""
 
+        model = Author
         fields = ['id', 'name', 'birth_date',
                   'bio', 'death_date', 'books', 'photo']
 
