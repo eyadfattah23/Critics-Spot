@@ -106,12 +106,77 @@ critics-spot/
 └── requirements.txt
 ```
 
-## API Endpoints
-- `/api/users/`: User registration and management
-- `/auth/jwt/`: Obtain JWT tokens
-- `/api/users/user_id/shelves/`: Bookshelf management
-- `/api/books/`: Book management
-- `/api/communities/`: Community and post management
+
+### User Routes
+
+- **`/api/users/`**: User-related operations.
+  - **`POST /api/users/`**: Create a new user.
+  - **`GET /api/users/`**: List all users.
+  - **`GET /api/users/{id}/`**: Retrieve a specific user.
+  - **`PUT /api/users/{id}/`**: Update a specific user.
+  - **`DELETE /api/users/{id}/`**: Delete a specific user.
+
+- **`/auth/users/activation/{uid}/{token}/`**: Activate a user account.
+- **`/auth/users/reset_password_confirm/{uid}/{token}/`**: Confirm password reset.
+
+### Book Routes
+
+- **`/api/books/`**: Book-related operations.
+  - **`POST /api/books/`**: Create a new book.
+  - **`GET /api/books/`**: List all books.
+  - **`GET /api/books/{id}/`**: Retrieve a specific book.
+  - **`PUT /api/books/{id}/`**: Update a specific book.
+  - **`DELETE /api/books/{id}/`**: Delete a specific book.
+
+### Shelf Routes
+
+- **`/api/shelves/`**: Shelf-related operations.
+  - **`POST /api/shelves/`**: Create a new shelf.
+  - **`GET /api/shelves/`**: List all shelves.
+  - **`GET /api/shelves/{id}/`**: Retrieve a specific shelf.
+  - **`PUT /api/shelves/{id}/`**: Update a specific shelf.
+  - **`DELETE /api/shelves/{id}/`**: Delete a specific shelf.
+
+### Community Routes
+
+- **`/api/communities/`**: Community-related operations.
+  - **`POST /api/communities/`**: Create a new community.
+  - **`GET /api/communities/`**: List all communities.
+  - **`GET /api/communities/{id}/`**: Retrieve a specific community.
+  - **`PUT /api/communities/{id}/`**: Update a specific community.
+  - **`DELETE /api/communities/{id}/`**: Delete a specific community.
+
+- **`/api/communities/{community_id}/posts/`**: Community post-related operations.
+  - **`POST /api/communities/{community_id}/posts/`**: Create a new post in a community.
+  - **`GET /api/communities/{community_id}/posts/`**: List all posts in a community.
+  - **`GET /api/communities/{community_id}/posts/{id}/`**: Retrieve a specific post in a community.
+  - **`PUT /api/communities/{community_id}/posts/{id}/`**: Update a specific post in a community.
+  - **`DELETE /api/communities/{community_id}/posts/{id}/`**: Delete a specific post in a community.
+
+- **`/api/communities/{community_id}/posts/{post_id}/comments/`**: Post comment-related operations.
+  - **`POST /api/communities/{community_id}/posts/{post_id}/comments/`**: Create a new comment on a post.
+  - **`GET /api/communities/{community_id}/posts/{post_id}/comments/`**: List all comments on a post.
+  - **`GET /api/communities/{community_id}/posts/{post_id}/comments/{id}/`**: Retrieve a specific comment on a post.
+  - **`PUT /api/communities/{community_id}/posts/{post_id}/comments/{id}/`**: Update a specific comment on a post.
+  - **`DELETE /api/communities/{community_id}/posts/{post_id}/comments/{id}/`**: Delete a specific comment on a post.
+
+### Swagger Documentation
+
+- **`/api/docs/`**: Swagger UI for API documentation.
+- **`/api/redoc/`**: ReDoc UI for API documentation.
+
+### Debug Toolbar
+
+- **`/__debug__/`**: Django Debug Toolbar.
+
+### Static and Media Files
+
+- **`/static/`**: Static files.
+- **`/media/`**: Media files.
+
+
+for more details on all the routes and methods see the documentation at 
+the route `api/docs`
 
 
 ## Testing
