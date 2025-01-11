@@ -50,6 +50,7 @@ class GenreAdmin(admin.ModelAdmin):
     """Admin class for managing genres."""
 
     list_display = ['id', 'name', 'number_of_books']
+    search_fields = ['name__icontains']
 
     def number_of_books(self, genre):
         """Count the number of books in a genre.

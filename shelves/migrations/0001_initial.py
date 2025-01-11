@@ -34,8 +34,6 @@ class Migration(migrations.Migration):
                 ('notes', models.TextField(blank=True)),
                 ('date_added', models.DateTimeField(auto_now_add=True)),
                 ('date_finished', models.DateTimeField(blank=True, null=True)),
-                ('book', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='books.book')),
-                ('shelf', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shelves.shelf')),
             ],
         ),
         migrations.AddIndex(
