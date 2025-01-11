@@ -24,12 +24,10 @@ class Post(models.Model):
 
     def __str__(self):
         """Return a string representation of the post."""
-        return f"Post: {
-            self.id} | Community: {
-            self.community.id} by {
-            self.user.username}: {
-                self.user.id} at {
-                    self.created_at.ctime()}"
+        return (
+            f"Post: {self.id} | Community: {self.community.id} by "
+            f"{self.user.username}: {self.user.id} at {self.created_at.ctime()}"
+        )
 
 
 class Like(models.Model):

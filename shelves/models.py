@@ -44,11 +44,10 @@ class Shelf(models.Model):
 
     def __str__(self):
         """Return string representation of the Shelf model."""
-        return f"shelf \"{
-            self.name}\":{
-            self.pk} owned by \"{
-            self.user.username}\":{
-                self.user.pk}"
+        return (
+            f'shelf "{self.name}":{self.pk} owned by '
+            f'"{self.user.username}":{self.user.pk}'
+        )
 
 
 class ShelfBook(models.Model):
@@ -80,10 +79,7 @@ class ShelfBook(models.Model):
 
     def __str__(self):
         """Return string representation of the ShelfBook model."""
-        return f"{
-            self.book.title}|{
-            self.book.id} in {
-            self.shelf.name}|{
-                self.shelf.id} owned by user: ({
-                    self.shelf.user.username})|{
-                        self.shelf.user.id}"
+        return (
+            f"{self.book.title}|{self.book.id} in {self.shelf.name}|{self.shelf.id} "
+            f"owned by user: ({self.shelf.user.username})|{self.shelf.user.id}"
+        )

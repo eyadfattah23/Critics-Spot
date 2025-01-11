@@ -160,8 +160,5 @@ class BookReview(models.Model):
 
     def __str__(self):
         """Return a string representation of the book review."""
-        return f"{
-            self.user.username} reviewed {
-            self.book.title} at {
-            self.created_at} | id: {
-                self.id}"
+        return "{} reviewed {} at {} | id: {}"\
+            .format(self.user.username, self.book.title, self.created_at, self.id)
