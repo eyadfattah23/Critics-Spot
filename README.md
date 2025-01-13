@@ -10,6 +10,7 @@ Critics-Spot is a web application that allows users to create and manage bookshe
 - **Books**: Users can add new books, update book details, and delete books.
 - **Communities**: Users can create posts, add comments, and like posts within communities.
 
+### [short features video](https://drive.google.com/file/d/12IZEr3W_MHP3Qr5o1VH4XI8ILHxA51M1/view?usp=drivesdk)
 ## Installation
 1. **Clone the repository**:
    ```bash
