@@ -41,6 +41,8 @@ Critics-Spot is a web application that allows users to create and manage bookshe
    python manage.py createsuperuser
    ```
 
+
+. Open your web browser and navigate to [http://localhost:8000/admin/](http://localhost:8000/admin/)
 ## Running the Application
 1. **Start the development server**:
    ```bash
@@ -48,7 +50,7 @@ Critics-Spot is a web application that allows users to create and manage bookshe
    ```
 
 2. **Access the application**:
-   Open your web browser and navigate to [http://localhost:8000/api/](http://localhost:8000/api/)
+   - Open your web browser and navigate to [http://localhost:8000/api/](http://localhost:8000/api/)
 
 ## Project Architecture
 The project follows a standard Django architecture with the following structure:
@@ -112,7 +114,8 @@ critics-spot/
 ### User Routes
 
 - **`/api/users/`**: User-related operations.
-  - **`POST /api/users/`**: Create a new user.
+  - **`POST /auth/users/`**: Create a new user.
+  - **`POST /auth/jwt/create`**: Create a new jwt token by logging in.
   - **`GET /api/users/`**: List all users.
   - **`GET /api/users/{id}/`**: Retrieve a specific user.
   - **`PUT /api/users/{id}/`**: Update a specific user.
@@ -121,7 +124,7 @@ critics-spot/
 - **`/auth/users/activation/{uid}/{token}/`**: Activate a user account.
 - **`/auth/users/reset_password_confirm/{uid}/{token}/`**: Confirm password reset.
 
-### Book Routes
+### Book Routes (and their reviews)
 
 - **`/api/books/`**: Book-related operations.
   - **`POST /api/books/`**: Create a new book.
@@ -129,6 +132,19 @@ critics-spot/
   - **`GET /api/books/{id}/`**: Retrieve a specific book.
   - **`PUT /api/books/{id}/`**: Update a specific book.
   - **`DELETE /api/books/{id}/`**: Delete a specific book.
+    
+  - **`GET /api/books/{id}/reviews/`**: Get all reviews of a specific book. 
+  - **`POST /api/books/{id}/reviews/`**: Create a new book review.
+  - **`GET /api/reviews/{id}`**: Get a specific book review.   
+  - **`DELETE /api/reviews/{id}`**: Delete a specific book review.
+
+### Authors routes
+- **`/api/authors/`**: Authors-related operations.
+  - **`POST /api/authors/`**: Create a new book.
+  - **`GET /api/authors/`**: List all books.
+  - **`GET /api/authors/{id}/`**: Retrieve a specific book.
+  - **`PUT /api/auhtors/{id}/`**: Update a specific book.
+
 
 ### Shelf Routes
 
