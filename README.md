@@ -13,110 +13,210 @@ Critics-Spot is a web application that allows users to create and manage bookshe
 ### [short features video](https://drive.google.com/file/d/12IZEr3W_MHP3Qr5o1VH4XI8ILHxA51M1/view?usp=drivesdk)
 ### [presentation](https://docs.google.com/presentation/d/14l8wjkGlodnNFtiX65iqRRUrZHDswzsH_qDQ2Si-vu4/edit?usp=drive_link)
 ## Installation
-1. **Clone the repository**:
+* ### 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/critics-spot.git
+   git clone https://github.com/eyadfattah23/critics-spot.git
    cd critics-spot
    ```
 
-2. **Set up a virtual environment**:
+* ### 2. **install python3 and pip3 if not already installed**:
+    ```bash
+    sudo apt install -y software-properties-common
+    sudo add-apt-repository -y ppa:deadsnakes/ppa
+    sudo apt update
+    sudo apt install -y python3.10 python3.10-venv python3.10-dev
+
+    python3 --version
+    ```
+* ### 3. **install and setup postgresql-14 if not already installed**:
+    ```bash
+    sudo apt update
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+    echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/postgresql-pgdg.list > /dev/null
+    sudo apt update
+    sudo apt install postgresql-14
+    sudo apt install postgresql postgresql-contrib
+    sudo service postgresql start
+    ```
+* ### 4. **prepare the databases**:
+    ```bash
+    ./database_creation.sh
+    ```
+    **if `FATAL: Peer authentication failed for user "postgres"` arises refer to this [link](https://stackoverflow.com/questions/18664074/getting-error-peer-authentication-failed-for-user-postgres-when-trying-to-ge) and [this one](https://stackoverflow.com/questions/18664074/getting-error-peer-authentication-failed-for-user-postgres-when-trying-to-ge)**
+
+* ### 5. **Set up a virtual environment**:
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   apt install python3-venv
+   python3.10 -m venv venv
+   source venv/bin/activate
    ```
 
-3. **Install dependencies**:
+* ### 6. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Set up the database**:
-   ```bash
-   python manage.py makemigrations
-   python manage.py migrate
-   ```
 
-5. **Create a superuser**:
+* ### 7. **create`.env` file**:
+    create an app password using this [link](https://myaccount.google.com/apppasswords?pli=1&rapt=AEjHL4OOoBqDwmuaqYhjHZjIZ0LdXCFVqzXUcphwXe7ybYLEjhsgpT3swJEYpopNtN1pCtv7MiXSY9cxFSM1B2AJUujbVnp4vqXbyGa8qYDPEU_rpg13hmc) if you're using gmail.
+    ```bash
+    $# cat .env
+    EMAIL_HOST_USER="your_email_host"
+    EMAIL_HOST_PASSWORD="application_password_created_above"
+    DEFAULT_FROM_EMAIL="default_email" # usually same as host
+    ```
+
+* ### 8. **migrate the tables**:
+   ```bash
+   python3.10 manage.py makemigrations
+   python3.10 manage.py migrate
+   ```
+   if any error is encountered delete all migrations using the following command:
+   `find . -path "*/migrations/*.py" ! -path "./.env/*" ! -name "__init__.py" -delete`.
+
+   [then migrate the tables again.](#8-migrate-the-tables)
+
+
+* ### 9. **Create a superuser**:
    ```bash
    python manage.py createsuperuser
    ```
+    and enter your credentials for this superuser/admin account.
+
+* ### 10. **activate this new superuser**:
+    a. open the psql shell:
+    ```bash
+    sudo psql -U postgres
+    ```
+    b. connect to the development database:
+    ```psql
+    postgres=# \c goodreads_clone_dev_db;
+    ```
+    c. change the `is_active` parameter in the table `users_customeuser`:
+    ```psql
+    goodreads_clone_dev_db=# update users_customuser set is_active = TRUE  where email='{EMAIL_USED_WHEN_CREATING_THE_SUPERUSER}';
+    ```
+    **NOTE: you can use any piece of credentials you want instead of email (e.g. id = 1, username = 'admin', ...etc.) run: `goodreads_clone_dev_db=# select * from users_customuser;`** to see the suitable piece of data for you
 
 
-. Open your web browser and navigate to [http://localhost:8000/admin/](http://localhost:8000/admin/)
+* ### 11. [Run the application](#running-the-application)
+
+
+* ### 12. Open your web browser and navigate to [http://localhost:8000/admin/](http://localhost:8000/admin/) then login using the credentials you used with the command `python3.10 manage.py createsuperuser`
+
+    ### ***AND NOW YOU HAVE ACCESS TO THE ADMIN PANEL!!!***
+
 ## Running the Application
-1. **Start the development server**:
+### 1. **Start the development server**:
    ```bash
-   python manage.py runserver
+   python3.10 manage.py runserver;
    ```
 
-2. **Access the application**:
-   - Open your web browser and navigate to [http://localhost:8000/api/](http://localhost:8000/api/)
+### 2. **Access the application**:
 
-## Project Architecture
-The project follows a standard Django architecture with the following structure:
+#### a. use your preferred rest api access tool like postman or curl in terminal.
+> **we recommend that you use the django rest-framework webpage (`http://localhost:8000/api/{ROUTE}/` or `http://localhost:8000/auth/{ROUTE}/`) in your browser or postman instead of the curl command in the terminal for ease of use.**
 
+#### b. if you want to login immediately with the superuser account created earlier jump to step 4.
+    
+#### c. send a POST request to **`POST http://localhost:8000/auth/users/`**.
+example:
+
+```bash
+    curl -H "Content-Type: application/json" -X POST -d '{"username": "tester_user", "email": "tester@gmail.com", "password": "Pass#test123", "password_confirm": "Pass#test123", "first_name": "Test", "last_name": "User"}' http://localhost:8000/auth/users/
 ```
-critics-spot/
-├── books/
-│   ├── migrations/
-│   ├── __init__.py
-│   ├── admin.py
-│   ├── apps.py
-│   ├── models.py
-│   ├── permissions.py
-│   ├── serializers.py
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
-├── communities/
-│   ├── migrations/
-│   ├── __init__.py
-│   ├── admin.py
-│   ├── apps.py
-│   ├── models.py
-│   ├── permissions.py
-│   ├── serializers.py
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
-├── shelves/
-│   ├── migrations/
-│   ├── __init__.py
-│   ├── admin.py
-│   ├── apps.py
-│   ├── models.py
-│   ├── permissions.py
-│   ├── serializers.py
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
-├── users/
-│   ├── migrations/
-│   ├── __init__.py
-│   ├── admin.py
-│   ├── apps.py
-│   ├── models.py
-│   ├── serializers.py
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
-├── critics_spot/
-│   ├── __init__.py
-│   ├── asgi.py
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-├── manage.py
-└── requirements.txt
+
+now this user (`tester_user`) will  receive an activation email on `tester@gmail.com` which will have an activation link like this:
+    `http://127.0.0.1:8000/auth/users/activation/MTA/cjb2x8-7ab038931019f4316ec8a816af90646a/`
+
+### 3. from here we have 2 scenarios (since the application is not deployed yet):**
+
+* email inbox is on the same device as the application --> just click on the activation link
+
+* email inbox is not on the same device as the application. --> either activate by going to the admin panel, clicking on the new_user's id and editing `Active` parameter for this user, OR using the [psql command used in installation to create a super user](#10-activate-this-new-superuser)
+
+
+### 4. Login and save the access token:
+
+now send a POST request to `http://localhost:8000/auth/jwt/create` with the email and password.
+example:
+```bash
+curl -H "Content-Type: application/json" -X POST -d { "email": "tester@gmail.com", "password": "Pass#test123"} http://localhost:8000/auth/jwt/create/
 ```
+which will result in a response like this:
+```bash
+{
+"refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczNzk4NzQ2NywiaWF0IjoxNzM3OTAxMDY3LCJqdGkiOiIxMTM3Yjg4MWRjYWM0MzhjOTI5YmQzOTNkM2E1YjBhYSIsInVzZXJfaWQiOjExfQ.2jy_R9-CNJAtx2SU8N4CFdHxjz-5C4hI3_T-CNzmiYI",
+
+"access":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM3OTg3NDY3LCJpYXQiOjE3Mzc5MDEwNjcsImp0aSI6IjhkNTkxYzNiN2YxMTQyYWNiOWM2M2Y4YzNkYmU3MjZiIiwidXNlcl9pZCI6MTF9.DOqizcVDmlYcWb2efSZJUmOHazoaV9GTVeNMq1wtad0"
+}
+```
+this access token will be used to access all the routes of the application.
+
+### 5. adding the access token to all your requests.
+any request from here on out must have the header:
+```json
+"Authorization": "JWT {ACCESS_TOKEN}"
+```
+- If in browser, download an extension that passes headers like [**Mod Header**](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en) and [**Header Editor**](https://chromewebstore.google.com/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh?hl=en).
+
+- If in postman, navigate to the `headers` tab and add a new header with the key `Authorization` and the value `"JWT {ACCESS_TOKEN}"`
+
+- If using curl command:
+    ```bash
+    curl -H curl -H "Content-Type: application/json" -X GET -H "Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM3OTg3NDY3LCJpYXQiOjE3Mzc5MDEwNjcsImp0aSI6IjhkNTkxYzNiN2YxMTQyYWNiOWM2M2Y4YzNkYmU3MjZiIiwidXNlcl9pZCI6MTF9.DOqizcVDmlYcWb2efSZJUmOHazoaV9GTVeNMq1wtad0" http://localhost:8000/auth/users/me/
+    ``` 
+    and response should be like this:
+    ```json
+    
+    {
+        "id": 11,
+        "username": "tester_user",
+        "email": "tester@gmail.com",
+        "first_name": "Test",
+        "last_name": "User",
+        "date_joined": "2025-01-26T13:01:53Z",
+        "image": "http://localhost:8000/media/profile_pictures/tester_user/profile.png",
+        "shelves": [
+            {
+                "id": 41,
+                "name": "Read",
+                "url": "http://localhost:8000/api/shelves/41/",
+                "image": null
+            },
+            {
+                "id": 42,
+                "name": "Currently Reading",
+                "url": "http://localhost:8000/api/shelves/42/",
+                "image": null
+            },
+            {
+                "id": 43,
+                "name": "Want To Read",
+                "url": "http://localhost:8000/api/shelves/43/",
+                "image": null
+            },
+            {
+                "id": 44,
+                "name": "Favorites",
+                "url": "http://localhost:8000/api/shelves/44/",
+                "image": null
+            }
+        ],
+        "is_staff": false
+    }
+    ```
+    well I know it's not this clean but it's the same. 😅
+
+### **IMPORTANT NOTE**: most of the app won't work and you will get `401 Unauthorized` error  without using it###
 
 
 ### User Routes
 
-- **`/api/users/`**: User-related operations.
-  - **`POST /auth/users/`**: Create a new user.
+- **`/api/users/` and `/auth/users`**: User and authorization related operations.
+  - **`POST /auth/users/`**: Create a new user. (registration route)
   - **`POST /auth/jwt/create`**: Create a new jwt token by logging in.
-  - **`GET /api/users/`**: List all users.
+  - **`GET /auth/users/`**: List all users. (only admin can see all users)
   - **`GET /api/users/{id}/`**: Retrieve a specific user.
   - **`PUT /api/users/{id}/`**: Update a specific user.
   - **`DELETE /api/users/{id}/`**: Delete a specific user.
@@ -130,12 +230,13 @@ critics-spot/
   - **`POST /api/books/`**: Create a new book.
   - **`GET /api/books/`**: List all books.
   - **`GET /api/books/{id}/`**: Retrieve a specific book.
-  - **`PUT /api/books/{id}/`**: Update a specific book.
+  - **`PUT/PATCH /api/books/{id}/`**: Update a specific book.
   - **`DELETE /api/books/{id}/`**: Delete a specific book.
     
   - **`GET /api/books/{id}/reviews/`**: Get all reviews of a specific book. 
   - **`POST /api/books/{id}/reviews/`**: Create a new book review.
-  - **`GET /api/reviews/{id}`**: Get a specific book review.   
+  - **`GET /api/reviews/{id}`**: Get a specific book review.
+  - **`PUT/PATCH /api/reviews/{id}`**: Update a specific book review.
   - **`DELETE /api/reviews/{id}`**: Delete a specific book review.
 
 ### Authors routes
@@ -144,6 +245,12 @@ critics-spot/
   - **`GET /api/authors/`**: List all books.
   - **`GET /api/authors/{id}/`**: Retrieve a specific book.
   - **`PUT /api/auhtors/{id}/`**: Update a specific book.
+### Genres routes
+- **`/api/genres/`**: Genres-related operations.
+  - **`POST /api/genres/`**: Create a new book.
+  - **`GET /api/genres/`**: List all books.
+  - **`GET /api/genres/{id}/`**: Retrieve a specific book.
+  - **`PUT /api/genres/{id}/`**: Update a specific book.
 
 
 ### Shelf Routes
@@ -151,9 +258,12 @@ critics-spot/
 - **`/api/shelves/`**: Shelf-related operations.
   - **`POST /api/shelves/`**: Create a new shelf.
   - **`GET /api/shelves/`**: List all shelves.
+  - **`GET /api/users/{id}/shelves/`**: List all shelves owned by a specific user.
   - **`GET /api/shelves/{id}/`**: Retrieve a specific shelf.
   - **`PUT /api/shelves/{id}/`**: Update a specific shelf.
   - **`DELETE /api/shelves/{id}/`**: Delete a specific shelf.
+
+  - **
 
 ### Community Routes
 
