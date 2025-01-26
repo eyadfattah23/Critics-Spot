@@ -64,7 +64,7 @@ class UserUpdateSerializer(BaseUserSerializer):
         model = CustomUser
         fields = ['id', 'username', 'first_name',
                   'last_name', 'email', 'image', 'bio']
-        read_only_fields = ['email', 'id']
+        read_only_fields = ['email', 'id', 'is_staff']
 
 
 class UserProfileSerializer(BaseUserSerializer):
@@ -80,7 +80,7 @@ class UserProfileSerializer(BaseUserSerializer):
                   'first_name', 'last_name',
                   'date_joined', 'image',
                   'shelves', 'is_staff']
-        read_only_fields = ['email', 'image', 'id']
+        read_only_fields = ['email', 'image', 'id', 'is_staff']
 
 
 class CustomUserCreateSerializer(BaseUserCreateSerializer):
