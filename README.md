@@ -208,31 +208,88 @@ any request from here on out must have the header:
     ```
     well I know it's not this clean but it's the same. 😅
 
-### **IMPORTANT NOTE**: most of the app won't work and you will get `401 Unauthorized` error  without using it###
+### **IMPORTANT NOTE**: most of the app won't work and you will get `401 Unauthorized` error  without using it
 
 
+Again!! we recommend using the django rest-framework webpage (http://localhost:8000/api/{ROUTE}/ or http://localhost:8000/auth/{ROUTE}/) in your browser with a header extension as mentioned above or postman instead of the curl command in the terminal for ease of use.
+
+don't forget to pass the header `"Authorization": "JWT {ACCESS_TOKEN}"`
+---
 ### User Routes
 
-- **`/api/users/` and `/auth/users`**: User and authorization related operations.
+- `/auth/users`**: User and authorization related operations.
   - **`POST /auth/users/`**: Create a new user. (registration route)
+    * body:
+        ```json
+        {
+            "username": "tester_user",
+            "email": "tester@gmail.com",
+            "password": "Pass#test123",
+            "password_confirm": "Pass#test123",
+            "first_name": "Test",
+            "last_name": "User"
+        }
+        ```
   - **`POST /auth/jwt/create`**: Create a new jwt token by logging in.
-  - **`GET /auth/users/`**: List all users. (only admin can see all users)
-  - **`GET /api/users/{id}/`**: Retrieve a specific user.
-  - **`PUT /api/users/{id}/`**: Update a specific user.
-  - **`DELETE /api/users/{id}/`**: Delete a specific user.
+    * body:
+        ```json
+        {
+            "email": "tester@gmail.com",
+            "password": "Pass#test123"
+        }
+        ```
+  - **`GET /auth/users/`**: List all users. (only a super user can see all users)
+  - **`GET /auth/users/{id}/`**: Retrieve a specific user. (you can only retrieve the Currently logged in user)
+  - **`GET /auth/users/me/`**: Retrieve the Currently logged in user.
+  - **`PUT/PATCH /api/users/{id}/`**: Update a specific user.
+  - **`PUT/PATCH /auth/users/me/`**: Update the Currently logged in user.
 
 - **`/auth/users/activation/{uid}/{token}/`**: Activate a user account.
 - **`/auth/users/reset_password_confirm/{uid}/{token}/`**: Confirm password reset.
 
 ### Book Routes (and their reviews)
 
-- **`/api/books/`**: Book-related operations.
+note: to get the best out of the books route you should:
+
+1. **Populate the books table using the script named `populate_books_data.py` by running `python3 manage.py shell` and pasting the content of the file.**
+2. **Add admin or librarian privileges to the current logged in user**(if logged in as an admin/superuser ignore this), **by using the script named `populate_group_permissions.sql` to populate permissions tables and then going to the admin panel to add the new privileges to the logged in user**(you can simply do all this in the admin panel by creating a new group in the groups table with the desired permissions then add this new group to the user in the custom users table)  
+
+now for the **`/api/books/`** routes: Book-related operations.
   - **`POST /api/books/`**: Create a new book.
+
+    * body:
+        ```json
+        {
+            "title": "new book",
+            "cover": "valid_file_url_or_remove_parameter_completely",
+            "description": "description",
+            "author": 2,
+            "genres": [1, 2],
+            "publication_date": "1925-04-10",
+            "buy_link": "a_valid_full_url",
+            "pages": 123
+        }
+        ```
   - **`GET /api/books/`**: List all books.
   - **`GET /api/books/{id}/`**: Retrieve a specific book.
-  - **`PUT/PATCH /api/books/{id}/`**: Update a specific book.
-  - **`DELETE /api/books/{id}/`**: Delete a specific book.
-    
+  - **`PUT/PATCH /api/books/{id}/`**: Update a specific book. (Librarian or admin only)
+    * body:
+        ```json
+        {
+            "title": "new book",
+            "description": "description",
+            "author": 2,
+            "genres": [
+                1,
+                2
+            ],
+            "publication_date": "1925-04-10",
+            "buy_link": "https://mail.google.com/",
+            "pages": 123
+        }
+        ```
+  - **`DELETE /api/books/{id}/`**: Delete a specific book. (Librarian or admin only)
+
   - **`GET /api/books/{id}/reviews/`**: Get all reviews of a specific book. 
   - **`POST /api/books/{id}/reviews/`**: Create a new book review.
   - **`GET /api/reviews/{id}`**: Get a specific book review.
@@ -256,9 +313,20 @@ any request from here on out must have the header:
 ### Shelf Routes
 
 - **`/api/shelves/`**: Shelf-related operations.
+  - **`GET /api/users/{user_id}/shelves/`**: List all shelves of a specific user.
+  - **`GET /api/users/{user_id}/favorites/`**: Retrieve the favorites shelf of a specific user.
+  - **`GET /api/users/{id}/shelves/`**: List all shelves owned by a specific user.
+  - **`POST /api/users/{id}/shelves/`**: Add a new shelf for a specific user.
+
+    * body:
+        ```json
+        {
+            "name": "new shelf"
+            //, "image" : "valid_image_file_or_remove_parameter_or_keep_this_parameter_commented"
+        }
+        ```
   - **`POST /api/shelves/`**: Create a new shelf.
   - **`GET /api/shelves/`**: List all shelves.
-  - **`GET /api/users/{id}/shelves/`**: List all shelves owned by a specific user.
   - **`GET /api/shelves/{id}/`**: Retrieve a specific shelf.
   - **`PUT /api/shelves/{id}/`**: Update a specific shelf.
   - **`DELETE /api/shelves/{id}/`**: Delete a specific shelf.
