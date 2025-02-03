@@ -1,7 +1,7 @@
 # Critics-Spot
 ![alt text](image.png)
 ## Overview
-Critics-Spot is a web application that allows users to create and manage bookshelves, add books to their shelves, and interact with other users. The app provides functionalities for user registration, authentication, and managing user profiles. Users can also add comments and likes to posts within communities.
+Critics-Spot is a web application that allows users to create and manage bookshelves, add books to their shelves, know where to buy these books from, and interact with other users. The app provides functionalities for user registration, authentication, and managing user profiles. Users can also add comments and likes to posts within communities.
 
 ## Features
 - **User Registration and Authentication**: Users can register, log in, and obtain authentication tokens.
