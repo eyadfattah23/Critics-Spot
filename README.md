@@ -342,15 +342,37 @@ now for the **`/api/books/`** routes: Book-related operations.
   - **`PUT /api/communities/{id}/`**: Update a specific community.
   - **`DELETE /api/communities/{id}/`**: Delete a specific community.
 
+  - **`POST /api/communities/{id}/join/`**: Join a community. (No body required).
+  - **`POST /api/communities/{id}/leave/`**: leave a community. (No body required).
+  - **`GET /api/communities/{id}/members/`**: List all members of a community.
+    
+
 - **`/api/communities/{community_id}/posts/`**: Community post-related operations.
   - **`POST /api/communities/{community_id}/posts/`**: Create a new post in a community.
+    * body:
+        ```json
+            {  
+                "content": "Just finished Dune – what an amazing book!"  
+            }
+        ```  
+        
   - **`GET /api/communities/{community_id}/posts/`**: List all posts in a community.
   - **`GET /api/communities/{community_id}/posts/{id}/`**: Retrieve a specific post in a community.
   - **`PUT /api/communities/{community_id}/posts/{id}/`**: Update a specific post in a community.
   - **`DELETE /api/communities/{community_id}/posts/{id}/`**: Delete a specific post in a community.
 
+  - **`POST /api/communities/{community_id}/posts/{post_id}/like/`**: Like a post. (No body required).
+  - **`POST /api/communities/{community_id}/posts/{post_id}/unlike/`**: Like a post. (No body required).
+
 - **`/api/communities/{community_id}/posts/{post_id}/comments/`**: Post comment-related operations.
+    * body:
+        ```json
+            {  
+                "content": "content": "Agreed! The world-building is incredible."  
+            }
+        ```  
   - **`POST /api/communities/{community_id}/posts/{post_id}/comments/`**: Create a new comment on a post.
+
   - **`GET /api/communities/{community_id}/posts/{post_id}/comments/`**: List all comments on a post.
   - **`GET /api/communities/{community_id}/posts/{post_id}/comments/{id}/`**: Retrieve a specific comment on a post.
   - **`PUT /api/communities/{community_id}/posts/{post_id}/comments/{id}/`**: Update a specific comment on a post.
