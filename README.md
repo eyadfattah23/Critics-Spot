@@ -301,7 +301,7 @@ now for the **`/api/books/`** routes: Book-related operations.
   - **`POST /api/authors/`**: Create a new book.
   - **`GET /api/authors/`**: List all books.
   - **`GET /api/authors/{id}/`**: Retrieve a specific book.
-  - **`PUT /api/auhtors/{id}/`**: Update a specific book.
+  - **`PUT /api/authors/{id}/`**: Update a specific book.
 ### Genres routes
 - **`/api/genres/`**: Genres-related operations.
   - **`POST /api/genres/`**: Create a new book.
@@ -325,6 +325,16 @@ now for the **`/api/books/`** routes: Book-related operations.
             //, "image" : "valid_image_file_or_remove_parameter_or_keep_this_parameter_commented"
         }
         ```
+
+  - **`POST /api/shelves/{shelf_id}/books/`**: Add a book to a shelf.
+    * body:
+        ```json
+        {  
+        "book": 123,  
+        "current_page": 50  
+        }
+        ```  
+  - **`DELETE /api/shelves/{shelf_id}/books/{book_id}/`**: Remove a book from a shelf.
   - **`POST /api/shelves/`**: Create a new shelf.
   - **`GET /api/shelves/`**: List all shelves.
   - **`GET /api/shelves/{id}/`**: Retrieve a specific shelf.
