@@ -141,7 +141,7 @@ now this user (`tester_user`) will  receive an activation email on `tester@gmail
 now send a POST request to `http://localhost:8000/auth/jwt/create` with the email and password.
 example:
 ```bash
-curl -H "Content-Type: application/json" -X POST -d { "email": "tester@gmail.com", "password": "Pass#test123"} http://localhost:8000/auth/jwt/create/
+curl -H "Content-Type: application/json" -X POST -d '{ "email": "tester@gmail.com", "password": "Pass#test123"}' http://localhost:8000/auth/jwt/create/
 ```
 which will result in a response like this:
 ```bash
